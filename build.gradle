@@ -37,3 +37,12 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.register('copyTestConfig', Copy) {
+	from 'Config/backend/'
+	into 'src/test/resources'
+}
+
+tasks.named('processTestResources') {
+	dependsOn 'copyTestConfig'
+}
