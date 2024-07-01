@@ -1,10 +1,13 @@
 package swm.betterlife.antifragile.common.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -13,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthFilter;
+import swm.betterlife.antifragile.common.jwt.filter.JwtAuthenticationEntryPoint;
 import swm.betterlife.antifragile.common.jwt.filter.JwtExceptionFilter;
 
 import java.util.List;
@@ -27,9 +31,10 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] PERMIT_PATHS = {
-            "/auth", "/auth/**", "/login/**",
+            "/auth/**"
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
@@ -41,7 +46,7 @@ public class SecurityConfig {
     };
 
     private static final String[] ALLOW_ORIGINS = {
-            "http://localhost:3000",
+            "http://localhost:8080",
     };
 
     @Bean
@@ -58,13 +63,12 @@ public class SecurityConfig {
                 .requestMatchers(PERMIT_PATHS).permitAll()
                 .requestMatchers(POST, PERMIT_PATHS_POST_METHOD).permitAll()
                 .requestMatchers(GET, PERMIT_PATHS_GET_METHOD).permitAll()
-                .requestMatchers("/v1/products/own").denyAll()
                 .anyRequest().authenticated()
         );
 
-//        http.exceptionHandling(exceptionHandling -> {
-//            exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint);
-//        });
+        http.exceptionHandling(exceptionHandling -> {
+            exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint);
+        });
 
 //        http.oauth2Login(oauth2 -> oauth2
 //                .userInfoEndpoint(
@@ -94,5 +98,11 @@ public class SecurityConfig {
         return source;
     }
 
+    @Bean
+    @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
+    public WebSecurityCustomizer configureH2ConsoleEnable() {
+        return web -> web.ignoring()
+                .requestMatchers(PathRequest.toH2Console());
+    }
 
 }

@@ -12,15 +12,17 @@ import java.util.List;
 
 @Builder
 public record PrincipalDetails(
-        Long id,
         String email,
         String password,
         LoginType loginType
 ) implements UserDetails {
 
+    public static PrincipalDetails of(String email, LoginType loginType) {
+        return new PrincipalDetails(email, "", loginType);
+    }
+
     public static PrincipalDetails of(Member member) {
         return new PrincipalDetails(
-                member.getId(),
                 member.getEmail(),
                 member.getPassword(),
                 member.getLoginType()

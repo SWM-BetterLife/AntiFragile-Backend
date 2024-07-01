@@ -39,3 +39,6 @@ out/
 ### ../resources/*.yml ###
 **/src/main/resources/*.yml
 **/src/test/resources/*.yml
+
+### Http Request
+http/**

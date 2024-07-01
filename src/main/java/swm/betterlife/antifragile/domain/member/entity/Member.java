@@ -22,4 +22,6 @@ public class Member extends BaseEntity {
     private String password;
     @Enumerated(EnumType.STRING)
     private LoginType loginType;
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
 }

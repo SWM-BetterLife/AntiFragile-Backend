@@ -6,9 +6,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
 
 import java.io.IOException;
 
@@ -18,9 +21,9 @@ import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.BEARER_
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtAuthFilter extends OncePerRequestFilter {
+public class  JwtAuthFilter extends OncePerRequestFilter {
 
-//        private final JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;
 
     @Override
     protected void doFilterInternal(
@@ -33,26 +36,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         log.info("JWT token: {}", token);
 
-        if (!StringUtils.hasText(token)) {
+        if (!StringUtils.hasText(token) || !jwtProvider.validateToken(token)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-//        String email = jwtProvider.getEmail(token);
-//        String provider = jwtProvider.getProvider(token);
+        Authentication authentication = jwtProvider.getAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-//        try {
-//            jwtProvider
-//                    .saveAuthInContextHolder(email, ProviderType.valueOf(provider));
-//        } catch (MemberNotFoundException e) {
-//            throw new TokenNotValidatedException();
-//        }
+        log.info("JWT authenticated: {}", authentication);
         filterChain.doFilter(request, response);
     }
 
 
     private String extractTokenFromRequest(HttpServletRequest request) {
         String token = request.getHeader(AUTHORIZATION_HEADER);
+        log.info("raw token: {}", token);
         if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
             return token.substring(BEARER_PREFIX.length());
         }

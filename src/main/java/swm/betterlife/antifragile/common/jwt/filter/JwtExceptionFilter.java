@@ -8,11 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.filter.OncePerRequestFilter;
+import swm.betterlife.antifragile.common.response.ResponseBody;
 
 import java.io.IOException;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Slf4j
@@ -33,17 +35,17 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (AuthenticationException e) {
-//            ResponseBody<Void> responseBody
-//                    = ResponseBody.fail(e.getMessage());
-//            completeResponse(response, e, responseBody, UNAUTHORIZED.value());
+            ResponseBody<Void> responseBody
+                    = ResponseBody.fail(e.getMessage());
+            completeResponse(response, e, responseBody, UNAUTHORIZED.value());
         } catch (Exception e) {
-//            ResponseBody<Void> responseBody
-//                    = ResponseBody.fail(e.getMessage());
-//            completeResponse(response, e, responseBody, BAD_REQUEST.value());
+            ResponseBody<Void> responseBody
+                    = ResponseBody.fail(e.getMessage());
+            completeResponse(response, e, responseBody, BAD_REQUEST.value());
         }
     }
 
-    private void makeResponse(
+    private void completeResponse(
             HttpServletResponse response,
             Exception e,
             ResponseBody responseBody,
