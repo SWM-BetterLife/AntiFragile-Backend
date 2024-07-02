@@ -6,14 +6,15 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import swm.betterlife.antifragile.common.exception.TokenExpiredException;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
-import swm.betterlife.antifragile.common.security.PrincipalDetailsService;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 
 import java.security.Key;
@@ -29,7 +30,7 @@ import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.*;
 @Component
 @RequiredArgsConstructor
 public class JwtProvider {
-    
+
     @Value("${jwt.secretKey}")
     private String secretKeyPlain;
     private Key secretKey;
@@ -94,12 +95,13 @@ public class JwtProvider {
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
-        } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다."); //todo : 만료일 때, Action ?
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다."); //todo : 만료일 때, Action ?
+            throw new TokenExpiredException();
         }
 
         return false;
