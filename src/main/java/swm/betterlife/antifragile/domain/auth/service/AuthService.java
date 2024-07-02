@@ -48,9 +48,9 @@ public class AuthService {
         Authentication authentication = getAuthenticate(loginRequest.email(), password);
 
         Member member = memberRepository.getMember(loginRequest.email());
-        String accessToken
-                = jwtProvider.generateAccessToken(authentication, loginRequest.loginType());
-        return LoginResponse.from(member, new TokenIssueResponse(accessToken));
+        TokenIssueResponse tokenIssueResponse
+                = jwtProvider.issueToken(authentication, loginRequest.loginType());
+        return LoginResponse.from(member, tokenIssueResponse);
     }
 
     @Transactional

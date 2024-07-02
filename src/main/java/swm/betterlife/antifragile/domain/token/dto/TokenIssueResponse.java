@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.auth.dto;
+package swm.betterlife.antifragile.domain.token.dto;
 
 public record TokenIssueResponse(
         String accessToken,
