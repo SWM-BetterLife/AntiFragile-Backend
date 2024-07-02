@@ -14,10 +14,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import swm.betterlife.antifragile.common.exception.TokenExpiredException;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
-import swm.betterlife.antifragile.domain.auth.dto.TokenIssueResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
+import swm.betterlife.antifragile.domain.token.dto.TokenIssueResponse;
 import swm.betterlife.antifragile.domain.token.entity.Token;
-import swm.betterlife.antifragile.domain.token.service.TokenService;
+import swm.betterlife.antifragile.domain.token.repository.TokenRepository;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class JwtProvider {
     private String secretKeyPlain;
     private Key secretKey;
 
-    private final TokenService tokenService;
+    private final TokenRepository tokenRepository;
 
     @PostConstruct
     protected void init() {
@@ -57,7 +57,7 @@ public class JwtProvider {
 
     private String generateRefreshToken(Authentication authentication, LoginType loginType) {
         String refreshToken =  generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME, loginType);
-        tokenService.save(Token.of(loginType, authentication.getName(), refreshToken));
+        tokenRepository.save(Token.of(loginType, authentication.getName(), refreshToken));
         return refreshToken;
     }
 
@@ -87,8 +87,8 @@ public class JwtProvider {
                 .compact();
     }
 
-    public Authentication getAuthentication(String accessToken) {
-        Claims claims = parseClaims(accessToken);
+    public Authentication getAuthentication(String token) {
+        Claims claims = parseClaims(token);
         if (claims.get(AUTHORITIES_KEY) == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
@@ -122,10 +122,10 @@ public class JwtProvider {
         return false;
     }
 
-    private Claims parseClaims(String accessToken) {
+    private Claims parseClaims(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(secretKey)
-                    .build().parseClaimsJws(accessToken).getBody();
+                    .build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }

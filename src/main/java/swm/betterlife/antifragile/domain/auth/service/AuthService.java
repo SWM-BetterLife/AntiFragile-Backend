@@ -13,11 +13,11 @@ import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
 import swm.betterlife.antifragile.domain.auth.dto.LoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.LoginResponse;
 import swm.betterlife.antifragile.domain.auth.dto.SignUpRequest;
-import swm.betterlife.antifragile.domain.auth.dto.TokenIssueResponse;
 import swm.betterlife.antifragile.domain.member.dto.MemberDetailResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
+import swm.betterlife.antifragile.domain.token.dto.TokenIssueResponse;
 
 import static swm.betterlife.antifragile.domain.member.entity.RoleType.ROLE_USER;
 

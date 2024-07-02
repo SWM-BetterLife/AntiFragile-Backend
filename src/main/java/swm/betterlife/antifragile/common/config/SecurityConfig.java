@@ -34,7 +34,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] PERMIT_PATHS = {
-            "/auth/**"
+            "/auth/**", "/token/re-issuance"
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {

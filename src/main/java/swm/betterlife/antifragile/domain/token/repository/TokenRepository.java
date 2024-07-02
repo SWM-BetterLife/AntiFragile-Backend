@@ -7,9 +7,5 @@ import swm.betterlife.antifragile.domain.token.entity.Token;
 @Repository
 public interface TokenRepository extends CrudRepository<Token, String> {
 
-    default Token getToken(String id) {
-        return findById(id).orElseThrow(RuntimeException::new); //todo: Custom Ex
-    }
-
     boolean existsTokenById(String id);
 }

@@ -15,6 +15,6 @@ public class MemberService {
     @Transactional(readOnly = true)
     public Member findMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(RuntimeException::new);    //todo: Custom Ex
     }
 }
