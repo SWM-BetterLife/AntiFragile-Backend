@@ -40,9 +40,6 @@ public class AuthService {
 
     @Transactional
     public LoginResponse login(LoginRequest loginRequest) {
-        log.info("google password: {}", googlePassword);
-        log.info("kakao password: {}", kakaoPassword);
-        log.info("naver password: {}", naverPassword);
         String password = getPasswordByLoginType(loginRequest.loginType());
 
         Authentication authentication = getAuthenticate(loginRequest.email(), password);
@@ -56,7 +53,6 @@ public class AuthService {
     @Transactional
     public MemberDetailResponse signUp(SignUpRequest signUpRequest) {
         if (memberRepository.existsByEmail(signUpRequest.email())) {
-            log.info("이미 존재하는 이메일 : {}", signUpRequest.email());
             throw new RuntimeException("이미 존재하는 이메일입니다.");  //todo: Custom Ex
         }
 

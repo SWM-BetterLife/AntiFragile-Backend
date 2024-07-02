@@ -17,7 +17,7 @@ import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.auth.dto.TokenIssueResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.token.entity.Token;
-import swm.betterlife.antifragile.domain.token.repository.TokenRepository;
+import swm.betterlife.antifragile.domain.token.service.TokenService;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -37,13 +37,12 @@ public class JwtProvider {
     private String secretKeyPlain;
     private Key secretKey;
 
-    private final TokenRepository tokenRepository;
+    private final TokenService tokenService;
 
     @PostConstruct
     protected void init() {
         byte[] keyBytes = Decoders.BASE64URL.decode(secretKeyPlain);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-        log.info("JWT Secret Key: {}", secretKeyPlain);
     }
 
     public TokenIssueResponse issueToken(Authentication authentication, LoginType loginType) {
@@ -58,7 +57,7 @@ public class JwtProvider {
 
     private String generateRefreshToken(Authentication authentication, LoginType loginType) {
         String refreshToken =  generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME, loginType);
-        tokenRepository.save(Token.of(loginType, authentication.getName(), refreshToken));
+        tokenService.save(Token.of(loginType, authentication.getName(), refreshToken));
         return refreshToken;
     }
 
