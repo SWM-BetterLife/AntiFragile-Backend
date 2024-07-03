@@ -1,13 +1,12 @@
 package swm.betterlife.antifragile.domain.pointReceipt.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 import swm.betterlife.antifragile.common.baseTimeEntity.BaseTimeEntity;
 
 @Getter
@@ -20,13 +19,11 @@ public class PointReceipt extends BaseTimeEntity {
     @Id
     private ObjectId id;
 
-    @Field("user_id")
-    private ObjectId userId;
+    private ObjectId memberId;
 
-    private String type;
+    private PointReceiptType type;
 
-    private Number amount;
+    private Integer amount;
 
-    @Field("emoticon_theme_id")
     private ObjectId emoticonThemeId;
 }

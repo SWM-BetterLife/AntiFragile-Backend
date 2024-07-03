@@ -1,15 +1,14 @@
 package swm.betterlife.antifragile.domain.emoticonTheme.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import swm.betterlife.antifragile.common.baseTimeEntity.BaseTimeEntity;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -23,20 +22,9 @@ public class EmoticonTheme extends BaseTimeEntity {
 
     private String name;
 
-    private Number price;
+    private Integer price;
 
-    private List<ObjectId> userIds;
+    private List<ObjectId> memberIds;
 
     private List<Emoticon> emoticons;
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class Emoticon {
-
-        private String emotion;
-
-        private String img;
-    }
 }

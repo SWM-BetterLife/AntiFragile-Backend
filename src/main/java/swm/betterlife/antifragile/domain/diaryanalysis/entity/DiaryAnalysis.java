@@ -1,6 +1,5 @@
-package swm.betterlife.antifragile.domain.member.entity;
+package swm.betterlife.antifragile.domain.diaryAnalysis.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,25 +14,25 @@ import swm.betterlife.antifragile.common.baseTimeEntity.BaseTimeEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document(collection = "members")
-public class Member extends BaseTimeEntity {
+@Document(collection = "diary_analyses")
+public class DiaryAnalysis extends BaseTimeEntity {
 
     @Id
     private ObjectId id;
 
-    private LoginType loginType;
+    private ObjectId memberId;
 
-    private Role role;
+    private List<String> emotions;
 
-    private String email;
+    private String event;
 
-    private String nickname;
+    private String thought;
 
-    private String profileImgUrl;
+    private String action;
 
-    private List<ObjectId> emoticonThemeId = new ArrayList<>();
+    private String comment;
 
-    private Integer point;
+    private List<RecommendContent> contents;
 
-    private Integer remainRecommendNumber;
+    private List<SelectedEmoticon> emoticons;
 }

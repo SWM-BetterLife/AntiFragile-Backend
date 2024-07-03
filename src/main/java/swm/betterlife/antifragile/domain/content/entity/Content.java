@@ -1,15 +1,15 @@
 package swm.betterlife.antifragile.domain.content.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import swm.betterlife.antifragile.common.baseTimeEntity.BaseTimeEntity;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -23,11 +23,11 @@ public class Content extends BaseTimeEntity {
 
     private String title;
 
-    private List<ObjectId> likeUserIds;
+    private List<ObjectId> likeMemberIds = new ArrayList<>();
 
-    private List<SaveUser> saveUser;
+    private List<SaveMember> saveMembers = new ArrayList<>();
 
-    private String thumbnailImg;
+    private String thumbnailImgUrl;
 
     private Integer subscriberNumber;
 
@@ -38,15 +38,4 @@ public class Content extends BaseTimeEntity {
     private Integer likeNumber;
 
     private String url;
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class SaveUser {
-
-        private ObjectId memberId;
-
-        private List<String> tags;
-    }
 }
