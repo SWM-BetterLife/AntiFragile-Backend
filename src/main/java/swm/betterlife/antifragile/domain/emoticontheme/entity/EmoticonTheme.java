@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.emoticonTheme.entity;
+package swm.betterlife.antifragile.domain.emoticontheme.entity;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import swm.betterlife.antifragile.common.baseTimeEntity.BaseTimeEntity;
+import swm.betterlife.antifragile.common.basetimeentity.BaseTimeEntity;
 
 @Getter
 @NoArgsConstructor

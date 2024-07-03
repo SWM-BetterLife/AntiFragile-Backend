@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.diaryAnalysis.entity;
+package swm.betterlife.antifragile.domain.diaryanalysis.entity;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

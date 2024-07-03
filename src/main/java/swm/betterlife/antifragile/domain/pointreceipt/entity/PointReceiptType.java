@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.pointReceipt.entity;
+package swm.betterlife.antifragile.domain.pointreceipt.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

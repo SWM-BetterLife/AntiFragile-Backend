@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.contentReview.entity;
+package swm.betterlife.antifragile.domain.contentreview.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

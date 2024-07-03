@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.recentContent.entity;
+package swm.betterlife.antifragile.domain.recentcontent.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import swm.betterlife.antifragile.common.baseTimeEntity.BaseTimeEntity;
+import swm.betterlife.antifragile.common.basetimeentity.BaseTimeEntity;
 
 @Getter
 @NoArgsConstructor

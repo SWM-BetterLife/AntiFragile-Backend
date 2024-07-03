@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.emoticonTheme.entity;
+package swm.betterlife.antifragile.domain.emoticontheme.entity;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

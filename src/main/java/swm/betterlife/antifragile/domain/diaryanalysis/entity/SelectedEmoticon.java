@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.diaryAnalysis.entity;
+package swm.betterlife.antifragile.domain.diaryanalysis.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

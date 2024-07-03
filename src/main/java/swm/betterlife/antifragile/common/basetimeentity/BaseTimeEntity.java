@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.common.baseTimeEntity;
+package swm.betterlife.antifragile.common.basetimeentity;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;

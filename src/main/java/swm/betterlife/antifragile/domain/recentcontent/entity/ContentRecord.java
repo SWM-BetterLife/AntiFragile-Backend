@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.recentContent.entity;
+package swm.betterlife.antifragile.domain.recentcontent.entity;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
