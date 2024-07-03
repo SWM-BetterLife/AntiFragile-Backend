@@ -11,6 +11,14 @@ jobs:
     # 실행 환경 지정
     runs-on: ubuntu-latest
 
+    # 서비스 지정
+    services:
+      # mongodb 서비스를 사용
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     # Task의 sequence를 명시한다.
     steps:
 
