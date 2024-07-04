@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ "release", "develop" ]
 
+
 jobs:
   build:
     # 실행 환경 지정
@@ -21,13 +22,21 @@ jobs:
 
     # Task의 sequence를 명시한다.
     steps:
-
+    
     # 리포지토리로 체크아웃을 진행하고 서브모듈을 참조하여 clone한다.
     - name: Checkout
       uses: actions/checkout@v4
       with:
         submodules: true
         token: ${{ secrets.ACTION_TOKEN }}
+
+    - name: Run check style
+      uses: nikitasavinov/checkstyle-action@master
+      with:
+        github_token: ${{ secrets.ACTION_TOKEN }}
+        tool_name: 'testtool'
+        level: error
+        checkstyle_config: ./custom_google_checks.xml
 
     - name: Update submodule
       run: |
