@@ -8,7 +8,25 @@ on:
 
 
 jobs:
-  build:
+  checkstyle_job:
+    runs-on: ubuntu-latest
+    name: Checkstyle job
+    steps:
+      - name: Reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run check style
+        uses: nikitasavinov/checkstyle-action@master
+        with:
+          github_token: ${{ secrets.ACTION_TOKEN }}
+          tool_name: 'testtool'
+          level: error
+          checkstyle_config: ./custom_google_checks.xml
+          
+  build_job:
     # 실행 환경 지정
     runs-on: ubuntu-latest
 
@@ -29,16 +47,6 @@ jobs:
       with:
         submodules: true
         token: ${{ secrets.ACTION_TOKEN }}
-
-    - name: Run CheckStyle
-      uses: nikitasavinov/checkstyle-action@master
-      with:
-        tool_name: checkstyle
-        reporter: github-pr-review # => report as pull request review
-        # reporter: github-check # => report as github check
-        # reporter: fail-only # => report only when there are violations
-        checkstyle_config: ./custom_google_checks.xml
-        fail_on_error: true
 
     - name: Update submodule
       run: |
