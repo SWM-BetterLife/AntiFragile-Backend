@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "release", "develop" ]
+    branches: [ "release", "develop", "*" ]
   pull_request:
     branches: [ "release", "develop" ]
 
@@ -30,13 +30,15 @@ jobs:
         submodules: true
         token: ${{ secrets.ACTION_TOKEN }}
 
-    - name: Run check style
+    - name: Run CheckStyle
       uses: nikitasavinov/checkstyle-action@master
       with:
-        github_token: ${{ secrets.ACTION_TOKEN }}
-        tool_name: 'testtool'
-        level: warning
+        tool_name: checkstyle
+        reporter: github-pr-review # => report as pull request review
+        # reporter: github-check # => report as github check
+        # reporter: fail-only # => report only when there are violations
         checkstyle_config: ./custom_google_checks.xml
+        fail_on_error: true
 
     - name: Update submodule
       run: |
