@@ -1,14 +1,13 @@
 package swm.betterlife.antifragile.common.security;
 
+import java.util.Collection;
+import java.util.List;
 import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
-
-import java.util.Collection;
-import java.util.List;
 
 @Builder
 public record PrincipalDetails(

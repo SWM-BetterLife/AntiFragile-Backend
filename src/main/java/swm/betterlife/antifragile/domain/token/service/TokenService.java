@@ -23,7 +23,7 @@ public class TokenService {
     private final JwtProvider jwtProvider;
 
     public TokenIssueResponse getTokenIssue(TokenReIssueRequest request) {
-        if(!jwtProvider.validateToken(request.refreshToken())) {
+        if (!jwtProvider.validateToken(request.refreshToken())) {
             throw new RefreshTokenNotValidatedException();
         }
         

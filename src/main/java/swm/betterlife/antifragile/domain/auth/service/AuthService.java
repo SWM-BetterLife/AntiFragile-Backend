@@ -1,5 +1,7 @@
 package swm.betterlife.antifragile.domain.auth.service;
 
+import static swm.betterlife.antifragile.domain.member.entity.RoleType.ROLE_USER;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,8 +20,6 @@ import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
 import swm.betterlife.antifragile.domain.token.dto.TokenIssueResponse;
-
-import static swm.betterlife.antifragile.domain.member.entity.RoleType.ROLE_USER;
 
 @Slf4j
 @Service
@@ -71,8 +71,8 @@ public class AuthService {
     }
 
     private Authentication getAuthenticate(String email, String password) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(email, password);
+        UsernamePasswordAuthenticationToken authenticationToken
+            = new UsernamePasswordAuthenticationToken(email, password);
         return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     }
 

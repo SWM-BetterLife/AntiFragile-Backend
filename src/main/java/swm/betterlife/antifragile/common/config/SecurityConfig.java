@@ -1,5 +1,9 @@
 package swm.betterlife.antifragile.common.config;
 
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -18,8 +22,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthFilter;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthenticationEntryPoint;
 import swm.betterlife.antifragile.common.jwt.filter.JwtExceptionFilter;
-
-import java.util.List;
 import swm.betterlife.antifragile.common.oauth.Oauth2LoginSuccessHandler;
 import swm.betterlife.antifragile.common.oauth.Oauth2UserService;
 
@@ -35,7 +37,7 @@ public class SecurityConfig {
     private final Oauth2LoginSuccessHandler oauth2LoginSuccessHandler;
 
     private static final String[] PERMIT_PATHS = {
-            "/auth/**", "/token/re-issuance", "/**"
+        "/auth/**", "/token/re-issuance", "/**"
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
@@ -47,7 +49,7 @@ public class SecurityConfig {
     };
 
     private static final String[] ALLOW_ORIGINS = {
-            "http://localhost:8080",
+        "http://localhost:8080",
     };
 
     @Bean
@@ -62,8 +64,8 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(PERMIT_PATHS).permitAll()
-//                .requestMatchers(POST, PERMIT_PATHS_POST_METHOD).permitAll()
-//                .requestMatchers(GET, PERMIT_PATHS_GET_METHOD).permitAll()
+                .requestMatchers(POST, PERMIT_PATHS_POST_METHOD).permitAll()
+                .requestMatchers(GET, PERMIT_PATHS_GET_METHOD).permitAll()
                 .anyRequest().authenticated()
         );
 
@@ -75,7 +77,6 @@ public class SecurityConfig {
                 .userInfoEndpoint(
                         userInfoEndpoint -> userInfoEndpoint.userService(oauth2UserService))
                 .successHandler(oauth2LoginSuccessHandler)
-//                .failureHandler(oauth2LoginFailureHandler)
         );
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
@@ -100,7 +101,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
+    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
     public WebSecurityCustomizer configureH2ConsoleEnable() {
         return web -> web.ignoring()
                 .requestMatchers(PathRequest.toH2Console());

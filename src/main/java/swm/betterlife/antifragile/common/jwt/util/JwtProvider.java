@@ -1,9 +1,24 @@
 package swm.betterlife.antifragile.common.jwt.util;
 
-import io.jsonwebtoken.*;
+import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.ACCESS_TOKEN_EXPIRE_TIME;
+import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.AUTHORITIES_KEY;
+import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.LOGIN_TYPE_KEY;
+import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.REFRESH_TOKEN_EXPIRE_TIME;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.security.Key;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,14 +33,6 @@ import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.token.dto.TokenIssueResponse;
 import swm.betterlife.antifragile.domain.token.entity.Token;
 import swm.betterlife.antifragile.domain.token.repository.TokenRepository;
-
-import java.security.Key;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.stream.Collectors;
-
-import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.*;
 
 
 @Slf4j

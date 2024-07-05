@@ -1,9 +1,13 @@
 package swm.betterlife.antifragile.common.jwt.filter;
 
+import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
+import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.BEARER_PREFIX;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -12,11 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
-
-import java.io.IOException;
-
-import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.AUTHORIZATION_HEADER;
-import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.BEARER_PREFIX;
 
 @Slf4j
 @Component
