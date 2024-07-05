@@ -23,9 +23,6 @@ import java.util.List;
 import swm.betterlife.antifragile.common.oauth.Oauth2LoginSuccessHandler;
 import swm.betterlife.antifragile.common.oauth.Oauth2UserService;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -38,7 +35,7 @@ public class SecurityConfig {
     private final Oauth2LoginSuccessHandler oauth2LoginSuccessHandler;
 
     private static final String[] PERMIT_PATHS = {
-            "/auth/**", "/token/re-issuance"
+            "/auth/**", "/token/re-issuance", "/**"
     };
 
     private static final String[] PERMIT_PATHS_POST_METHOD = {
@@ -60,13 +57,13 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(
-                session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(PERMIT_PATHS).permitAll()
-                .requestMatchers(POST, PERMIT_PATHS_POST_METHOD).permitAll()
-                .requestMatchers(GET, PERMIT_PATHS_GET_METHOD).permitAll()
+//                .requestMatchers(POST, PERMIT_PATHS_POST_METHOD).permitAll()
+//                .requestMatchers(GET, PERMIT_PATHS_GET_METHOD).permitAll()
                 .anyRequest().authenticated()
         );
 

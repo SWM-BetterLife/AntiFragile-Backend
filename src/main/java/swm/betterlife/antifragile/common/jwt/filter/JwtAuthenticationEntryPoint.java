@@ -20,19 +20,22 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException
     ) {
+        log.error("CustomAuthenticationEntryPoint : Not Authenticated Request", authException);
         sendResponse(authException);
     }
 
     private void sendResponse(AuthenticationException authException) {
         if (authException instanceof BadCredentialsException) {
             log.info("Bad credentials");
-            throw new BadCredentialsException(authException.getMessage());
+            throw new BadCredentialsException(authException.getMessage());  //todo: Custom ex
         } else if (authException instanceof InternalAuthenticationServiceException) {
             log.info("Internal authentication service exception");
             throw new InsufficientAuthenticationException(authException.getMessage());
         } else if (authException instanceof InsufficientAuthenticationException) {
             log.info("Insufficient authentication");
             throw new InsufficientAuthenticationException(authException.getMessage());
+        } else {
+            log.info("Authentication exception : {}", authException.getMessage());
         }
     }
 }

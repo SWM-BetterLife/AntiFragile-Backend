@@ -23,4 +23,9 @@ public class MemberController {
         log.info("principalDetails :  {}", principalDetails);
         return memberService.findMemberByEmail(principalDetails.email());
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "success";
+    }
 }
