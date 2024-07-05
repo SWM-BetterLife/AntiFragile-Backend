@@ -18,8 +18,4 @@ public class RecommendContent {
     private String title;
 
     private String url;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime modifiedAt;
 }
