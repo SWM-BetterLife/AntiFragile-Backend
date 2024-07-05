@@ -1,5 +1,6 @@
 package swm.betterlife.antifragile.domain.emoticontheme.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class EmoticonTheme extends BaseTimeEntity {
 
     private Integer price;
 
-    private List<ObjectId> memberIds;
+    private List<ObjectId> buyerIds = new ArrayList<>();
 
-    private List<Emoticon> emoticons;
+    private List<Emoticon> emoticons = new ArrayList<>();
 }

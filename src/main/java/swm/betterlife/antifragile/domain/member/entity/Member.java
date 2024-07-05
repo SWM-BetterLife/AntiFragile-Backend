@@ -31,7 +31,7 @@ public class Member extends BaseTimeEntity {
 
     private String profileImgUrl;
 
-    private List<ObjectId> emoticonThemeId = new ArrayList<>();
+    private List<ObjectId> emoticonThemeIds = new ArrayList<>();
 
     private Integer point;
 

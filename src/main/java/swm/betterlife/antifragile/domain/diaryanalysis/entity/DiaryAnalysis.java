@@ -1,5 +1,6 @@
 package swm.betterlife.antifragile.domain.diaryanalysis.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +23,7 @@ public class DiaryAnalysis extends BaseTimeEntity {
 
     private ObjectId memberId;
 
-    private List<String> emotions;
+    private List<String> emotions = new ArrayList<>();
 
     private String event;
 
@@ -32,7 +33,7 @@ public class DiaryAnalysis extends BaseTimeEntity {
 
     private String comment;
 
-    private List<RecommendContent> contents;
+    private List<RecommendContent> contents = new ArrayList<>();
 
-    private List<SelectedEmoticon> emoticons;
+    private List<SelectedEmoticon> emoticons = new ArrayList<>();
 }
