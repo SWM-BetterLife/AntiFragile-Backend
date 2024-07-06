@@ -6,14 +6,14 @@ import swm.betterlife.antifragile.domain.member.entity.Member;
 
 @Builder
 public record MemberDetailResponse(
-        Long id,
+        String id,
         String email,
         String nickName,
         LoginType loginType
 ) {
     public static MemberDetailResponse from(Member member) {
         return MemberDetailResponse.builder()
-                .id(member.getId())
+                .id(member.getId().toString())
                 .email(member.getEmail())
                 .nickName(member.getNickName())
                 .loginType(member.getLoginType())
