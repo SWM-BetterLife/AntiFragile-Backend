@@ -1,5 +1,7 @@
 package swm.betterlife.antifragile.domain.member.entity;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -21,11 +23,9 @@ public class Member extends BaseTimeEntity {
     @Id
     private ObjectId id;
 
-    private LoginType loginType;
-
-    private Role role;
-
     private String email;
+
+    private String password;
 
     private String nickname;
 
@@ -36,4 +36,10 @@ public class Member extends BaseTimeEntity {
     private Integer point;
 
     private Integer remainRecommendNumber;
+
+    @Enumerated(EnumType.STRING)
+    private LoginType loginType;
+
+    @Enumerated(EnumType.STRING)
+    private RoleType roleType;
 }
