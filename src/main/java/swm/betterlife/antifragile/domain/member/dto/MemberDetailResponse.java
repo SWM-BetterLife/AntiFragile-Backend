@@ -15,7 +15,7 @@ public record MemberDetailResponse(
         return MemberDetailResponse.builder()
                 .id(member.getId().toString())
                 .email(member.getEmail())
-                .nickName(member.getNickName())
+                .nickName(member.getNickname())
                 .loginType(member.getLoginType())
                 .build();
     }

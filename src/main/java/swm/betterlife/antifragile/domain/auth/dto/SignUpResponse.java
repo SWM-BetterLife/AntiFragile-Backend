@@ -5,7 +5,7 @@ import swm.betterlife.antifragile.domain.member.entity.LoginType;
 public record SignUpResponse(
     Long id,
     String email,
-    String nickName,
+    String nickname,
     LoginType loginType,
     String accessToken
 ) {

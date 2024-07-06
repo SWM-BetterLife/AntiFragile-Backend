@@ -40,14 +40,6 @@ public class SecurityConfig {
         "/auth/**", "/token/re-issuance", "/**"
     };
 
-    private static final String[] PERMIT_PATHS_POST_METHOD = {
-
-    };
-
-    private static final String[] PERMIT_PATHS_GET_METHOD = {
-
-    };
-
     private static final String[] ALLOW_ORIGINS = {
         "http://localhost:8080",
     };
@@ -64,8 +56,6 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(PERMIT_PATHS).permitAll()
-                .requestMatchers(POST, PERMIT_PATHS_POST_METHOD).permitAll()
-                .requestMatchers(GET, PERMIT_PATHS_GET_METHOD).permitAll()
                 .anyRequest().authenticated()
         );
 
@@ -99,12 +89,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
-    @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled", havingValue = "true")
-    public WebSecurityCustomizer configureH2ConsoleEnable() {
-        return web -> web.ignoring()
-                .requestMatchers(PathRequest.toH2Console());
-    }
-
 }
