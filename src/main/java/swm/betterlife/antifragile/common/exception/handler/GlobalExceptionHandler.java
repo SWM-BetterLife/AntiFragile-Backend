@@ -38,4 +38,5 @@ public class GlobalExceptionHandler {
         log.error("[LoginRequiredException] Message = {}", e.getMessage());
         return ResponseBody.fail(e.getMessage());
     }
+
 }
