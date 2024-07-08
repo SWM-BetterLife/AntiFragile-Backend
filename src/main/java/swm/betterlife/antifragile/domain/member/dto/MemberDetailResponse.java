@@ -9,14 +9,18 @@ public record MemberDetailResponse(
         String id,
         String email,
         String nickName,
+        String profileImgUrl,
+        Integer point,
         LoginType loginType
 ) {
     public static MemberDetailResponse from(Member member) {
         return MemberDetailResponse.builder()
-                .id(member.getId().toString())
-                .email(member.getEmail())
-                .nickName(member.getNickname())
-                .loginType(member.getLoginType())
-                .build();
+            .id(member.getId().toString())
+            .email(member.getEmail())
+            .nickName(member.getNickname())
+            .profileImgUrl(member.getProfileImgUrl())
+            .point(member.getPoint())
+            .loginType(member.getLoginType())
+            .build();
     }
 }

@@ -12,14 +12,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
+import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.domain.auth.dto.LoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.LoginResponse;
+import swm.betterlife.antifragile.domain.auth.dto.LogoutRequest;
 import swm.betterlife.antifragile.domain.auth.dto.SignUpRequest;
 import swm.betterlife.antifragile.domain.member.dto.MemberDetailResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
 import swm.betterlife.antifragile.domain.token.dto.TokenIssueResponse;
+import swm.betterlife.antifragile.domain.token.service.TokenService;
 
 @Slf4j
 @Service
@@ -37,6 +40,7 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
     @Transactional
     public LoginResponse login(LoginRequest loginRequest) {
@@ -68,6 +72,11 @@ public class AuthService {
 
         return MemberDetailResponse.from(memberRepository.save(member));
 
+    }
+
+    @Transactional
+    public void logout(LogoutRequest logoutRequest) {
+        tokenService.deleteToken(logoutRequest.refreshToken());
     }
 
     private Authentication getAuthenticate(String email, String password) {
