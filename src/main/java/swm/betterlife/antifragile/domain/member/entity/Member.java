@@ -42,4 +42,12 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateProfileImgUrl(String profileImgUrl) {
+        this.profileImgUrl = profileImgUrl;
+    }
 }

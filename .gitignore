@@ -42,3 +42,7 @@ out/
 
 ### Http Request
 http/**
+
+## Redis
+
+redis/data/*.rdb

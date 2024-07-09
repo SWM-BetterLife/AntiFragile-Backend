@@ -29,4 +29,5 @@ public class AuthController {
     public MemberDetailResponse signUp(@RequestBody SignUpRequest signUpRequest) {
         return authService.signUp(signUpRequest);
     }
+
 }
