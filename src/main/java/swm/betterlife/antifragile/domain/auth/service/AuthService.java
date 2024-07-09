@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
-import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.domain.auth.dto.LoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.LoginResponse;
 import swm.betterlife.antifragile.domain.auth.dto.LogoutRequest;
