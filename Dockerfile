@@ -1,0 +1,11 @@
+# FROM openjdk:17-jdk
+FROM openjdk:17-jdk
+
+# Docker 빌드 시점에 환경 변수 JAR_FILE 생성, gradle로 빌드했을 때 jar 파일이 생성되는 경로
+ARG JAR_FILE=build/libs/*.jar
+
+# COPY build/libs/*.jar antifragile.jar
+COPY ${JAR_FILE} antifragile.jar
+
+# 운영 및 개발에서 사용되는 환경 설정을 분리
+ENTRYPOINT ["java", "-jar", "/antifragile.jar"]

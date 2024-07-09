@@ -1,0 +1,47 @@
+name: Deploy to EC2 with Docker
+
+on:
+  push:
+    branches: [ "release", "develop" ]
+
+jobs:
+  deploy_job:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 레포지토리 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Docker 이미지를 빌드할 준비
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # DockerHub에 로그인
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Docker 이미지를 빌드, push
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile:latest
+
+      # EC2 인스턴스에 SSH로 접속하여 Docker 컨테이너를 업데이트하고 실행
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/antifragile:latest
+            docker stop antifragile || true
+            docker rm antifragile || true
+            docker run -d --name antifragile -p 80:80 ${{ secrets.DOCKER_USERNAME }}/antifragile:latest
