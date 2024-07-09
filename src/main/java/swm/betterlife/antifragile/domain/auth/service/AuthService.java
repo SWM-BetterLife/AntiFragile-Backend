@@ -45,7 +45,8 @@ public class AuthService {
     public LoginResponse login(LoginRequest loginRequest) {
         String password = getPasswordByLoginType(loginRequest.loginType());
 
-        String username = loginRequest.loginType().name() + ":" + loginRequest.email(); //todo: common분리
+        String username
+            = loginRequest.loginType().name() + ":" + loginRequest.email(); //todo: common분리
         Authentication authentication = getAuthenticate(username, password);
 
         Member member = memberRepository.getMember(
