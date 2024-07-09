@@ -45,17 +45,22 @@ public class AuthService {
     public LoginResponse login(LoginRequest loginRequest) {
         String password = getPasswordByLoginType(loginRequest.loginType());
 
-        Authentication authentication = getAuthenticate(loginRequest.email(), password);
+        String username = loginRequest.loginType().name() + ":" + loginRequest.email(); //todo: common분리
+        Authentication authentication = getAuthenticate(username, password);
 
-        Member member = memberRepository.getMember(loginRequest.email());
+        Member member = memberRepository.getMember(
+            loginRequest.email(), loginRequest.loginType()
+        );
         TokenIssueResponse tokenIssueResponse
-                = jwtProvider.issueToken(authentication, loginRequest.loginType());
+                = jwtProvider.issueToken(authentication);
         return LoginResponse.from(member, tokenIssueResponse);
     }
 
     @Transactional
     public MemberDetailResponse signUp(SignUpRequest signUpRequest) {
-        if (memberRepository.existsByEmail(signUpRequest.email())) {
+        if (memberRepository.existsByEmailAndLoginType(
+            signUpRequest.email(), signUpRequest.loginType())
+        ) {
             throw new RuntimeException("이미 존재하는 이메일입니다.");  //todo: Custom Ex
         }
 
@@ -78,9 +83,9 @@ public class AuthService {
         tokenService.deleteToken(logoutRequest.refreshToken());
     }
 
-    private Authentication getAuthenticate(String email, String password) {
+    private Authentication getAuthenticate(String username, String password) {
         UsernamePasswordAuthenticationToken authenticationToken
-            = new UsernamePasswordAuthenticationToken(email, password);
+            = new UsernamePasswordAuthenticationToken(username, password);
         return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     }
 

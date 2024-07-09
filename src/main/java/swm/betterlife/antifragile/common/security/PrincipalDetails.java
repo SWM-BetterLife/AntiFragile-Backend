@@ -3,27 +3,34 @@ package swm.betterlife.antifragile.common.security;
 import java.util.Collection;
 import java.util.List;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 
+@Slf4j
 @Builder
 public record PrincipalDetails(
         String email,
         String password,
+        ObjectId memberId,
         LoginType loginType
 ) implements UserDetails {
 
-    public static PrincipalDetails of(String email, LoginType loginType) {
-        return new PrincipalDetails(email, "", loginType);
+    public static PrincipalDetails of(
+        String email, ObjectId memberId, LoginType loginType
+    ) {
+        return new PrincipalDetails(email, "", memberId, loginType);
     }
 
     public static PrincipalDetails of(Member member) {
         return new PrincipalDetails(
                 member.getEmail(),
                 member.getPassword(),
+                member.getId(),
                 member.getLoginType()
         );
     }
@@ -41,7 +48,7 @@ public record PrincipalDetails(
 
     @Override
     public String getUsername() {
-        return email;
+        return loginType + ":" + email; //todo: common Method 분리
     }
 
     @Override

@@ -3,6 +3,7 @@ package swm.betterlife.antifragile.common.jwt.util;
 import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.ACCESS_TOKEN_EXPIRE_TIME;
 import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.AUTHORITIES_KEY;
 import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.LOGIN_TYPE_KEY;
+import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.MEMBER_ID_KEY;
 import static swm.betterlife.antifragile.common.jwt.constant.JwtConstant.REFRESH_TOKEN_EXPIRE_TIME;
 
 import io.jsonwebtoken.Claims;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,25 +54,23 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenIssueResponse issueToken(Authentication authentication, LoginType loginType) {
-        String accessToken = generateAccessToken(authentication, loginType);
-        String refreshToken = generateRefreshToken(authentication, loginType);
+    public TokenIssueResponse issueToken(Authentication authentication) {
+        String accessToken = generateAccessToken(authentication);
+        String refreshToken = generateRefreshToken(authentication);
         return new TokenIssueResponse(accessToken, refreshToken);
     }
 
-    private String generateAccessToken(Authentication authentication, LoginType loginType) {
-        return generateToken(authentication, ACCESS_TOKEN_EXPIRE_TIME, loginType);
+    private String generateAccessToken(Authentication authentication) {
+        return generateToken(authentication, ACCESS_TOKEN_EXPIRE_TIME);
     }
 
-    private String generateRefreshToken(Authentication authentication, LoginType loginType) {
-        String refreshToken =  generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME, loginType);
-        tokenRepository.save(Token.of(loginType, authentication.getName(), refreshToken));
+    private String generateRefreshToken(Authentication authentication) {
+        String refreshToken =  generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME);
+        tokenRepository.save(new Token(authentication.getName(), refreshToken));
         return refreshToken;
     }
 
-    private String generateToken(
-            Authentication authentication, Long tokenExpiresIn, LoginType loginType
-    ) {
+    private String generateToken(Authentication authentication, Long tokenExpiresIn) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -78,26 +78,32 @@ public class JwtProvider {
         long now = (new Date()).getTime();
         Date expiration = new Date(now + tokenExpiresIn);
 
-        return getToken(authentication, authorities, expiration, loginType);
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String email = principalDetails.email();
+        String memberId = principalDetails.memberId().toString();
+        LoginType loginType = principalDetails.loginType();
+
+        return getToken(email, authorities, memberId, expiration, loginType);
     }
 
     private String getToken(
-            Authentication authentication, String authorities,
+            String email, String authorities, String memberId,
             Date accessTokenExpiresIn, LoginType loginType
     ) {
         return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim(LOGIN_TYPE_KEY, loginType)
-                .claim(AUTHORITIES_KEY, authorities)
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(secretKey, SignatureAlgorithm.HS512)
-                .compact();
+            .setSubject(email)
+            .claim(MEMBER_ID_KEY, memberId)
+            .claim(LOGIN_TYPE_KEY, loginType)
+            .claim(AUTHORITIES_KEY, authorities)
+            .setExpiration(accessTokenExpiresIn)
+            .signWith(secretKey, SignatureAlgorithm.HS512)
+            .compact();
     }
 
     public Authentication getAuthentication(String token) {
         Claims claims = parseClaims(token);
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new RuntimeException("권한 정보가 없는 토큰입니다."); //todo: CustomEx
         }
 
         Collection<? extends GrantedAuthority> authorities =
@@ -105,9 +111,12 @@ public class JwtProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
+        String email = claims.getSubject();
+        ObjectId memberId = new ObjectId((String) claims.get(MEMBER_ID_KEY));
         LoginType loginType = LoginType.valueOf((String) claims.get(LOGIN_TYPE_KEY));
 
-        PrincipalDetails principal = PrincipalDetails.of(claims.getSubject(), loginType);
+        PrincipalDetails principal
+            = PrincipalDetails.of(email, memberId, loginType);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 

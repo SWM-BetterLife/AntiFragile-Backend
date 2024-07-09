@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-import swm.betterlife.antifragile.domain.member.entity.LoginType;
 
 @RedisHash(value = "Token", timeToLive = 120)
 @AllArgsConstructor
@@ -16,7 +15,4 @@ public class Token {
     private String id;
     private String tokenValue;
 
-    public static Token of(LoginType loginType, String email, String tokenValue) {
-        return new Token(loginType.name() + email, tokenValue);
-    }
 }
