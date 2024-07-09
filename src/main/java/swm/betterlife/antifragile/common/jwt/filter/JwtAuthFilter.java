@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class  JwtAuthFilter extends OncePerRequestFilter {
@@ -32,8 +31,6 @@ public class  JwtAuthFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String token = extractTokenFromRequest(request);
-
-        log.info("token: {}", token);
 
         if (!StringUtils.hasText(token) || !jwtProvider.validateToken(token)) {
             filterChain.doFilter(request, response);

@@ -20,7 +20,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException
     ) {
-        log.error("CustomAuthenticationEntryPoint : Not Authenticated Request", authException);
         sendResponse(authException);
     }
 

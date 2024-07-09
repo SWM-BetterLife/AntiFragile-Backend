@@ -8,6 +8,7 @@ public class JwtConstant {
     public static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 60;
     public static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24;
 
+    public static final String MEMBER_ID_KEY = "memberId";
     public static final String LOGIN_TYPE_KEY = "loginType";
     public static final String AUTHORITIES_KEY = "authorities";
 }
