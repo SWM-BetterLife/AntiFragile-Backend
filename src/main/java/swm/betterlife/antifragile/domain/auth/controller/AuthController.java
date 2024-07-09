@@ -11,7 +11,6 @@ import swm.betterlife.antifragile.domain.auth.dto.LoginResponse;
 import swm.betterlife.antifragile.domain.auth.dto.SignUpRequest;
 import swm.betterlife.antifragile.domain.auth.service.AuthService;
 import swm.betterlife.antifragile.domain.member.dto.MemberDetailResponse;
-import swm.betterlife.antifragile.domain.member.entity.LoginType;
 
 @Slf4j
 @RestController

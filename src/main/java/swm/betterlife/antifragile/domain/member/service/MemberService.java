@@ -34,6 +34,6 @@ public class MemberService {
         ProfileImgModifyRequest request, String email, LoginType loginType
     ) {
         Member findMember = memberRepository.getMember(email, loginType);
-        findMember.updateNickname(request.profileImg());
+        findMember.updateProfileImgUrl(request.profileImg()); //todo: S3 이미지 변경 코드 추가
     }
 }
