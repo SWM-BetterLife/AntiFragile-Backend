@@ -8,16 +8,16 @@ import swm.betterlife.antifragile.domain.member.entity.Member;
 public record MemberDetailResponse(
         String id,
         String email,
-        String nickName,
+        String nickname,
         String profileImgUrl,
         Integer point,
-        LoginType loginType
+        LoginType loginType //todo: 연속 작성일 수, 총 작성일 수 추가
 ) {
     public static MemberDetailResponse from(Member member) {
         return MemberDetailResponse.builder()
             .id(member.getId().toString())
             .email(member.getEmail())
-            .nickName(member.getNickname())
+            .nickname(member.getNickname())
             .profileImgUrl(member.getProfileImgUrl())
             .point(member.getPoint())
             .loginType(member.getLoginType())

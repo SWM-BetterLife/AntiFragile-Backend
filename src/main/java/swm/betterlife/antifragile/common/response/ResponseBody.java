@@ -1,7 +1,5 @@
 package swm.betterlife.antifragile.common.response;
 
-import lombok.Getter;
-
 public record ResponseBody<T>(Status status, String errorMessage, T data) {
 
     public static ResponseBody<Void> ok() {
