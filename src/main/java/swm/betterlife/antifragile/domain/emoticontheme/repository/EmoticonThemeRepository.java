@@ -11,4 +11,4 @@ public interface EmoticonThemeRepository extends MongoRepository<EmoticonTheme, 
         return findById(id).orElseThrow(EmoticonThemeNotFoundException::new);
     }
 
- }
+}

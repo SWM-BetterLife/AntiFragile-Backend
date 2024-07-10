@@ -43,14 +43,11 @@ public class EmoticonThemeService {
 
         for (EmoticonTheme emoticonTheme : emoticonThemes) {
             if (
-                emoticonTheme.getPrice() == null ||
-                emoticonTheme.getBuyerIds().contains(memberId)
+                emoticonTheme.getPrice() == null || emoticonTheme.getBuyerIds().contains(memberId)
             ) {
                 ownEmoticonThemes.add(emoticonTheme);
             }
         }
-
-//        ownEmoticonThemes.stream().forEach(e -> log.info("_id: {}", e.getId()));
 
         List<EmoticonThemeOwnDetailResponse> emoticonThemeDtoList =
             ownEmoticonThemes.stream().map(EmoticonThemeOwnDetailResponse::from).toList();
@@ -74,24 +71,6 @@ public class EmoticonThemeService {
 
         List<ObjectId> buyerIds = emoticonTheme.getBuyerIds();
         buyerIds.add(memberId);
-    }
-
-//    @PostConstruct
-    public void init() {
-        EmoticonTheme emoticonTheme1
-            = EmoticonTheme.builder()
-            .name("테마1")
-            .price(1000)
-            .buyerIds(List.of(new ObjectId("668a8fbddefae240291b149d")))
-            .emoticons(List.of(new Emoticon(Emotion.ANXIETY, "img-url-1")))
-            .build();
-        EmoticonTheme emoticonTheme2
-            = EmoticonTheme.builder()
-            .name("테마2")
-            .emoticons(List.of(new Emoticon(Emotion.JOY, "img-url-1")))
-            .build();;
-        emoticonThemeRepository.save(emoticonTheme1);
-        emoticonThemeRepository.save(emoticonTheme2);
     }
 
 }
