@@ -25,7 +25,7 @@ public class EmoticonTheme extends BaseTimeEntity {
 
     private Integer price;
 
-    private List<ObjectId> buyerIds = new ArrayList<>();
+    private List<ObjectId> buyerIds = new ArrayList<>();    //todo: Set 으로 바꿀지 논의 예정
 
     private List<Emoticon> emoticons = new ArrayList<>();
 }

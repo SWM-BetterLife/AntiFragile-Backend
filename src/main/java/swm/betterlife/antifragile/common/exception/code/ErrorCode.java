@@ -11,6 +11,8 @@ public enum ErrorCode {
     LOGIN_REQUIRED("로그인 재시도가 필요합니다"),
 
     MEMBER_NOT_FOUND("멤버를 찾을 수 없습니다"),
+
+    EMOTICON_THEME_NOT_FOUND("이모티콘 테마를 찾을 수 없습니다"),
     ;
 
     private final String message;
