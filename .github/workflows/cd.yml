@@ -62,7 +62,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile:develop
+          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile-dev:latest
           build-args: |
             SPRING_PROFILES_ACTIVE=develop
 
@@ -74,7 +74,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile:release
+          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile-release:latest
           build-args: |
             SPRING_PROFILES_ACTIVE=release
 
@@ -87,20 +87,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/antifragile:develop
-            docker stop antifragile || true
-            docker rm antifragile || true
-            docker run -d --name antifragile -p 80:80 ${{ secrets.DOCKER_USERNAME }}/antifragile:develop
-
-      - name: Deploy to EC2 (release)
-        if: contains(github.ref, 'release')
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/antifragile:release
-            docker stop antifragile || true
-            docker rm antifragile || true
-            docker run -d --name antifragile -p 80:80 ${{ secrets.DOCKER_USERNAME }}/antifragile:release
+            docker pull ${{ secrets.DOCKER_USERNAME }}/antifragile-dev:latest
+            docker stop antifragile-dev || true
+            docker rm antifragile-dev || true
+            docker run -d --name antifragile-dev -p 80:80 ${{ secrets.DOCKER_USERNAME }}/antifragile-dev:latest
