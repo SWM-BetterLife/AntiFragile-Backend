@@ -15,7 +15,6 @@ public record EmoticonThemeOwnDetailResponse(
     List<EmoticonInfoResponse> emoticons
 ) {
     public static EmoticonThemeOwnDetailResponse from(EmoticonTheme emoticonTheme) {
-        log.info("from _id : {}", emoticonTheme.getId());
         return EmoticonThemeOwnDetailResponse.builder()
             .id(emoticonTheme.getId())
             .name(emoticonTheme.getName())

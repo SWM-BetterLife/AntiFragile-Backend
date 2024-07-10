@@ -3,17 +3,21 @@ package swm.betterlife.antifragile.domain.emoticontheme.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import swm.betterlife.antifragile.common.response.PagingResponse;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
-import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnEntireResponse;
+import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeSummaryResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.service.EmoticonThemeService;
 
 @Slf4j
@@ -25,8 +29,10 @@ public class EmoticonThemeController {
     private final EmoticonThemeService emoticonThemeService;
 
     @GetMapping
-    public ResponseBody<EmoticonThemeEntireResponse> getEntireEmoticonThemes() {
-        return ResponseBody.ok(emoticonThemeService.getAllEmoticonThemes());
+    public ResponseBody<PagingResponse<EmoticonThemeSummaryResponse>> getEntireEmoticonThemes(
+        @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ResponseBody.ok(emoticonThemeService.getAllEmoticonThemes(pageable));
     }
 
     @GetMapping("/own")

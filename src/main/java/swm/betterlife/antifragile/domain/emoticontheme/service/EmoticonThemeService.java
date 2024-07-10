@@ -1,23 +1,22 @@
 package swm.betterlife.antifragile.domain.emoticontheme.service;
 
-import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import swm.betterlife.antifragile.common.response.PagingResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoResponse;
-import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnDetailResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeSummaryResponse;
-import swm.betterlife.antifragile.domain.emoticontheme.entity.Emoticon;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.EmoticonTheme;
-import swm.betterlife.antifragile.domain.emoticontheme.entity.Emotion;
 import swm.betterlife.antifragile.domain.emoticontheme.repository.EmoticonThemeRepository;
 
 @Slf4j
@@ -29,11 +28,9 @@ public class EmoticonThemeService {
     private final EmoticonThemeRepository emoticonThemeRepository;
 
     @Transactional(readOnly = true)
-    public EmoticonThemeEntireResponse getAllEmoticonThemes() {
-        List<EmoticonTheme> emoticonThemes = emoticonThemeRepository.findAll();
-        List<EmoticonThemeSummaryResponse> emoticonThemeDtoList
-            = emoticonThemes.stream().map(EmoticonThemeSummaryResponse::from).toList();
-        return new EmoticonThemeEntireResponse(emoticonThemeDtoList);
+    public PagingResponse<EmoticonThemeSummaryResponse> getAllEmoticonThemes(Pageable pageable) {
+        Page<EmoticonTheme> emoticonThemes = emoticonThemeRepository.findAll(pageable);
+        return PagingResponse.from(emoticonThemes.map(EmoticonThemeSummaryResponse::from));
     }
 
     @Transactional(readOnly = true)
