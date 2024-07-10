@@ -26,6 +26,23 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      # gradle caching - 빌드 시간 향상
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
       # Docker 이미지를 빌드할 준비
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -37,24 +54,53 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Docker 이미지를 빌드, push
-      - name: Build and push Docker image
+      # Develop에 Docker 이미지를 build, push
+      - name: Build and push Docker image to develop
+        if: contains(github.ref, 'develop')
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile:develop
+          build-args: |
+            SPRING_PROFILES_ACTIVE=develop
+
+      # Release에 Docker 이미지를 build, push
+      - name: Build and push Docker image to release
+        if: contains(github.ref, 'release')
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile:release
+          build-args: |
+            SPRING_PROFILES_ACTIVE=release
 
       # EC2 인스턴스에 SSH로 접속하여 Docker 컨테이너를 업데이트하고 실행
-      - name: Deploy to EC2
+      - name: Deploy to EC2 (develop)
+        if: contains(github.ref, 'develop')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/antifragile:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/antifragile:develop
             docker stop antifragile || true
             docker rm antifragile || true
-            docker run -d --name antifragile -p 80:80 ${{ secrets.DOCKER_USERNAME }}/antifragile:latest
+            docker run -d --name antifragile -p 80:80 ${{ secrets.DOCKER_USERNAME }}/antifragile:develop
+
+      - name: Deploy to EC2 (release)
+        if: contains(github.ref, 'release')
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/antifragile:release
+            docker stop antifragile || true
+            docker rm antifragile || true
+            docker run -d --name antifragile -p 80:80 ${{ secrets.DOCKER_USERNAME }}/antifragile:release
