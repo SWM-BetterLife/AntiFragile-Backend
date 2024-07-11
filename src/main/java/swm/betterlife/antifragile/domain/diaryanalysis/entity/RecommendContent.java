@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import swm.betterlife.antifragile.domain.content.entity.Content;
 
 @Getter
 @NoArgsConstructor
@@ -16,4 +17,12 @@ public class RecommendContent {
     private String title;
 
     private String url;
+
+    public static RecommendContent of(Content content) {
+        return RecommendContent.builder()
+            .id(content.getId())
+            .title(content.getTitle())
+            .url(content.getUrl())
+            .build();
+    }
 }

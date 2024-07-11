@@ -1,15 +1,23 @@
 package swm.betterlife.antifragile.domain.content.dto.response;
 
 import lombok.Builder;
+import swm.betterlife.antifragile.domain.content.entity.Content;
+import swm.betterlife.antifragile.domain.content.entity.YoutubeInfo;
 
 import java.util.List;
 
 @Builder
 public record ContentRecommendResponse(
-        List<Content> contents
+        List<ContentResponse> contents
 ) {
+    public static ContentRecommendResponse from(List<ContentResponse> contents) {
+        return ContentRecommendResponse.builder()
+                .contents(contents)
+                .build();
+    }
+
     @Builder
-    public record Content(
+    public record ContentResponse(
             String id,
             String title,
             String description,
@@ -18,22 +26,57 @@ public record ContentRecommendResponse(
             String youtubeLink,
             VideoStats videoStats,
             AppStats appStats
-    ) {}
+    ) {
+        public static ContentResponse from(Content content) {
+            return ContentResponse.builder()
+                .id(content.getId())
+                .title(content.getTitle())
+                .description(content.getDescription())
+                .channel(Channel.from(content.getYouTubeInfo()))
+                .thumbnailImg(content.getThumbnailImgUrl())
+                .youtubeLink(content.getUrl())
+                .videoStats(VideoStats.from(content.getYouTubeInfo()))
+                .appStats(AppStats.from(content))
+                .build();
+        }
+    }
 
     @Builder
     public record Channel(
             String name,
             String img,
-            String subscribeNumber
-    ) {}
+            Long subscribeNumber
+    ) {
+        public static Channel from(YoutubeInfo youtubeInfo) {
+            return Channel.builder()
+                .name(youtubeInfo.getChannelName())
+                .img(youtubeInfo.getChannelImg())
+                .subscribeNumber(youtubeInfo.getSubscriberNumber())
+                .build();
+        }
+    }
 
     @Builder
     public record VideoStats(
-            String viewNumber, String likeNumber
-    ) {}
+            Long viewNumber, Long likeNumber
+    ) {
+        public static VideoStats from(YoutubeInfo youtubeInfo) {
+            return VideoStats.builder()
+                .viewNumber(youtubeInfo.getViewNumber())
+                .likeNumber(youtubeInfo.getLikeNumber())
+                .build();
+        }
+    }
 
     @Builder
     public record AppStats(
-        String viewNumber, String likeNumber
-    ) {}
+        Long viewNumber, Long likeNumber
+    ) {
+        public static AppStats from(Content content) {
+            return AppStats.builder()
+                .viewNumber(content.getAppViewNumber())
+                .likeNumber(content.getAppLikeNumber())
+                .build();
+        }
+    }
 }
