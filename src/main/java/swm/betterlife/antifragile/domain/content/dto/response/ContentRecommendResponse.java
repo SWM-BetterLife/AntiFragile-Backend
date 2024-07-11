@@ -1,10 +1,9 @@
 package swm.betterlife.antifragile.domain.content.dto.response;
 
+import java.util.List;
 import lombok.Builder;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.entity.YoutubeInfo;
-
-import java.util.List;
 
 @Builder
 public record ContentRecommendResponse(
