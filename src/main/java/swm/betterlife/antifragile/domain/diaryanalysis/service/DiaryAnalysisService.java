@@ -4,6 +4,10 @@ package swm.betterlife.antifragile.domain.diaryanalysis.service;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import swm.betterlife.antifragile.common.exception.DiaryAnalysisNotFoundException;
 import swm.betterlife.antifragile.domain.content.entity.Content;
@@ -16,6 +20,7 @@ import swm.betterlife.antifragile.domain.diaryanalysis.repository.DiaryAnalysisR
 @RequiredArgsConstructor
 public class DiaryAnalysisService {
 
+    private final MongoTemplate mongoTemplate;
     private final DiaryAnalysisRepository diaryAnalysisRepository;
 
     public DiaryAnalysis getDiaryAnalysisByMemberIdAndDate(String memberId, LocalDate date) {
@@ -27,7 +32,9 @@ public class DiaryAnalysisService {
         List<RecommendContent> recommendContents = contents.stream()
             .map(RecommendContent::of).toList();
 
-        diaryAnalysis.getContents().addAll(recommendContents);
-        diaryAnalysisRepository.save(diaryAnalysis);
+        Query query = new Query(Criteria.where("id").is(diaryAnalysis.getId()));
+        Update update = new Update().push("contents").each(recommendContents.toArray());
+
+        mongoTemplate.updateFirst(query, update, DiaryAnalysis.class);
     }
 }
