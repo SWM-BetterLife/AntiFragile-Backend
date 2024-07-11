@@ -1,12 +1,11 @@
 package swm.betterlife.antifragile.domain.diaryanalysis.entity;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import swm.betterlife.antifragile.domain.content.entity.Content;
-
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
