@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ContentRecord {
-    private ObjectId id;
+    private String id;
 
     private String title;
 

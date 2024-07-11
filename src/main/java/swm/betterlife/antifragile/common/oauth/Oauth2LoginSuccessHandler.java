@@ -6,14 +6,13 @@ import java.io.IOException;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import swm.betterlife.antifragile.domain.auth.dto.LoginRequest;
-import swm.betterlife.antifragile.domain.auth.dto.LoginResponse;
+import swm.betterlife.antifragile.domain.auth.dto.request.LoginRequest;
+import swm.betterlife.antifragile.domain.auth.dto.response.LoginResponse;
 import swm.betterlife.antifragile.domain.auth.service.AuthService;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 

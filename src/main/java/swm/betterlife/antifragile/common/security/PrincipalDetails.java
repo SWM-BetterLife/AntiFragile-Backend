@@ -16,12 +16,12 @@ import swm.betterlife.antifragile.domain.member.entity.Member;
 public record PrincipalDetails(
         String email,
         String password,
-        ObjectId memberId,
+        String memberId,
         LoginType loginType
 ) implements UserDetails {
 
     public static PrincipalDetails of(
-        String email, ObjectId memberId, LoginType loginType
+        String email, String memberId, LoginType loginType
     ) {
         return new PrincipalDetails(email, "", memberId, loginType);
     }
