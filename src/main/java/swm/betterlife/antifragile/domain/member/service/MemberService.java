@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
@@ -44,8 +45,14 @@ public class MemberService {
         findMember.updateProfileImgUrl(request.profileImg()); //todo: S3 이미지 변경 코드 추가
     }
 
-    public Member getMemberById(String memberId) {
-        return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+    public void decrementRemainRecommendNumber(String memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(MemberNotFoundException::new);
+        if (member.getRemainRecommendNumber() <= 0) {
+            throw new ExcessRecommendLimitException();
+        }
+        member.decrementRemainRecommendNumber();
+        memberRepository.save(member);
     }
 
     @Scheduled(cron = "0 0 0 * * *")

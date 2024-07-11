@@ -138,10 +138,6 @@ public class ContentService {
     }
 
     private void validateRecommendLimit(String memberId) {
-        Member member = memberService.getMemberById(memberId);
-        if (member.getRemainRecommendNumber() <= 0) {
-            throw new ExcessRecommendLimitException();
-        }
-        member.decrementRemainRecommendNumber();
+        memberService.decrementRemainRecommendNumber(memberId);
     }
 }
