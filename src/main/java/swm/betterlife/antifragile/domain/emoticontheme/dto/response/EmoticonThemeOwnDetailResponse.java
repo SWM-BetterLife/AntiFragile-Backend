@@ -3,14 +3,13 @@ package swm.betterlife.antifragile.domain.emoticontheme.dto.response;
 import java.util.List;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.Emoticon;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.EmoticonTheme;
 
 @Slf4j
 @Builder
 public record EmoticonThemeOwnDetailResponse(
-    ObjectId id,
+    String id,
     String name,
     List<EmoticonInfoResponse> emoticons
 ) {

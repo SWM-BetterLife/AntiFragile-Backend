@@ -10,11 +10,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
 
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document(collection = "content")
+@Document(collection = "contents")
 public class Content extends BaseTimeEntity {
 
     @Id

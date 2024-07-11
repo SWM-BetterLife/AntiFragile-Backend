@@ -11,7 +11,7 @@ public record EmoticonThemeSummaryResponse(
 ) {
     public static EmoticonThemeSummaryResponse from(EmoticonTheme emoticonTheme) {
         return EmoticonThemeSummaryResponse.builder()
-            .id(emoticonTheme.getId().toString())
+            .id(emoticonTheme.getId())
             .name(emoticonTheme.getName())
             .price(emoticonTheme.getPrice())
             .build();

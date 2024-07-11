@@ -2,7 +2,6 @@ package swm.betterlife.antifragile.domain.emoticontheme.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -39,13 +38,13 @@ public class EmoticonThemeController {
     public ResponseBody<EmoticonThemeOwnEntireResponse> getEntireOwnEmoticonThemes(
         @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
-        ObjectId memberId = principalDetails.memberId();
+        String memberId = principalDetails.memberId();
         return ResponseBody.ok(emoticonThemeService.getAllOwnEmoticonThemes(memberId));
     }
 
     @GetMapping("/{emoticonThemeId}/emoticons")
     public ResponseBody<EmoticonEntireResponse> getEntireEmoticons(
-        @PathVariable ObjectId emoticonThemeId
+        @PathVariable String emoticonThemeId
     ) {
         return ResponseBody.ok(emoticonThemeService.getAllEmoticons(emoticonThemeId));
     }
@@ -53,7 +52,7 @@ public class EmoticonThemeController {
     @PostMapping("/{emoticonThemeId}/purchase")
     public ResponseBody<Void> purchaseEmoticonTheme(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @PathVariable ObjectId emoticonThemeId
+        @PathVariable String emoticonThemeId
     ) {
         emoticonThemeService    // todo: 몽고 db 쿼리로 $push 로 해결하기.
             .addMemberIdToEmoticonTheme(principalDetails.memberId(), emoticonThemeId);

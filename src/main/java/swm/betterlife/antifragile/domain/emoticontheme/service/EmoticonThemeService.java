@@ -1,5 +1,7 @@
 package swm.betterlife.antifragile.domain.emoticontheme.service;
 
+import static swm.betterlife.antifragile.common.util.CollectionName.EMOTICON_THEMES;
+
 import com.mongodb.client.result.UpdateResult;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +17,10 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import swm.betterlife.antifragile.common.exception.EmoticonThemeAlreadyHasMemberId;
 import swm.betterlife.antifragile.common.exception.EmoticonThemeNotFoundException;
 import swm.betterlife.antifragile.common.response.PagingResponse;
+import swm.betterlife.antifragile.common.util.ObjectIdGenerator;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnDetailResponse;
@@ -41,7 +45,7 @@ public class EmoticonThemeService {
     }
 
     @Transactional(readOnly = true)
-    public EmoticonThemeOwnEntireResponse getAllOwnEmoticonThemes(ObjectId memberId) {
+    public EmoticonThemeOwnEntireResponse getAllOwnEmoticonThemes(String memberId) {
         List<EmoticonTheme> emoticonThemes = emoticonThemeRepository.findAll();
         List<EmoticonTheme> ownEmoticonThemes = new ArrayList<>();
 
@@ -60,7 +64,7 @@ public class EmoticonThemeService {
     }
 
     @Transactional(readOnly = true)
-    public EmoticonEntireResponse getAllEmoticons(ObjectId emoticonThemeId) {
+    public EmoticonEntireResponse getAllEmoticons(String emoticonThemeId) {
         EmoticonTheme emoticonTheme
             = emoticonThemeRepository.getEmoticonTheme(emoticonThemeId);
         List<EmoticonInfoResponse> emoticonDtoList
@@ -69,13 +73,15 @@ public class EmoticonThemeService {
     }
 
     @Transactional
-    public void addMemberIdToEmoticonTheme(ObjectId memberId, ObjectId emoticonThemeId) {
+    public void addMemberIdToEmoticonTheme(String memberId, String emoticonThemeId) {
 
-        Query query = Query.query(Criteria.where("_id").is(emoticonThemeId));
+        Query query = Query.query(Criteria.where("_id").is(ObjectIdGenerator.generate(emoticonThemeId)));
         Update update = new Update().addToSet("buyer_ids", memberId);
-        UpdateResult result = mongoTemplate.updateFirst(query, update, "emoticon_theme");
+        UpdateResult result = mongoTemplate.updateFirst(query, update, EMOTICON_THEMES.getName());
 
-        if (result.getModifiedCount() == 0) {
+        if (result.getMatchedCount() > 0 && result.getModifiedCount() == 0) {
+            throw new EmoticonThemeAlreadyHasMemberId();
+        } else if (result.getModifiedCount() == 0) {
             throw new EmoticonThemeNotFoundException();
         }
     }
