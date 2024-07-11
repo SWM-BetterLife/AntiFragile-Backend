@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
-import swm.betterlife.antifragile.domain.auth.dto.LoginRequest;
-import swm.betterlife.antifragile.domain.auth.dto.LoginResponse;
-import swm.betterlife.antifragile.domain.auth.dto.LogoutRequest;
-import swm.betterlife.antifragile.domain.auth.dto.SignUpRequest;
+import swm.betterlife.antifragile.domain.auth.dto.request.LoginRequest;
+import swm.betterlife.antifragile.domain.auth.dto.request.LogoutRequest;
+import swm.betterlife.antifragile.domain.auth.dto.request.SignUpRequest;
+import swm.betterlife.antifragile.domain.auth.dto.response.LoginResponse;
 import swm.betterlife.antifragile.domain.auth.service.AuthService;
-import swm.betterlife.antifragile.domain.member.dto.MemberDetailResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 
 @Slf4j
 @RestController

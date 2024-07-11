@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.auth.dto;
+package swm.betterlife.antifragile.domain.auth.dto.response;
 
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 

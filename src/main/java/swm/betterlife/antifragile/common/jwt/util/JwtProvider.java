@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import swm.betterlife.antifragile.common.exception.TokenExpiredException;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
-import swm.betterlife.antifragile.domain.token.dto.TokenIssueResponse;
+import swm.betterlife.antifragile.domain.token.dto.response.TokenIssueResponse;
 import swm.betterlife.antifragile.domain.token.entity.Token;
 import swm.betterlife.antifragile.domain.token.repository.TokenRepository;
 
@@ -80,7 +80,7 @@ public class JwtProvider {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         String email = principalDetails.email();
-        String memberId = principalDetails.memberId().toString();
+        String memberId = principalDetails.memberId();
         LoginType loginType = principalDetails.loginType();
 
         return getToken(email, authorities, memberId, expiration, loginType);
@@ -112,7 +112,7 @@ public class JwtProvider {
                         .collect(Collectors.toList());
 
         String email = claims.getSubject();
-        ObjectId memberId = new ObjectId((String) claims.get(MEMBER_ID_KEY));
+        String memberId = (String) claims.get(MEMBER_ID_KEY);
         LoginType loginType = LoginType.valueOf((String) claims.get(LOGIN_TYPE_KEY));
 
         PrincipalDetails principal

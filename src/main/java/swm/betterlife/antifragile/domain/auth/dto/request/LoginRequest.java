@@ -1,6 +1,5 @@
-package swm.betterlife.antifragile.domain.auth.dto;
+package swm.betterlife.antifragile.domain.auth.dto.request;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 
 public record LoginRequest(

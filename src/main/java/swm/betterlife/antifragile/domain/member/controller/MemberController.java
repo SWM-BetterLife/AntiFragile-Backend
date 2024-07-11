@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
-import swm.betterlife.antifragile.domain.member.dto.MemberDetailResponse;
-import swm.betterlife.antifragile.domain.member.dto.NicknameModifyRequest;
-import swm.betterlife.antifragile.domain.member.dto.ProfileImgModifyRequest;
+import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
+import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
 
 @Slf4j
