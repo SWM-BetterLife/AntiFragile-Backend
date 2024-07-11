@@ -22,7 +22,9 @@ public record ContentRecommendResponse(
 
     @Builder
     public record Channel(
-            String name, String subscribeNumber
+            String name,
+            String img,
+            String subscribeNumber
     ) {}
 
     @Builder

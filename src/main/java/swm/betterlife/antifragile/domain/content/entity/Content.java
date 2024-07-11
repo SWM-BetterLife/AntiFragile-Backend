@@ -28,13 +28,11 @@ public class Content extends BaseTimeEntity {
 
     private String thumbnailImgUrl;
 
-    private Integer subscriberNumber;
+    private YoutubeInfo youTubeInfo;
 
-    private String channelName;
+    private Integer appViewNumber; // 앱 자체 조회수
 
-    private Integer viewNumber;
-
-    private Integer likeNumber;
+    private Integer appLikeNumber; // 앱 자체 좋아요 수
 
     private String url;
 }
