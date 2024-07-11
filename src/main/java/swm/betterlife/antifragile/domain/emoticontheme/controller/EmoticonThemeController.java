@@ -55,8 +55,8 @@ public class EmoticonThemeController {
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable ObjectId emoticonThemeId
     ) {
-        emoticonThemeService
-            .saveMemberIdAtEmoticonTheme(principalDetails.memberId(), emoticonThemeId);
+        emoticonThemeService    // todo: 몽고 db 쿼리로 $push 로 해결하기.
+            .addMemberIdToEmoticonTheme(principalDetails.memberId(), emoticonThemeId);
         return ResponseBody.ok();
     }
 
