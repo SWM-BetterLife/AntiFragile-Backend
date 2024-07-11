@@ -11,11 +11,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class YoutubeInfo {
 
-    private Integer subscriberNumber;
+    private Long subscriberNumber;
 
     private String channelName;
 
-    private Integer viewNumber; // YouTube 조회수
+    private String channelImg;
 
-    private Integer likeNumber; // YouTube 좋아요 수
+    private Long viewNumber;
+
+    private Long likeNumber;
 }

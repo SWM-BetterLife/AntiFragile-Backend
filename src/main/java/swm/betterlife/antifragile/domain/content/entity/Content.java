@@ -22,6 +22,8 @@ public class Content extends BaseTimeEntity {
 
     private String title;
 
+    private String description;
+
     private List<String> likeMemberIds = new ArrayList<>();
 
     private List<SaveMember> saveMembers = new ArrayList<>();
@@ -30,9 +32,9 @@ public class Content extends BaseTimeEntity {
 
     private YoutubeInfo youTubeInfo;
 
-    private Integer appViewNumber; // 앱 자체 조회수
+    private Long appViewNumber;
 
-    private Integer appLikeNumber; // 앱 자체 좋아요 수
+    private Long appLikeNumber;
 
     private String url;
 }
