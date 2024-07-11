@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
@@ -17,11 +16,11 @@ import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
 public class ContentReview extends BaseTimeEntity {
 
     @Id
-    private ObjectId id;
+    private String id;
 
     private ReviewMember reviewMember;
 
-    private ObjectId contentId;
+    private String contentId;
 
     private String reviewContent;
 }

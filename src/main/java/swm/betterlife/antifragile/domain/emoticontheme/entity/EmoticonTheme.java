@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
@@ -19,13 +18,13 @@ import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
 public class EmoticonTheme extends BaseTimeEntity {
 
     @Id
-    private ObjectId id;
+    private String id;
 
     private String name;
 
     private Integer price;
 
-    private List<ObjectId> buyerIds = new ArrayList<>();    //todo: Set 으로 바꿀지 논의 예정
+    private List<String> buyerIds = new ArrayList<>();
 
     private List<Emoticon> emoticons = new ArrayList<>();
 }

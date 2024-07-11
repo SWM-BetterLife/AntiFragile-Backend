@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.exception.LoginRequiredException;
 import swm.betterlife.antifragile.common.exception.RefreshTokenNotValidatedException;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
-import swm.betterlife.antifragile.domain.token.dto.TokenIssueResponse;
-import swm.betterlife.antifragile.domain.token.dto.TokenReIssueRequest;
+import swm.betterlife.antifragile.domain.token.dto.request.TokenReIssueRequest;
+import swm.betterlife.antifragile.domain.token.dto.response.TokenIssueResponse;
 import swm.betterlife.antifragile.domain.token.entity.Token;
 import swm.betterlife.antifragile.domain.token.repository.TokenRepository;
 
