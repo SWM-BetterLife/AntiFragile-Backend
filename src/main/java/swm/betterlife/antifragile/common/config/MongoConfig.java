@@ -46,10 +46,4 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
             new SimpleMongoClientDatabaseFactory(mongoClient(), getDatabaseName())
         );
     }
-
-    @PostConstruct
-    public void initIndexes() {
-        mongoTemplate().indexOps(Content.class)
-            .ensureIndex(new Index().on("url", Sort.Direction.ASC).unique());
-    }
 }
