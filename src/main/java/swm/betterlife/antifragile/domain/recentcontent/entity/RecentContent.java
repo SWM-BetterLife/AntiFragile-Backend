@@ -14,7 +14,7 @@ import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document(collection = "recent_content")
+@Document(collection = "recent_contents")
 public class RecentContent extends BaseTimeEntity {
 
     @Id
