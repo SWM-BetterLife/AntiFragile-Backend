@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
@@ -21,7 +20,7 @@ import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
 public class Member extends BaseTimeEntity {
 
     @Id
-    private ObjectId id;
+    private String id;
 
     private String email;
 
@@ -31,7 +30,7 @@ public class Member extends BaseTimeEntity {
 
     private String profileImgUrl;
 
-    private List<ObjectId> emoticonThemeIds = new ArrayList<>();
+    private List<String> emoticonThemeIds = new ArrayList<>();
 
     private Integer point;
 

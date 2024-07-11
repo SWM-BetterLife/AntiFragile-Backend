@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import swm.betterlife.antifragile.domain.token.dto.TokenIssueResponse;
-import swm.betterlife.antifragile.domain.token.dto.TokenReIssueRequest;
+import swm.betterlife.antifragile.domain.token.dto.request.TokenReIssueRequest;
+import swm.betterlife.antifragile.domain.token.dto.response.TokenIssueResponse;
 import swm.betterlife.antifragile.domain.token.service.TokenService;
 
 @RestController

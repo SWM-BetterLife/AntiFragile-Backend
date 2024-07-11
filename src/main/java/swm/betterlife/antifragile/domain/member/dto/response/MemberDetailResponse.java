@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.member.dto;
+package swm.betterlife.antifragile.domain.member.dto.response;
 
 import lombok.Builder;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
