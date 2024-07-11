@@ -1,5 +1,7 @@
 package swm.betterlife.antifragile.domain.content.service;
 
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,10 +20,6 @@ import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisService;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
-
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -99,7 +97,7 @@ public class ContentService {
 
     private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis) {
         // TODO: gpt api와 youtube api를 통해서 추천 컨텐츠를 가져와야 함
-        return Collections.emptyList();
+        return MockDataProvider.getContents1();
     }
 
     private List<Content> getRecommendContentsByAnalysis(
@@ -108,7 +106,7 @@ public class ContentService {
         String feedback
     ) {
         // TODO: gpt api와 youtube api를 통해서 재추천 컨텐츠를 가져와야 함
-        return Collections.emptyList();
+        return MockDataProvider.getContents2();
     }
 
     private List<String> extractRecommendedUrls(DiaryAnalysis analysis) {
@@ -123,7 +121,9 @@ public class ContentService {
             .set("title", recommendedContent.getTitle())
             .set("description", recommendedContent.getDescription())
             .set("thumbnailImgUrl", recommendedContent.getThumbnailImgUrl())
-            .set("youTubeInfo.subscriberNumber", recommendedContent.getYouTubeInfo().getSubscriberNumber())
+            .set(
+                "youTubeInfo.subscriberNumber",
+                recommendedContent.getYouTubeInfo().getSubscriberNumber())
             .set("youTubeInfo.channelName", recommendedContent.getYouTubeInfo().getChannelName())
             .set("youTubeInfo.channelImg", recommendedContent.getYouTubeInfo().getChannelImg())
             .set("youTubeInfo.viewNumber", recommendedContent.getYouTubeInfo().getViewNumber())
