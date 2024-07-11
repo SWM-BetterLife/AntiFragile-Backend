@@ -8,6 +8,10 @@ import swm.betterlife.antifragile.domain.member.entity.Member;
 
 public interface MemberRepository extends MongoRepository<Member, String> {
 
+    default Member getMember(String id) {
+        return findById(id).orElseThrow(MemberNotFoundException::new);
+    }
+
     default Member getMember(String email, LoginType loginType) {
         return findByEmailAndLoginType(email, loginType)
             .orElseThrow(MemberNotFoundException::new);   //todo : Custom Ex

@@ -32,7 +32,8 @@ public class Member extends BaseTimeEntity {
 
     private List<String> emoticonThemeIds = new ArrayList<>();
 
-    private Integer point;
+    @Builder.Default
+    private Integer point = 0;
 
     private Integer remainRecommendNumber;
 
@@ -48,5 +49,9 @@ public class Member extends BaseTimeEntity {
 
     public void updateProfileImgUrl(String profileImgUrl) {
         this.profileImgUrl = profileImgUrl;
+    }
+
+    public void addPoint(Integer amount) {
+        this.point += amount;
     }
 }
