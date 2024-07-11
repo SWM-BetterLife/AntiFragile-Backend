@@ -33,9 +33,11 @@ public class Content extends BaseTimeEntity {
 
     private YoutubeInfo youTubeInfo;
 
-    private Long appViewNumber;
+    @Builder.Default
+    private Long appViewNumber = 0L;
 
-    private Long appLikeNumber;
+    @Builder.Default
+    private Long appLikeNumber = 0L;
 
     private String url;
 }
