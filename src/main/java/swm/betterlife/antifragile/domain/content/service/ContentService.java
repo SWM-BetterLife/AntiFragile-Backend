@@ -70,6 +70,20 @@ public class ContentService {
             .map(ContentRecommendResponse.ContentResponse::from).toList());
     }
 
+    @Transactional
+    public void likeContent(String memberId, String contentId) {
+        Query query = new Query(Criteria.where("id").is(contentId));
+        Update update = new Update().addToSet("likeMemberIds", memberId);
+        mongoTemplate.updateFirst(query, update, Content.class);
+    }
+
+    @Transactional
+    public void unlikeContent(String memberId, String contentId) {
+        Query query = new Query(Criteria.where("id").is(contentId));
+        Update update = new Update().pull("likeMemberIds", memberId);
+        mongoTemplate.updateFirst(query, update, Content.class);
+    }
+
     private DiaryAnalysis getDiaryAnalysis(String memberId, LocalDate date) {
         return diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
     }

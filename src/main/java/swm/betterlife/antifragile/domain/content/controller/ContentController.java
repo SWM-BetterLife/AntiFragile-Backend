@@ -3,6 +3,7 @@ package swm.betterlife.antifragile.domain.content.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +31,7 @@ public class ContentController {
             contentService.saveRecommendContents(principalDetails.memberId(), date));
     }
 
-    @PostMapping
+    @PostMapping("/re")
     public ResponseBody<ContentRecommendResponse> addReRecommendContents(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam("date") LocalDate date,
@@ -38,5 +39,24 @@ public class ContentController {
     ) {
         return ResponseBody.ok(
             contentService.saveReRecommendContents(principalDetails.memberId(), date, feedback));
+    }
+
+    // TODO: 좋아요, 좋아요 취소 하나로 합칠 지 고민
+    @PostMapping("/{contentId}/like")
+    public ResponseBody<Void> likeContent(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @PathVariable String contentId
+    ) {
+        contentService.likeContent(principalDetails.memberId(), contentId);
+        return ResponseBody.ok();
+    }
+
+    @PostMapping("/{contentId}/unlike")
+    public ResponseBody<Void> unlikeContent(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @PathVariable String contentId
+    ) {
+        contentService.unlikeContent(principalDetails.memberId(), contentId);
+        return ResponseBody.ok();
     }
 }
