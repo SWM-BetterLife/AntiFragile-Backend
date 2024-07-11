@@ -49,4 +49,8 @@ public class Member extends BaseTimeEntity {
     public void updateProfileImgUrl(String profileImgUrl) {
         this.profileImgUrl = profileImgUrl;
     }
+
+    public void decrementRemainRecommendNumber() {
+        this.remainRecommendNumber--;
+    }
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,11 +20,14 @@ public class RecommendContent {
 
     private String url;
 
+    private LocalDateTime recommendAt;
+
     public static RecommendContent of(Content content) {
         return RecommendContent.builder()
             .id(content.getId())
             .title(content.getTitle())
             .url(content.getUrl())
+            .recommendAt(LocalDateTime.now())
             .build();
     }
 }

@@ -29,4 +29,14 @@ public class ContentController {
         return ResponseBody.ok(
             contentService.saveRecommendContents(principalDetails.memberId(), date));
     }
+
+    @PostMapping
+    public ResponseBody<ContentRecommendResponse> addReRecommendContents(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestParam("date") LocalDate date,
+        @RequestParam("feedback") String feedback
+    ) {
+        return ResponseBody.ok(
+            contentService.saveReRecommendContents(principalDetails.memberId(), date, feedback));
+    }
 }

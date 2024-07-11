@@ -3,6 +3,7 @@ package swm.betterlife.antifragile.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
@@ -35,5 +36,9 @@ public class MemberService {
     ) {
         Member findMember = memberRepository.getMember(email, loginType);
         findMember.updateProfileImgUrl(request.profileImg()); //todo: S3 이미지 변경 코드 추가
+    }
+
+    public Member getMemberById(String memberId) {
+        return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
     }
 }
