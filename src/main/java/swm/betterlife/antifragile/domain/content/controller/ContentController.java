@@ -20,6 +20,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/contents")
 public class ContentController {
+
     private final ContentService contentService;
 
     @PostMapping

@@ -8,9 +8,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.betterlife.antifragile.common.exception.ContentNotFoundException;
 import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
+import swm.betterlife.antifragile.domain.content.repository.ContentRepository;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.DiaryAnalysis;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisService;
@@ -28,7 +30,10 @@ public class ContentService {
     private final MongoTemplate mongoTemplate;
 
     private final MemberService memberService;
+
     private final DiaryAnalysisService diaryAnalysisService;
+
+    private final ContentRepository contentRepository;
 
     @Transactional
     public ContentRecommendResponse saveRecommendContents(String memberId, LocalDate date) {
@@ -82,6 +87,10 @@ public class ContentService {
         Query query = new Query(Criteria.where("id").is(contentId));
         Update update = new Update().pull("likeMemberIds", memberId);
         mongoTemplate.updateFirst(query, update, Content.class);
+    }
+
+    public Content getContentById(String contentId) {
+        return contentRepository.findById(contentId).orElseThrow(ContentNotFoundException::new);
     }
 
     private DiaryAnalysis getDiaryAnalysis(String memberId, LocalDate date) {
