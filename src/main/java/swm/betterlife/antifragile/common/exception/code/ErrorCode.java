@@ -15,7 +15,7 @@ public enum ErrorCode {
     EMOTICON_THEME_NOT_FOUND("이모티콘 테마를 찾을 수 없습니다"),
     EMOTICON_THEME_ALREADY_PURCHASED("해당 이모티콘을 이미 구매하였습니다"),
 
-    ILLEGAL_OBJECT_ID("ObjectId는 24자이어야 합니다"),
+    ILLEGAL_OBJECT_ID("ObjectId가 올바르지 않습니다. 24자이어야 합니다"),
 
     ;
 

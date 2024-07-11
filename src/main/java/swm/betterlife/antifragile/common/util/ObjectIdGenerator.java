@@ -11,7 +11,7 @@ public class ObjectIdGenerator {
     public static ObjectId generate(String id) {
         try {
             return new ObjectId(id);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new IllegalObjectIdException();
         }
     }

@@ -46,20 +46,18 @@ public class EmoticonThemeService {
 
     @Transactional(readOnly = true)
     public EmoticonThemeOwnEntireResponse getAllOwnEmoticonThemes(String memberId) {
-        List<EmoticonTheme> emoticonThemes = emoticonThemeRepository.findAll();
-        List<EmoticonTheme> ownEmoticonThemes = new ArrayList<>();
+        Criteria priceCriteria = Criteria.where("price").is(null);
+        Criteria buyerIdsCriteria = Criteria.where("buyer_ids").in(memberId);
+        Query query = new Query()
+            .addCriteria(new Criteria().orOperator(priceCriteria, buyerIdsCriteria));
 
-        for (EmoticonTheme emoticonTheme : emoticonThemes) {
-            if (
-                emoticonTheme.getPrice() == null || emoticonTheme.getBuyerIds().contains(memberId)
-            ) {
-                ownEmoticonThemes.add(emoticonTheme);
-            }
-        }
+        List<EmoticonTheme> ownEmoticonThemes
+            = mongoTemplate.find(query, EmoticonTheme.class, EMOTICON_THEMES.getName());
 
-        List<EmoticonThemeOwnDetailResponse> emoticonThemeDtoList =
-            ownEmoticonThemes.stream().map(EmoticonThemeOwnDetailResponse::from).toList();
-        emoticonThemeDtoList.forEach(e -> log.info("_id: {}", e.id()));
+        List<EmoticonThemeOwnDetailResponse> emoticonThemeDtoList = ownEmoticonThemes.stream()
+            .map(EmoticonThemeOwnDetailResponse::from)
+            .toList();
+
         return new EmoticonThemeOwnEntireResponse(emoticonThemeDtoList);
     }
 
@@ -75,7 +73,9 @@ public class EmoticonThemeService {
     @Transactional
     public void addMemberIdToEmoticonTheme(String memberId, String emoticonThemeId) {
 
-        Query query = Query.query(Criteria.where("_id").is(ObjectIdGenerator.generate(emoticonThemeId)));
+        Query query = Query.query(
+            Criteria.where("_id").is(ObjectIdGenerator.generate(emoticonThemeId))
+        );
         Update update = new Update().addToSet("buyer_ids", memberId);
         UpdateResult result = mongoTemplate.updateFirst(query, update, EMOTICON_THEMES.getName());
 
