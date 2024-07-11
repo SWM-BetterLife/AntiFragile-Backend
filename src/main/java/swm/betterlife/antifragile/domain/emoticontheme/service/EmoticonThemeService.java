@@ -3,11 +3,9 @@ package swm.betterlife.antifragile.domain.emoticontheme.service;
 import static swm.betterlife.antifragile.common.util.CollectionName.EMOTICON_THEMES;
 
 import com.mongodb.client.result.UpdateResult;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
