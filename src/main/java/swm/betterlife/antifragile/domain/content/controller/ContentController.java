@@ -27,10 +27,6 @@ public class ContentController {
         @RequestParam("date") LocalDate date
     ) {
         return ResponseBody.ok(
-            contentService.saveRecommendContents(
-                principalDetails.email(),
-                principalDetails.loginType(),
-                date
-            ));
+            contentService.saveRecommendContents(principalDetails.memberId(), date));
     }
 }

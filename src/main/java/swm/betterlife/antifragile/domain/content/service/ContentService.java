@@ -16,9 +16,7 @@ public class ContentService {
     private final ContentRepository contentRepository;
 
     @Transactional
-    public ContentRecommendResponse saveRecommendContents(
-        String email, LoginType loginType, LocalDate date
-    ) {
+    public ContentRecommendResponse saveRecommendContents(String memberId, LocalDate date) {
         return null;
     }
 }
