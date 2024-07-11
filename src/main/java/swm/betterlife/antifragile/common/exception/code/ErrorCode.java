@@ -11,6 +11,9 @@ public enum ErrorCode {
     LOGIN_REQUIRED("로그인 재시도가 필요합니다"),
 
     MEMBER_NOT_FOUND("멤버를 찾을 수 없습니다"),
+
+    // DiaryAnalysis
+    DIARY_ANALYSIS_NOT_FOUND("일기 분석을 찾을 수 없습니다"),
     ;
 
     private final String message;
