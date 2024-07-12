@@ -13,6 +13,7 @@ import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
 
 @Slf4j
@@ -55,4 +56,11 @@ public class MemberController {
         return ResponseBody.ok();
     }
 
+    @GetMapping("/re-recommend-number")
+    public ResponseBody<MemberRemainNumberResponse> getRemainRecommendNumber(
+        @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        return ResponseBody.ok(
+            memberService.getRemainRecommendNumber(principalDetails.memberId()));
+    }
 }
