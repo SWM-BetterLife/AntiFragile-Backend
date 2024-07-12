@@ -11,14 +11,12 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.exception.ContentNotFoundException;
-import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.repository.ContentRepository;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.DiaryAnalysis;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisService;
-import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
 
 @Service
