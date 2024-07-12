@@ -13,7 +13,7 @@ public record PointReceiptDetailResponse(
     PurchaseItemResponse purchaseItem
 ) {
     public static PointReceiptDetailResponse from(PointReceipt pointReceipt) {
-        if(pointReceipt.getType().equals(CHARGE)) {
+        if (pointReceipt.getType().equals(CHARGE)) {
             return PointReceiptDetailResponse.builder()
                 .amount(pointReceipt.getAmount())
                 .type(pointReceipt.getType())
