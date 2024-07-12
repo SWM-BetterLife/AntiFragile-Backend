@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import swm.betterlife.antifragile.domain.content.entity.Content;
+import swm.betterlife.antifragile.domain.content.entity.YoutubeInfo;
 
 @Getter
 @NoArgsConstructor
@@ -17,6 +18,12 @@ public class RecommendContent {
 
     private String title;
 
+    private String description;
+
+    private String thumbnailImgUrl;
+
+    private YoutubeInfo youtubeInfo;
+
     private String url;
 
     private LocalDateTime recommendAt;
@@ -25,6 +32,9 @@ public class RecommendContent {
         return RecommendContent.builder()
             .id(content.getId())
             .title(content.getTitle())
+            .description(content.getDescription())
+            .thumbnailImgUrl(content.getThumbnailImgUrl())
+            .youtubeInfo(content.getYoutubeInfo())
             .url(content.getUrl())
             .recommendAt(LocalDateTime.now())
             .build();

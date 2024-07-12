@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     // Content
     CONTENT_NOT_FOUND("컨텐츠를 찾을 수 없습니다"),
+    RECOMMENDED_CONTENT_NOT_FOUND("추천된 콘텐츠를 찾을 수 없습니다."),
     EXCESS_RECOMMEND_LIMIT("오늘의 추천 횟수가 초과되었습니다"),
 
     EMOTICON_THEME_NOT_FOUND("이모티콘 테마를 찾을 수 없습니다"),

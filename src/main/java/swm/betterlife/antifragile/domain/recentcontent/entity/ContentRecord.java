@@ -33,9 +33,9 @@ public class ContentRecord {
             .id(content.getId())
             .title(content.getTitle())
             .thumbnailImgUrl(content.getThumbnailImgUrl())
-            .subscriberNumber(content.getYouTubeInfo().getSubscriberNumber())
-            .viewNumber(content.getYouTubeInfo().getViewNumber())
-            .likeNumber(content.getYouTubeInfo().getLikeNumber())
+            .subscriberNumber(content.getYoutubeInfo().getSubscriberNumber())
+            .viewNumber(content.getYoutubeInfo().getViewNumber())
+            .likeNumber(content.getYoutubeInfo().getLikeNumber())
             .url(content.getUrl())
             .viewedAt(LocalDateTime.now())
             .build();

@@ -1,6 +1,7 @@
 package swm.betterlife.antifragile.domain.content.service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -9,8 +10,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.exception.ContentNotFoundException;
+import swm.betterlife.antifragile.common.exception.RecommendedContentNotFoundException;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.repository.ContentRepository;
@@ -31,7 +32,6 @@ public class ContentService {
 
     private final ContentRepository contentRepository;
 
-    @Transactional
     public ContentRecommendResponse saveRecommendContents(String memberId, LocalDate date) {
         DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
         List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis);
@@ -45,7 +45,6 @@ public class ContentService {
             .map(ContentRecommendResponse.ContentResponse::from).toList());
     }
 
-    @Transactional
     public ContentRecommendResponse saveReRecommendContents(
         String memberId,
         LocalDate date,
@@ -71,19 +70,33 @@ public class ContentService {
             .map(ContentRecommendResponse.ContentResponse::from).toList());
     }
 
-    @Transactional
     public void likeContent(String memberId, String contentId) {
         Query query = new Query(Criteria.where("id").is(contentId));
         Update update = new Update().addToSet("likeMemberIds", memberId);
         mongoTemplate.updateFirst(query, update, Content.class);
     }
 
-    @Transactional
     public void unlikeContent(String memberId, String contentId) {
         Query query = new Query(Criteria.where("id").is(contentId));
         Update update = new Update().pull("likeMemberIds", memberId);
         mongoTemplate.updateFirst(query, update, Content.class);
     }
+
+    public ContentRecommendResponse getRecommendContents(String memberId, LocalDate date) {
+        DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
+        if (analysis.getContents() == null || analysis.getContents().isEmpty()) {
+            throw new RecommendedContentNotFoundException();
+        }
+
+        return ContentRecommendResponse.from(
+            analysis.getContents().stream()
+                .sorted(Comparator.comparing(RecommendContent::getRecommendAt).reversed())
+                .limit(5)
+                .map(ContentRecommendResponse.ContentResponse::from)
+                .toList()
+        );
+    }
+
 
     public Content getContentById(String contentId) {
         return contentRepository.findById(contentId).orElseThrow(ContentNotFoundException::new);
@@ -121,11 +134,11 @@ public class ContentService {
             .set("thumbnailImgUrl", recommendedContent.getThumbnailImgUrl())
             .set(
                 "youTubeInfo.subscriberNumber",
-                recommendedContent.getYouTubeInfo().getSubscriberNumber())
-            .set("youTubeInfo.channelName", recommendedContent.getYouTubeInfo().getChannelName())
-            .set("youTubeInfo.channelImg", recommendedContent.getYouTubeInfo().getChannelImg())
-            .set("youTubeInfo.viewNumber", recommendedContent.getYouTubeInfo().getViewNumber())
-            .set("youTubeInfo.likeNumber", recommendedContent.getYouTubeInfo().getLikeNumber());
+                recommendedContent.getYoutubeInfo().getSubscriberNumber())
+            .set("youTubeInfo.channelName", recommendedContent.getYoutubeInfo().getChannelName())
+            .set("youTubeInfo.channelImg", recommendedContent.getYoutubeInfo().getChannelImg())
+            .set("youTubeInfo.viewNumber", recommendedContent.getYoutubeInfo().getViewNumber())
+            .set("youTubeInfo.likeNumber", recommendedContent.getYoutubeInfo().getLikeNumber());
 
         return mongoTemplate.findAndModify(
             query,
