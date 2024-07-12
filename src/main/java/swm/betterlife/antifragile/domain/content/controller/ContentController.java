@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
+import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.service.ContentService;
 
@@ -69,5 +70,14 @@ public class ContentController {
     ) {
         return ResponseBody.ok(
             contentService.getRecommendContents(principalDetails.memberId(), date));
+    }
+
+    @GetMapping("/{contentId}")
+    public ResponseBody<ContentDetailResponse> getContentDetail(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @PathVariable String contentId
+    ) {
+        return ResponseBody.ok(
+            contentService.getContentDetail(principalDetails.memberId(), contentId));
     }
 }

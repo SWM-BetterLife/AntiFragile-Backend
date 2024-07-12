@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import swm.betterlife.antifragile.common.exception.ContentNotFoundException;
 import swm.betterlife.antifragile.common.exception.RecommendedContentNotFoundException;
+import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.repository.ContentRepository;
@@ -95,6 +96,15 @@ public class ContentService {
                 .map(ContentRecommendResponse.ContentResponse::from)
                 .toList()
         );
+    }
+
+    public ContentDetailResponse getContentDetail(String memberId, String contentId) {
+        Content content = getContentById(contentId);
+        Boolean isLiked = content.getLikeMemberIds().contains(memberId);
+        Boolean isSaved = content.getSaveMembers().stream()
+            .anyMatch(saveMember -> saveMember.getMemberId().equals(memberId));
+
+        return ContentDetailResponse.from(content, isLiked, isSaved);
     }
 
 
