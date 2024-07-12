@@ -51,11 +51,14 @@ public class DiaryAnalysisService {
 
         Query query = new Query(Criteria.where("id").is(diaryAnalysis.getId()));
 
-        removeExistingRecommandContents(recommendContents, query);
+        removeExistingRecommendContents(recommendContents, query);
         saveNewRecommendContents(recommendContents, query);
     }
 
-    private void removeExistingRecommandContents(List<RecommendContent> recommendContents, Query query) {
+    private void removeExistingRecommendContents(
+        List<RecommendContent> recommendContents,
+        Query query
+    ) {
         for (RecommendContent recommendContent : recommendContents) {
             Update pullUpdate = new Update().pull(
                 "contents",
