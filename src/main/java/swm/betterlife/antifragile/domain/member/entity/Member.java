@@ -51,7 +51,4 @@ public class Member extends BaseTimeEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
-    public void addPoint(Integer amount) {
-        this.point += amount;
-    }
 }

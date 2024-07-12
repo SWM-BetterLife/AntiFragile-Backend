@@ -1,9 +1,15 @@
 package swm.betterlife.antifragile.domain.member.service;
 
+import com.mongodb.client.result.UpdateResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
@@ -17,6 +23,7 @@ import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Transactional(readOnly = true)
     public MemberDetailResponse findMemberByEmail(String email, LoginType loginType) {
@@ -43,9 +50,17 @@ public class MemberService {
 
     @Transactional
     public Integer addPointByAmount(String memberId, Integer amount) {
-        Member member = memberRepository.getMember(memberId);
-        member.addPoint(amount);
-        return memberRepository.save(member).getPoint();
+
+        Query query = new Query(Criteria.where("_id").is(memberId));
+        Update update = new Update().inc("point", amount);
+        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Member.class);
+
+        if (updateResult.getModifiedCount() == 0) {
+            throw new MemberNotFoundException();
+        } else {
+            Member updatedMember = mongoTemplate.findOne(query, Member.class);
+            return updatedMember.getPoint();
+        }
     }
 
 }

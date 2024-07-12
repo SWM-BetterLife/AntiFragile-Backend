@@ -40,9 +40,9 @@ public class PointReceiptService {
                 .type(PointReceiptType.CHARGE)
                 .amount(pointChargeRequest.chargeAmount())
                 .build());
-        int chargedPoint
-            = memberService.addPointByAmount(memberId, pointChargeRequest.chargeAmount());
-        return new PointChargeResponse(chargedPoint);
+        return new PointChargeResponse(
+            memberService.addPointByAmount(memberId, pointChargeRequest.chargeAmount())
+        );
     }
 
 }
