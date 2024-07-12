@@ -3,7 +3,7 @@ package swm.betterlife.antifragile.domain.content.dto.response;
 import java.util.List;
 import lombok.Builder;
 import swm.betterlife.antifragile.domain.content.entity.Content;
-import swm.betterlife.antifragile.domain.content.entity.YoutubeInfo;
+import swm.betterlife.antifragile.domain.content.entity.YouTubeInfo;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 
 @Builder
@@ -30,9 +30,9 @@ public record ContentRecommendResponse(
                 .id(content.getId())
                 .title(content.getTitle())
                 .description(content.getDescription())
-                .channel(Channel.from(content.getYoutubeInfo()))
+                .channel(Channel.from(content.getYouTubeInfo()))
                 .thumbnailImg(content.getThumbnailImgUrl())
-                .videoStats(VideoStats.from(content.getYoutubeInfo()))
+                .videoStats(VideoStats.from(content.getYouTubeInfo()))
                 .build();
         }
 
@@ -41,9 +41,9 @@ public record ContentRecommendResponse(
                 .id(recommendContent.getId())
                 .title(recommendContent.getTitle())
                 .description(recommendContent.getDescription())
-                .channel(Channel.from(recommendContent.getYoutubeInfo()))
+                .channel(Channel.from(recommendContent.getYouTubeInfo()))
                 .thumbnailImg(recommendContent.getThumbnailImgUrl())
-                .videoStats(VideoStats.from(recommendContent.getYoutubeInfo()))
+                .videoStats(VideoStats.from(recommendContent.getYouTubeInfo()))
                 .build();
         }
     }
@@ -54,7 +54,7 @@ public record ContentRecommendResponse(
             String img,
             Long subscribeNumber
     ) {
-        public static Channel from(YoutubeInfo youtubeInfo) {
+        public static Channel from(YouTubeInfo youtubeInfo) {
             return Channel.builder()
                 .name(youtubeInfo.getChannelName())
                 .img(youtubeInfo.getChannelImg())
@@ -67,7 +67,7 @@ public record ContentRecommendResponse(
     public record VideoStats(
             Long viewNumber, Long likeNumber
     ) {
-        public static VideoStats from(YoutubeInfo youtubeInfo) {
+        public static VideoStats from(YouTubeInfo youtubeInfo) {
             return VideoStats.builder()
                 .viewNumber(youtubeInfo.getViewNumber())
                 .likeNumber(youtubeInfo.getLikeNumber())

@@ -144,11 +144,11 @@ public class ContentService {
             .set("thumbnailImgUrl", recommendedContent.getThumbnailImgUrl())
             .set(
                 "youTubeInfo.subscriberNumber",
-                recommendedContent.getYoutubeInfo().getSubscriberNumber())
-            .set("youTubeInfo.channelName", recommendedContent.getYoutubeInfo().getChannelName())
-            .set("youTubeInfo.channelImg", recommendedContent.getYoutubeInfo().getChannelImg())
-            .set("youTubeInfo.viewNumber", recommendedContent.getYoutubeInfo().getViewNumber())
-            .set("youTubeInfo.likeNumber", recommendedContent.getYoutubeInfo().getLikeNumber());
+                recommendedContent.getYouTubeInfo().getSubscriberNumber())
+            .set("youTubeInfo.channelName", recommendedContent.getYouTubeInfo().getChannelName())
+            .set("youTubeInfo.channelImg", recommendedContent.getYouTubeInfo().getChannelImg())
+            .set("youTubeInfo.viewNumber", recommendedContent.getYouTubeInfo().getViewNumber())
+            .set("youTubeInfo.likeNumber", recommendedContent.getYouTubeInfo().getLikeNumber());
 
         return mongoTemplate.findAndModify(
             query,

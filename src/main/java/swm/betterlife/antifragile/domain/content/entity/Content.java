@@ -31,7 +31,7 @@ public class Content extends BaseTimeEntity {
 
     private String thumbnailImgUrl;
 
-    private YoutubeInfo youtubeInfo;
+    private YouTubeInfo youTubeInfo;
 
     @Builder.Default
     private Long appViewNumber = 0L;
