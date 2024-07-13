@@ -24,5 +24,5 @@ public class PointReceipt extends BaseTimeEntity {
 
     private Integer amount;
 
-    private String emoticonThemeId;
+    private Item purchaseItem;
 }

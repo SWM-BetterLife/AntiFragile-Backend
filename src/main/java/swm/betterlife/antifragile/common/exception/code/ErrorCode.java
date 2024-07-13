@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
+    // Auth
     TOKEN_EXPIRED("토큰이 만료되었습니다"),
     REFRESH_TOKEN_NOT_VALIDATED("리프레시 토큰이 유효하지 않습니다"),
     LOGIN_REQUIRED("로그인 재시도가 필요합니다"),
 
+    // Member
     MEMBER_NOT_FOUND("멤버를 찾을 수 없습니다"),
 
     // DiaryAnalysis
@@ -20,10 +22,16 @@ public enum ErrorCode {
     CONTENT_NOT_FOUND("컨텐츠를 찾을 수 없습니다"),
     EXCESS_RECOMMEND_LIMIT("오늘의 추천 횟수가 초과되었습니다"),
 
+    // EmoticonTheme
     EMOTICON_THEME_NOT_FOUND("이모티콘 테마를 찾을 수 없습니다"),
     EMOTICON_THEME_ALREADY_PURCHASED("해당 이모티콘을 이미 구매하였습니다"),
 
+    // MemberPoint
+    MEMBER_POINT_NOT_FOUND("멤버 포인트를 찾을 수 없습니다"),
+
+    // Common
     ILLEGAL_OBJECT_ID("ObjectId가 올바르지 않습니다. 24자이어야 합니다"),
+
     ;
 
     private final String message;

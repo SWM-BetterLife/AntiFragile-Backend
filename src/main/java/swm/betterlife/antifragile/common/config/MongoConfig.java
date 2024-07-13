@@ -42,4 +42,5 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
             new SimpleMongoClientDatabaseFactory(mongoClient(), getDatabaseName())
         );
     }
+
 }
