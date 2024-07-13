@@ -1,5 +1,6 @@
 package swm.betterlife.antifragile.domain.diaryanalysis.entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,8 @@ public class DiaryAnalysis extends BaseTimeEntity {
     private String action;
 
     private String comment;
+
+    private LocalDate diaryDate;
 
     private List<RecommendContent> contents = new ArrayList<>();
 
