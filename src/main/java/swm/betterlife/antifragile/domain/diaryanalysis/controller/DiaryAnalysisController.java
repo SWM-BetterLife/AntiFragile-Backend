@@ -34,7 +34,7 @@ public class DiaryAnalysisController {
         return ResponseBody.ok();
     }
 
-    @PutMapping("")
+    @PutMapping
     public ResponseBody<Void> modifyDiaryAnalysis(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody ModifyDiaryAnalysisRequest request,
