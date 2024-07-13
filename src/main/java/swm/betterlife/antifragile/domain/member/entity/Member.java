@@ -32,9 +32,6 @@ public class Member extends BaseTimeEntity {
 
     private List<String> emoticonThemeIds = new ArrayList<>();
 
-    @Builder.Default
-    private Integer point = 0;
-
     private Integer remainRecommendNumber;
 
     @Enumerated(EnumType.STRING)
