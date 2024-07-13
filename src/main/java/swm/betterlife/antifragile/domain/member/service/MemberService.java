@@ -47,20 +47,6 @@ public class MemberService {
         memberRepository.save(findMember);  //todo: MongoTemplate 변경
     }
 
-    @Transactional
-    public Integer addPointByAmount(String memberId, Integer amount) {
-
-        Query query = new Query(Criteria.where("_id").is(memberId));
-        Update update = new Update().inc("point", amount);
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, Member.class);
-
-        if (updateResult.getModifiedCount() == 0) {
-            throw new MemberNotFoundException();
-        }
-
-        return memberPointService.getPointByMemberId(memberId);
-    }
-
 
     public void decrementRemainRecommendNumber(String memberId) {
         Member member = memberRepository.findById(memberId)

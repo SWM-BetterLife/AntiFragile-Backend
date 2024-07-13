@@ -7,7 +7,7 @@ import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.token.dto.response.TokenIssueResponse;
 
 @Builder
-public record LoginResponse(
+public record AuthLoginResponse(
     String id,
     String email,
     String nickname,
@@ -15,11 +15,11 @@ public record LoginResponse(
     MemberDetailResponse memberDetail,
     TokenIssueResponse tokenIssue
 ) {
-    public static LoginResponse from(
+    public static AuthLoginResponse from(
             Member member,
             TokenIssueResponse tokenIssue
     ) {
-        return LoginResponse.builder()
+        return AuthLoginResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
             .nickname(member.getNickname())

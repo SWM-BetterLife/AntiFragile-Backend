@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.response.PagingResponse;
+import swm.betterlife.antifragile.domain.member.service.MemberPointService;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
 import swm.betterlife.antifragile.domain.pointreceipt.dto.request.PointChargeRequest;
 import swm.betterlife.antifragile.domain.pointreceipt.dto.response.PointChargeResponse;
@@ -20,6 +21,7 @@ public class PointReceiptService {
 
     private final PointReceiptRepository pointReceiptRepository;
     private final MemberService memberService;
+    private final MemberPointService memberPointService;
 
     @Transactional(readOnly = true)
     public PagingResponse<PointReceiptDetailResponse> getAllOwnPointReceipts(
@@ -39,9 +41,7 @@ public class PointReceiptService {
                 .type(PointReceiptType.CHARGE)
                 .amount(pointChargeRequest.chargeAmount())
                 .build());
-        return new PointChargeResponse(
-            memberService.addPointByAmount(memberId, pointChargeRequest.chargeAmount())
-        );
+        return new PointChargeResponse(memberPointService.getPointByMemberId(memberId));
     }
 
 }

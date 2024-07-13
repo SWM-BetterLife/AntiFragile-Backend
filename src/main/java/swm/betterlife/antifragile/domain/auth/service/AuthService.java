@@ -12,11 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
-import swm.betterlife.antifragile.domain.auth.dto.request.LoginRequest;
-import swm.betterlife.antifragile.domain.auth.dto.request.LogoutRequest;
-import swm.betterlife.antifragile.domain.auth.dto.request.SignUpRequest;
-import swm.betterlife.antifragile.domain.auth.dto.response.LoginResponse;
-import swm.betterlife.antifragile.domain.auth.dto.response.SignUpResponse;
+import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
+import swm.betterlife.antifragile.domain.auth.dto.request.AuthLogoutRequest;
+import swm.betterlife.antifragile.domain.auth.dto.request.AuthSignUpRequest;
+import swm.betterlife.antifragile.domain.auth.dto.response.AuthLoginResponse;
+import swm.betterlife.antifragile.domain.auth.dto.response.AuthSignUpResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
@@ -42,46 +42,46 @@ public class AuthService {
     private final TokenService tokenService;
 
     @Transactional
-    public LoginResponse login(LoginRequest loginRequest) {
-        String password = getPasswordByLoginType(loginRequest.loginType());
+    public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
+        String password = getPasswordByLoginType(authLoginRequest.loginType());
 
         String username
-            = loginRequest.loginType().name() + ":" + loginRequest.email(); //todo: common분리
+            = authLoginRequest.loginType().name() + ":" + authLoginRequest.email(); //todo: common분리
         Authentication authentication = getAuthenticate(username, password);
 
         Member member = memberRepository.getMember(
-            loginRequest.email(), loginRequest.loginType()
+            authLoginRequest.email(), authLoginRequest.loginType()
         );
         TokenIssueResponse tokenIssueResponse
                 = jwtProvider.issueToken(authentication);
-        return LoginResponse.from(member, tokenIssueResponse);
+        return AuthLoginResponse.from(member, tokenIssueResponse);
     }
 
     @Transactional
-    public SignUpResponse signUp(SignUpRequest signUpRequest) {
+    public AuthSignUpResponse signUp(AuthSignUpRequest authSignUpRequest) {
         if (memberRepository.existsByEmailAndLoginType(
-            signUpRequest.email(), signUpRequest.loginType())
+            authSignUpRequest.email(), authSignUpRequest.loginType())
         ) {
             throw new RuntimeException("이미 존재하는 이메일입니다.");  //todo: Custom Ex
         }
 
-        String password = getPasswordByLoginType(signUpRequest.loginType());
+        String password = getPasswordByLoginType(authSignUpRequest.loginType());
         String encodedPassword = passwordEncoder.encode(password);
 
         Member member = Member.builder()
-                .email(signUpRequest.email())
+                .email(authSignUpRequest.email())
                 .password(encodedPassword)
-                .loginType(signUpRequest.loginType())
+                .loginType(authSignUpRequest.loginType())
                 .roleType(ROLE_USER)
                 .build();
 
-        return SignUpResponse.from(memberRepository.save(member));
+        return AuthSignUpResponse.from(memberRepository.save(member));
 
     }
 
     @Transactional
-    public void logout(LogoutRequest logoutRequest) {
-        tokenService.deleteToken(logoutRequest.refreshToken());
+    public void logout(AuthLogoutRequest authLogoutRequest) {
+        tokenService.deleteToken(authLogoutRequest.refreshToken());
     }
 
     private Authentication getAuthenticate(String username, String password) {
