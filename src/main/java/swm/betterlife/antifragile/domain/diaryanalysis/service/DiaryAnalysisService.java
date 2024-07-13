@@ -2,7 +2,6 @@ package swm.betterlife.antifragile.domain.diaryanalysis.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -75,12 +74,13 @@ public class DiaryAnalysisService {
     public void saveDiaryAnalysis(
         String memberId, SaveDiaryAnalysisRequest request
     ) {
-        if (request.diaryDate() != null) {
-            Optional<DiaryAnalysis> existingAnalysis = diaryAnalysisRepository.findByMemberIdAndDiaryDate(
-                memberId, request.diaryDate());
-            if (existingAnalysis.isPresent()) {
-                throw new IllegalArgumentException("이미 해당 날짜에 사용자의 일기 분석이 존재합니다");
-            }
+        Query query = new Query(Criteria.where("memberId").is(memberId)
+            .and("diaryDate").is(request.diaryDate()));
+
+        DiaryAnalysis existingDiaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
+
+        if (existingDiaryAnalysis != null) {
+            throw new IllegalArgumentException("이미 해당 날짜에 사용자의 일기 분석이 존재합니다");
         }
 
         // DiaryAnalysis 객체 생성
