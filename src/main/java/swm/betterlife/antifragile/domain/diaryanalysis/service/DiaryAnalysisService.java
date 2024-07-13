@@ -2,10 +2,9 @@ package swm.betterlife.antifragile.domain.diaryanalysis.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
-import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -77,11 +76,10 @@ public class DiaryAnalysisService {
         String memberId, SaveDiaryAnalysisRequest request
     ) {
         if (request.diaryDate() != null) {
-            // 이미 해당 memberId와 diaryDate를 가진 데이터가 있는지 확인
-            DiaryAnalysis existingAnalysis = diaryAnalysisRepository.getDiaryAnalysis(
+            Optional<DiaryAnalysis> existingAnalysis = diaryAnalysisRepository.findByMemberIdAndDiaryDate(
                 memberId, request.diaryDate());
-            if (existingAnalysis != null) {
-                throw new IllegalArgumentException("이미 해당 날짜에 사용자의 일기가 존재합니다");
+            if (existingAnalysis.isPresent()) {
+                throw new IllegalArgumentException("이미 해당 날짜에 사용자의 일기 분석이 존재합니다");
             }
         }
 
@@ -103,11 +101,17 @@ public class DiaryAnalysisService {
 
     @Transactional
     public void modifyDiaryAnalysis(
-        String memberId, ModifyDiaryAnalysisRequest request, DateTime date
+        String memberId, ModifyDiaryAnalysisRequest request, LocalDate date
     ) {
         // 다이어리 분석을 가져오기 위한 쿼리 생성
         Query query = new Query(Criteria.where("memberId").is(memberId)
             .and("diaryDate").is(date));
+
+        DiaryAnalysis existingDiaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
+
+        if (existingDiaryAnalysis == null) {
+            throw new IllegalArgumentException("해당 날짜에 해당하는 일기 분석이 없습니다");
+        }
 
         // 다이어리 분석을 수정하기 위한 업데이트 생성
         Update update = new Update()
@@ -118,10 +122,7 @@ public class DiaryAnalysisService {
             .set("comment", request.comment())
             .set("emoticon", request.emoticon());
 
-        // FindAndModifyOptions 생성
-        FindAndModifyOptions options = FindAndModifyOptions.options().upsert(true).returnNew(true);
-
         // 다이어리 분석을 업데이트하거나 새로 생성
-        mongoTemplate.findAndModify(query, update, options, DiaryAnalysis.class);
+        mongoTemplate.findAndModify(query, update, DiaryAnalysis.class);
     }
 }

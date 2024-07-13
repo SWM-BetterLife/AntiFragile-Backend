@@ -1,8 +1,8 @@
 package swm.betterlife.antifragile.domain.diaryanalysis.controller;
 
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,7 +39,7 @@ public class DiaryAnalysisController {
     public ResponseBody<Void> modifyDiaryAnalysis(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody ModifyDiaryAnalysisRequest request,
-        @RequestParam DateTime date
+        @RequestParam LocalDate date
     ) {
         diaryAnalysisService.modifyDiaryAnalysis(
             principalDetails.memberId(), request, date
