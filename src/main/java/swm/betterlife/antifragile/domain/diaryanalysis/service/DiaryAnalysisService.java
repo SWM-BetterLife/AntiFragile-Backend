@@ -77,9 +77,10 @@ public class DiaryAnalysisService {
     ) {
         if (request.diaryDate() != null) {
             // 이미 해당 memberId와 diaryDate를 가진 데이터가 있는지 확인
-            DiaryAnalysis existingAnalysis = diaryAnalysisRepository.getDiaryAnalysis(memberId, request.diaryDate());
+            DiaryAnalysis existingAnalysis = diaryAnalysisRepository.getDiaryAnalysis(
+                memberId, request.diaryDate());
             if (existingAnalysis != null) {
-                throw new IllegalArgumentException("이미 해당 memberId와 diaryDate를 가진 데이터가 존재합니다.");
+                throw new IllegalArgumentException("이미 해당 날짜에 사용자의 일기가 존재합니다");
             }
         }
 
