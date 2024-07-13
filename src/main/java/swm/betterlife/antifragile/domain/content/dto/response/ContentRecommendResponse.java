@@ -3,7 +3,8 @@ package swm.betterlife.antifragile.domain.content.dto.response;
 import java.util.List;
 import lombok.Builder;
 import swm.betterlife.antifragile.domain.content.entity.Content;
-import swm.betterlife.antifragile.domain.content.entity.YoutubeInfo;
+import swm.betterlife.antifragile.domain.content.entity.YouTubeInfo;
+import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 
 @Builder
 public record ContentRecommendResponse(
@@ -22,9 +23,7 @@ public record ContentRecommendResponse(
             String description,
             Channel channel,
             String thumbnailImg,
-            String youtubeLink,
-            VideoStats videoStats,
-            AppStats appStats
+            VideoStats videoStats
     ) {
         public static ContentResponse from(Content content) {
             return ContentResponse.builder()
@@ -33,9 +32,18 @@ public record ContentRecommendResponse(
                 .description(content.getDescription())
                 .channel(Channel.from(content.getYouTubeInfo()))
                 .thumbnailImg(content.getThumbnailImgUrl())
-                .youtubeLink(content.getUrl())
                 .videoStats(VideoStats.from(content.getYouTubeInfo()))
-                .appStats(AppStats.from(content))
+                .build();
+        }
+
+        public static ContentResponse from(RecommendContent recommendContent) {
+            return ContentResponse.builder()
+                .id(recommendContent.getId())
+                .title(recommendContent.getTitle())
+                .description(recommendContent.getDescription())
+                .channel(Channel.from(recommendContent.getYouTubeInfo()))
+                .thumbnailImg(recommendContent.getThumbnailImgUrl())
+                .videoStats(VideoStats.from(recommendContent.getYouTubeInfo()))
                 .build();
         }
     }
@@ -46,7 +54,7 @@ public record ContentRecommendResponse(
             String img,
             Long subscribeNumber
     ) {
-        public static Channel from(YoutubeInfo youtubeInfo) {
+        public static Channel from(YouTubeInfo youtubeInfo) {
             return Channel.builder()
                 .name(youtubeInfo.getChannelName())
                 .img(youtubeInfo.getChannelImg())
@@ -59,22 +67,10 @@ public record ContentRecommendResponse(
     public record VideoStats(
             Long viewNumber, Long likeNumber
     ) {
-        public static VideoStats from(YoutubeInfo youtubeInfo) {
+        public static VideoStats from(YouTubeInfo youtubeInfo) {
             return VideoStats.builder()
                 .viewNumber(youtubeInfo.getViewNumber())
                 .likeNumber(youtubeInfo.getLikeNumber())
-                .build();
-        }
-    }
-
-    @Builder
-    public record AppStats(
-        Long viewNumber, Long likeNumber
-    ) {
-        public static AppStats from(Content content) {
-            return AppStats.builder()
-                .viewNumber(content.getAppViewNumber())
-                .likeNumber(content.getAppLikeNumber())
                 .build();
         }
     }

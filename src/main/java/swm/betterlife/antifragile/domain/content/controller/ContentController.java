@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
+import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.service.ContentService;
 
@@ -59,5 +61,23 @@ public class ContentController {
     ) {
         contentService.unlikeContent(principalDetails.memberId(), contentId);
         return ResponseBody.ok();
+    }
+
+    @GetMapping
+    public ResponseBody<ContentRecommendResponse> getRecommendContents(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestParam("date") LocalDate date
+    ) {
+        return ResponseBody.ok(
+            contentService.getRecommendContents(principalDetails.memberId(), date));
+    }
+
+    @GetMapping("/{contentId}")
+    public ResponseBody<ContentDetailResponse> getContentDetail(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @PathVariable String contentId
+    ) {
+        return ResponseBody.ok(
+            contentService.getContentDetail(principalDetails.memberId(), contentId));
     }
 }

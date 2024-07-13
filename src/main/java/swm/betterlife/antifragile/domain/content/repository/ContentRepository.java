@@ -6,5 +6,4 @@ import swm.betterlife.antifragile.domain.content.entity.Content;
 
 public interface ContentRepository extends MongoRepository<Content, String> {
     Optional<Content> findByUrl(String url);
-
 }
