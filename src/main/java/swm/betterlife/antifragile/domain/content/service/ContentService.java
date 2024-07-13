@@ -1,11 +1,10 @@
 package swm.betterlife.antifragile.domain.content.service;
 
+import com.mongodb.client.result.UpdateResult;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-
-import com.mongodb.client.result.UpdateResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
