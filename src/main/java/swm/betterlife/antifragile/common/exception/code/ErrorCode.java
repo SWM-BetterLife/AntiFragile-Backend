@@ -15,6 +15,10 @@ public enum ErrorCode {
     // DiaryAnalysis
     DIARY_ANALYSIS_NOT_FOUND("일기 분석을 찾을 수 없습니다"),
 
+    // Content
+    CONTENT_NOT_FOUND("컨텐츠를 찾을 수 없습니다"),
+    EXCESS_RECOMMEND_LIMIT("오늘의 추천 횟수가 초과되었습니다"),
+
     EMOTICON_THEME_NOT_FOUND("이모티콘 테마를 찾을 수 없습니다"),
     EMOTICON_THEME_ALREADY_PURCHASED("해당 이모티콘을 이미 구매하였습니다"),
 

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import swm.betterlife.antifragile.domain.content.entity.Content;
 
 @Getter
 @NoArgsConstructor
@@ -17,13 +18,26 @@ public class ContentRecord {
 
     private String thumbnailImgUrl;
 
-    private Integer subscriberNumber;
+    private Long subscriberNumber;
 
-    private Integer viewNumber;
+    private Long viewNumber;
 
-    private Integer likeNumber;
+    private Long likeNumber;
 
     private String url;
 
     private LocalDateTime viewedAt;
+
+    public static ContentRecord of(Content content) {
+        return ContentRecord.builder()
+            .id(content.getId())
+            .title(content.getTitle())
+            .thumbnailImgUrl(content.getThumbnailImgUrl())
+            .subscriberNumber(content.getYouTubeInfo().getSubscriberNumber())
+            .viewNumber(content.getYouTubeInfo().getViewNumber())
+            .likeNumber(content.getYouTubeInfo().getLikeNumber())
+            .url(content.getUrl())
+            .viewedAt(LocalDateTime.now())
+            .build();
+    }
 }

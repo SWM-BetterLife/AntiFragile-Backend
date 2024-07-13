@@ -23,19 +23,29 @@ public class Content extends BaseTimeEntity {
 
     private String title;
 
+    private String description;
+
     private List<String> likeMemberIds = new ArrayList<>();
 
     private List<SaveMember> saveMembers = new ArrayList<>();
 
     private String thumbnailImgUrl;
 
-    private Integer subscriberNumber;
+    private YoutubeInfo youTubeInfo;
 
-    private String channelName;
+    @Builder.Default
+    private Long appViewNumber = 0L;
 
-    private Integer viewNumber;
-
-    private Integer likeNumber;
+    @Builder.Default
+    private Long appLikeNumber = 0L;
 
     private String url;
+
+    public Content updateContent(Content content) {
+        this.title = content.getTitle();
+        this.description = content.getDescription();
+        this.thumbnailImgUrl = content.getThumbnailImgUrl();
+        this.youTubeInfo = content.getYouTubeInfo();
+        return this;
+    }
 }
