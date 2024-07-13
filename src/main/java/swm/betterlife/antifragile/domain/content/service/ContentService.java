@@ -3,8 +3,8 @@ package swm.betterlife.antifragile.domain.content.service;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,8 +37,8 @@ public class ContentService {
         DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
         List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis);
 
-        List<Content> savedContents = recommendedContents.stream()
-            .map(this::saveOrUpdateContent).toList();
+        List<Content> savedContents = contentRepository.saveAll(
+            recommendedContents.stream().map(this::saveOrUpdateContent).toList());
 
         diaryAnalysisService.saveRecommendContents(analysis, savedContents);
 
@@ -62,8 +62,8 @@ public class ContentService {
             feedback
         );
 
-        List<Content> savedContents = recommendedContents.stream()
-            .map(this::saveOrUpdateContent).toList();
+        List<Content> savedContents = contentRepository.saveAll(
+            recommendedContents.stream().map(this::saveOrUpdateContent).toList());
 
         diaryAnalysisService.saveRecommendContents(analysis, savedContents);
 
@@ -136,26 +136,15 @@ public class ContentService {
             .toList();
     }
 
-    private Content saveOrUpdateContent(Content recommendedContent) {
-        Query query = new Query(Criteria.where("url").is(recommendedContent.getUrl()));
-        Update update = new Update()
-            .set("title", recommendedContent.getTitle())
-            .set("description", recommendedContent.getDescription())
-            .set("thumbnailImgUrl", recommendedContent.getThumbnailImgUrl())
-            .set(
-                "youTubeInfo.subscriberNumber",
-                recommendedContent.getYouTubeInfo().getSubscriberNumber())
-            .set("youTubeInfo.channelName", recommendedContent.getYouTubeInfo().getChannelName())
-            .set("youTubeInfo.channelImg", recommendedContent.getYouTubeInfo().getChannelImg())
-            .set("youTubeInfo.viewNumber", recommendedContent.getYouTubeInfo().getViewNumber())
-            .set("youTubeInfo.likeNumber", recommendedContent.getYouTubeInfo().getLikeNumber());
+    public Content saveOrUpdateContent(Content recommendedContent) {
+        Optional<Content> existingContentOpt = contentRepository.findByUrl(
+            recommendedContent.getUrl());
 
-        return mongoTemplate.findAndModify(
-            query,
-            update,
-            FindAndModifyOptions.options().returnNew(true).upsert(true),
-            Content.class
-        );
+        if (existingContentOpt.isPresent()) {
+            return existingContentOpt.get().updateContent(recommendedContent);
+        }
+
+        return recommendedContent;
     }
 
     private void validateRecommendLimit(String memberId) {
