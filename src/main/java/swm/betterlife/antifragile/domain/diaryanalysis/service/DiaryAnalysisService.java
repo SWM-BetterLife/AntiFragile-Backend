@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -93,8 +94,7 @@ public class DiaryAnalysisService {
             .thought(request.thought())
             .action(request.action())
             .comment(request.comment())
-            .contents(request.contents())
-            .emoticons(request.emoticons())
+            .emoticon(request.emoticon())
             .build();
 
         // MongoDB에 저장
@@ -103,11 +103,11 @@ public class DiaryAnalysisService {
 
     @Transactional
     public void modifyDiaryAnalysis(
-        String memberId, ModifyDiaryAnalysisRequest request, String date
+        String memberId, ModifyDiaryAnalysisRequest request, DateTime date
     ) {
         // 다이어리 분석을 가져오기 위한 쿼리 생성
         Query query = new Query(Criteria.where("memberId").is(memberId)
-            .and("diaryDate").is(LocalDate.parse(date)));
+            .and("diaryDate").is(date));
 
         // 다이어리 분석을 수정하기 위한 업데이트 생성
         Update update = new Update()
@@ -116,8 +116,7 @@ public class DiaryAnalysisService {
             .set("thought", request.thought())
             .set("action", request.action())
             .set("comment", request.comment())
-            .set("contents", request.contents())
-            .set("emoticons", request.emoticons());
+            .set("emoticon", request.emoticon());
 
         // FindAndModifyOptions 생성
         FindAndModifyOptions options = FindAndModifyOptions.options().upsert(true).returnNew(true);

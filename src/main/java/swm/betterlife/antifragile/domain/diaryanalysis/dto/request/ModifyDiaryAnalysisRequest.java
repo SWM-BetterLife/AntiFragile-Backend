@@ -10,7 +10,6 @@ public record ModifyDiaryAnalysisRequest(
     String thought,
     String action,
     String comment,
-    List<RecommendContent> contents,
-    List<SelectedEmoticon> emoticons
+    SelectedEmoticon emoticon
 ) {
 }

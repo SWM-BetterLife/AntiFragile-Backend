@@ -37,5 +37,5 @@ public class DiaryAnalysis extends BaseTimeEntity {
 
     private List<RecommendContent> contents = new ArrayList<>();
 
-    private List<SelectedEmoticon> emoticons = new ArrayList<>();
+    private SelectedEmoticon emoticon;
 }

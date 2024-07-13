@@ -12,7 +12,6 @@ public record SaveDiaryAnalysisRequest(
     String action,
     String comment,
     LocalDate diaryDate,
-    List<RecommendContent> contents,
-    List<SelectedEmoticon> emoticons
+    SelectedEmoticon emoticon
 ) {
 }
