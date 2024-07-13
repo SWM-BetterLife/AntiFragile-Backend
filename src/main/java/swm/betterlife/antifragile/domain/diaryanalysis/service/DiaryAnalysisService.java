@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
+import swm.betterlife.antifragile.common.exception.DiaryAnalysisAlreadyExistedException;
 import swm.betterlife.antifragile.common.exception.DiaryAnalysisNotFoundException;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.ModifyDiaryAnalysisRequest;
@@ -80,7 +81,7 @@ public class DiaryAnalysisService {
         DiaryAnalysis existingDiaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
 
         if (existingDiaryAnalysis != null) {
-            throw new IllegalArgumentException("이미 해당 날짜에 사용자의 일기 분석이 존재합니다");
+            throw new DiaryAnalysisAlreadyExistedException();
         }
 
         // DiaryAnalysis 객체 생성
@@ -107,12 +108,6 @@ public class DiaryAnalysisService {
         Query query = new Query(Criteria.where("memberId").is(memberId)
             .and("diaryDate").is(date));
 
-        DiaryAnalysis existingDiaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
-
-        if (existingDiaryAnalysis == null) {
-            throw new IllegalArgumentException("해당 날짜에 해당하는 일기 분석이 없습니다");
-        }
-
         // 다이어리 분석을 수정하기 위한 업데이트 생성
         Update update = new Update()
             .set("emotions", request.emotions())
@@ -122,7 +117,10 @@ public class DiaryAnalysisService {
             .set("comment", request.comment())
             .set("emoticon", request.emoticon());
 
-        // 다이어리 분석을 업데이트하거나 새로 생성
-        mongoTemplate.findAndModify(query, update, DiaryAnalysis.class);
+        DiaryAnalysis result = mongoTemplate.findAndModify(query, update, DiaryAnalysis.class);
+
+        if (result == null) {
+            throw new DiaryAnalysisNotFoundException();
+        }
     }
 }
