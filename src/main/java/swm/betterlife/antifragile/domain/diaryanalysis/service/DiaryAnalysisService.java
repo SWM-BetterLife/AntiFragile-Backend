@@ -29,6 +29,7 @@ public class DiaryAnalysisService {
     private final DiaryAnalysisRepository diaryAnalysisRepository;
     private final MongoTemplate mongoTemplate;
 
+    @Transactional(readOnly = true)
     public DiaryAnalysis getDiaryAnalysisByMemberIdAndDate(String memberId, LocalDate date) {
         Query query = new Query();
         query.addCriteria(Criteria.where("memberId").is(memberId)
@@ -42,14 +43,32 @@ public class DiaryAnalysisService {
         return diaryAnalysis;
     }
 
+    @Transactional
     public void saveRecommendContents(DiaryAnalysis diaryAnalysis, List<Content> contents) {
         List<RecommendContent> recommendContents = contents.stream()
             .map(RecommendContent::of).toList();
 
         Query query = new Query(Criteria.where("id").is(diaryAnalysis.getId()));
-        Update update = new Update().push("contents").each(recommendContents.toArray());
 
-        mongoTemplate.updateFirst(query, update, DiaryAnalysis.class);
+        removeExistingRecommendContents(recommendContents, query);
+        saveNewRecommendContents(recommendContents, query);
+    }
+
+    private void removeExistingRecommendContents(
+        List<RecommendContent> recommendContents,
+        Query query
+    ) {
+        for (RecommendContent recommendContent : recommendContents) {
+            Update pullUpdate = new Update().pull(
+                "contents",
+                new Query(Criteria.where("url").is(recommendContent.getUrl())));
+            mongoTemplate.updateFirst(query, pullUpdate, DiaryAnalysis.class);
+        }
+    }
+
+    private void saveNewRecommendContents(List<RecommendContent> recommendContents, Query query) {
+        Update pushUpdate = new Update().addToSet("contents").each(recommendContents.toArray());
+        mongoTemplate.updateFirst(query, pushUpdate, DiaryAnalysis.class);
     }
 
     @Transactional
