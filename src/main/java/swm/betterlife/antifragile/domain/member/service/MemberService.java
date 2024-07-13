@@ -1,6 +1,7 @@
 package swm.betterlife.antifragile.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -13,43 +14,36 @@ import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyReques
 import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
-import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final MongoTemplate mongoTemplate;
-
     private final MemberRepository memberRepository;
+    private final MongoTemplate mongoTemplate;
+    private final MemberPointService memberPointService;
 
     @Transactional(readOnly = true)
-    public MemberDetailResponse findMemberByEmail(String email, LoginType loginType) {
-        return MemberDetailResponse.from(memberRepository.getMember(email, loginType));
+    public MemberDetailResponse findMemberByEmail(String id) {
+        Integer point = memberPointService.getPointByMemberId(id);
+        return MemberDetailResponse.from(memberRepository.getMember(id), point);
     }
 
     @Transactional
-    public void modifyNickname(
-        NicknameModifyRequest request, String email, LoginType loginType
-    ) {
-        Member findMember = memberRepository.getMember(email, loginType);
+    public void modifyNickname(NicknameModifyRequest request, String id) {
+        Member findMember = memberRepository.getMember(id);
         findMember.updateNickname(request.nickname());
+        memberRepository.save(findMember);  //todo: MongoTemplate 변경
     }
 
     @Transactional
-    public void modifyProfileImg(
-        ProfileImgModifyRequest request, String email, LoginType loginType
-    ) {
-        Member findMember = memberRepository.getMember(email, loginType);
+    public void modifyProfileImg(ProfileImgModifyRequest request, String id) {
+        Member findMember = memberRepository.getMember(id);
         findMember.updateProfileImgUrl(request.profileImg()); //todo: S3 이미지 변경 코드 추가
-    }
-
-    public MemberRemainNumberResponse getRemainRecommendNumber(String memberId) {
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(MemberNotFoundException::new);
-        return MemberRemainNumberResponse.from(member.getRemainRecommendNumber());
+        memberRepository.save(findMember);  //todo: MongoTemplate 변경
     }
 
     public void decrementRemainRecommendNumber(String memberId) {
@@ -60,6 +54,12 @@ public class MemberService {
         }
         member.decrementRemainRecommendNumber();
         memberRepository.save(member);
+    }
+
+    public MemberRemainNumberResponse getRemainRecommendNumber(String memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(MemberNotFoundException::new);
+        return MemberRemainNumberResponse.from(member.getRemainRecommendNumber());
     }
 
     @Scheduled(cron = "0 0 0 * * *")

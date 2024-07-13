@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
-import swm.betterlife.antifragile.domain.auth.dto.request.LoginRequest;
-import swm.betterlife.antifragile.domain.auth.dto.request.LogoutRequest;
-import swm.betterlife.antifragile.domain.auth.dto.request.SignUpRequest;
-import swm.betterlife.antifragile.domain.auth.dto.response.LoginResponse;
+import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
+import swm.betterlife.antifragile.domain.auth.dto.request.AuthLogoutRequest;
+import swm.betterlife.antifragile.domain.auth.dto.request.AuthSignUpRequest;
+import swm.betterlife.antifragile.domain.auth.dto.response.AuthLoginResponse;
+import swm.betterlife.antifragile.domain.auth.dto.response.AuthSignUpResponse;
 import swm.betterlife.antifragile.domain.auth.service.AuthService;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 
 @Slf4j
 @RestController
@@ -23,22 +23,22 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseBody<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseBody.ok(authService.login(loginRequest));
+    public ResponseBody<AuthLoginResponse> login(@RequestBody AuthLoginRequest authLoginRequest) {
+        return ResponseBody.ok(authService.login(authLoginRequest));
     }
 
     @PostMapping("/sign-up")
-    public ResponseBody<MemberDetailResponse> signUp(
-        @RequestBody SignUpRequest signUpRequest
+    public ResponseBody<AuthSignUpResponse> signUp(
+        @RequestBody AuthSignUpRequest authSignUpRequest
     ) {
-        return ResponseBody.ok(authService.signUp(signUpRequest));
+        return ResponseBody.ok(authService.signUp(authSignUpRequest));
     }
 
     @PostMapping("/logout")
     public ResponseBody<Void> logout(
-        @RequestBody LogoutRequest logoutRequest
+        @RequestBody AuthLogoutRequest authLogoutRequest
     ) {
-        authService.logout(logoutRequest);
+        authService.logout(authLogoutRequest);
         return ResponseBody.ok();
     }
 

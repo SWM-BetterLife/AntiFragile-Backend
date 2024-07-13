@@ -11,8 +11,8 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import swm.betterlife.antifragile.domain.auth.dto.request.LoginRequest;
-import swm.betterlife.antifragile.domain.auth.dto.response.LoginResponse;
+import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
+import swm.betterlife.antifragile.domain.auth.dto.response.AuthLoginResponse;
 import swm.betterlife.antifragile.domain.auth.service.AuthService;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 
@@ -46,9 +46,9 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         if (isExist) {
             /* 바로 로그인 */
-            LoginRequest loginRequest =  new LoginRequest(email, loginType);
-            LoginResponse loginResponse = authService.login(loginRequest);
-            response.getWriter().write(loginResponse.toString());   //todo: ResponseBody 감싸기
+            AuthLoginRequest authLoginRequest =  new AuthLoginRequest(email, loginType);
+            AuthLoginResponse authLoginResponse = authService.login(authLoginRequest);
+            response.getWriter().write(authLoginResponse.toString());   //todo: ResponseBody 감싸기
         } else {
             /* 회원 가입 필요 */
             log.info("회원 가입 필요");
