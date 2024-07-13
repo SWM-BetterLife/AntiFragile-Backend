@@ -27,7 +27,6 @@ public class PointReceiptService {
     ) {
         Page<PointReceipt> pointReceipts
             = pointReceiptRepository.findAllByMemberId(memberId, pageable);
-
         return PagingResponse.from(pointReceipts.map(PointReceiptDetailResponse::from));
     }
 

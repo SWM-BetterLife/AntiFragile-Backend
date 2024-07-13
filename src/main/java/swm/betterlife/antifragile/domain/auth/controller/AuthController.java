@@ -11,8 +11,8 @@ import swm.betterlife.antifragile.domain.auth.dto.request.LoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.LogoutRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.SignUpRequest;
 import swm.betterlife.antifragile.domain.auth.dto.response.LoginResponse;
+import swm.betterlife.antifragile.domain.auth.dto.response.SignUpResponse;
 import swm.betterlife.antifragile.domain.auth.service.AuthService;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 
 @Slf4j
 @RestController
@@ -28,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseBody<MemberDetailResponse> signUp(
+    public ResponseBody<SignUpResponse> signUp(
         @RequestBody SignUpRequest signUpRequest
     ) {
         return ResponseBody.ok(authService.signUp(signUpRequest));

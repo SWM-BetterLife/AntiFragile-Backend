@@ -28,9 +28,7 @@ public class MemberController {
         @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         return ResponseBody.ok(
-            memberService.findMemberByEmail(
-                principalDetails.email(), principalDetails.loginType()
-            ));
+            memberService.findMemberByEmail(principalDetails.memberId()));
     }
 
     @PutMapping("/nickname")
@@ -38,9 +36,7 @@ public class MemberController {
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody NicknameModifyRequest request
     ) {
-        memberService.modifyNickname(
-            request, principalDetails.email(), principalDetails.loginType()
-        );
+        memberService.modifyNickname(request, principalDetails.memberId());
         return ResponseBody.ok();
     }
 
@@ -49,9 +45,7 @@ public class MemberController {
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody ProfileImgModifyRequest request
     ) {
-        memberService.modifyProfileImg(
-            request, principalDetails.email(), principalDetails.loginType()
-        );
+        memberService.modifyProfileImg(request, principalDetails.memberId());
         return ResponseBody.ok();
     }
 

@@ -17,6 +17,8 @@ public enum ErrorCode {
 
     ILLEGAL_OBJECT_ID("ObjectId가 올바르지 않습니다. 24자이어야 합니다"),
 
+    MEMBER_POINT_NOT_FOUND("멤버 포인트를 찾을 수 없습니다")
+
     ;
 
     private final String message;

@@ -16,7 +16,7 @@ import swm.betterlife.antifragile.domain.auth.dto.request.LoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.LogoutRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.SignUpRequest;
 import swm.betterlife.antifragile.domain.auth.dto.response.LoginResponse;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
+import swm.betterlife.antifragile.domain.auth.dto.response.SignUpResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
@@ -58,7 +58,7 @@ public class AuthService {
     }
 
     @Transactional
-    public MemberDetailResponse signUp(SignUpRequest signUpRequest) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
         if (memberRepository.existsByEmailAndLoginType(
             signUpRequest.email(), signUpRequest.loginType())
         ) {
@@ -75,7 +75,7 @@ public class AuthService {
                 .roleType(ROLE_USER)
                 .build();
 
-        return MemberDetailResponse.from(memberRepository.save(member));
+        return SignUpResponse.from(memberRepository.save(member));
 
     }
 

@@ -13,13 +13,13 @@ public record MemberDetailResponse(
         Integer point,
         LoginType loginType //todo: 연속 작성일 수, 총 작성일 수 추가
 ) {
-    public static MemberDetailResponse from(Member member) {
+    public static MemberDetailResponse from(Member member, Integer point) {
         return MemberDetailResponse.builder()
-            .id(member.getId().toString())
+            .id(member.getId())
             .email(member.getEmail())
             .nickname(member.getNickname())
             .profileImgUrl(member.getProfileImgUrl())
-            .point(member.getPoint())
+            .point(point)
             .loginType(member.getLoginType())
             .build();
     }
