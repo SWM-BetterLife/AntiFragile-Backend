@@ -7,8 +7,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
@@ -35,14 +37,14 @@ public class MemberService {
     public void modifyNickname(NicknameModifyRequest request, String id) {
         Member findMember = memberRepository.getMember(id);
         findMember.updateNickname(request.nickname());
-        memberRepository.save(findMember);
+        memberRepository.save(findMember);  //todo: MongoTemplate 변경
     }
 
     @Transactional
     public void modifyProfileImg(ProfileImgModifyRequest request, String id) {
         Member findMember = memberRepository.getMember(id);
         findMember.updateProfileImgUrl(request.profileImg()); //todo: S3 이미지 변경 코드 추가
-        memberRepository.save(findMember);
+        memberRepository.save(findMember);  //todo: MongoTemplate 변경
     }
 
     @Transactional
@@ -59,4 +61,22 @@ public class MemberService {
         return memberPointService.getPointByMemberId(memberId);
     }
 
+
+    public void decrementRemainRecommendNumber(String memberId) {
+        Member member = memberRepository.findById(memberId)
+            .orElseThrow(MemberNotFoundException::new);
+        if (member.getRemainRecommendNumber() <= 0) {
+            throw new ExcessRecommendLimitException();
+        }
+        member.decrementRemainRecommendNumber();
+        memberRepository.save(member);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void resetRemainRecommendNumber() {
+        Query query = new Query();
+        Update update = new Update().set("remainRecommendNumber", 3);
+
+        mongoTemplate.updateMulti(query, update, Member.class);
+    }
 }

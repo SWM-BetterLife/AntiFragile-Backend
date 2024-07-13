@@ -48,4 +48,8 @@ public class Member extends BaseTimeEntity {
         this.profileImgUrl = profileImgUrl;
     }
 
+
+    public void decrementRemainRecommendNumber() {
+        this.remainRecommendNumber--;
+    }
 }
