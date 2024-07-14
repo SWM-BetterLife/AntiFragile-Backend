@@ -87,7 +87,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: 'docker-compose.dev.yml'
-          target: '${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/'
+          target: ''
 
       # EC2 인스턴스에 SSH로 접속하여 Docker 컨테이너를 업데이트하고 실행
       - name: Deploy to EC2 (develop)
