@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import swm.betterlife.antifragile.common.exception.S3DeleteFailException;
 import swm.betterlife.antifragile.common.exception.S3UploadFailException;
 
 @Component
@@ -61,7 +62,7 @@ public class S3ImageComponent {
         try {
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, deleteUrl[3]));
         } catch (AmazonS3Exception e) {
-            throw new S3UploadFailException();
+            throw new S3DeleteFailException();
         }
     }
 }
