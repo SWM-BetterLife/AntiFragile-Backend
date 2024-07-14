@@ -68,7 +68,7 @@ jobs:
 
       # Release에 Docker 이미지를 build, push
       - name: Build and push Docker image to release
-        if: contains(github.ref, 'develop')
+        if: contains(github.ref, 'release')
         uses: docker/build-push-action@v4
         with:
           context: .
