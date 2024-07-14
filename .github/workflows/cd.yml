@@ -93,14 +93,12 @@ jobs:
       - name: Deploy to EC2 (develop)
         if: contains(github.ref, 'develop') || contains(github.ref, 'feature/SWM-34-modify-dev-cd')
         uses: appleboy/ssh-action@master
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu
-            docker-compose -f docker-compose.dev.yml pull
-            docker-compose -f docker-compose.dev.yml up -d
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} docker-compose -f docker-compose.dev.yml pull
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} docker-compose -f docker-compose.dev.yml up -d
             
