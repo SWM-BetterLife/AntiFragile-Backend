@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
-import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
@@ -44,9 +45,9 @@ public class MemberController {
     @PutMapping("/profile-img")
     public ResponseBody<Void> modifyProfileImg(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody ProfileImgModifyRequest request
+        @RequestPart MultipartFile profileImgFile
     ) {
-        memberService.modifyProfileImg(request, principalDetails.memberId());
+        memberService.modifyProfileImg(profileImgFile, principalDetails.memberId());
         return ResponseBody.ok();
     }
 
