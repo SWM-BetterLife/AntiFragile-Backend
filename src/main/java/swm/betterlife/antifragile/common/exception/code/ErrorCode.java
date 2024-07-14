@@ -35,6 +35,10 @@ public enum ErrorCode {
     // Common
     ILLEGAL_OBJECT_ID("ObjectId가 올바르지 않습니다. 24자이어야 합니다"),
 
+    // S3
+    S3_UPLOAD_FAIL("S3 업로드에 실패하였습니다"),
+    S3_DELETE_FAIL("S3 삭제에 실패하였습니다")
+
     ;
 
     private final String message;
