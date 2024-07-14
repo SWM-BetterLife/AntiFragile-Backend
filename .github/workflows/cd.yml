@@ -56,7 +56,7 @@ jobs:
 
       # Develop에 Docker 이미지를 build, push
       - name: Build and push Docker image to develop
-        if: contains(github.ref, 'develop')
+        if: contains(github.ref, 'develop') || contains(github.ref, 'feature/SWM-34-modify-dev-cd')
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -68,7 +68,7 @@ jobs:
 
       # Release에 Docker 이미지를 build, push
       - name: Build and push Docker image to release
-        if: contains(github.ref, 'release')
+        if: contains(github.ref, 'develop') || contains(github.ref, 'feature/SWM-34-modify-dev-cd')
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -80,7 +80,7 @@ jobs:
 
       # docker-compose 파일을 EC2로 복사
       - name: Copy docker-compose file to EC2
-        if: contains(github.ref, 'develop')
+        if: contains(github.ref, 'develop') || contains(github.ref, 'feature/SWM-34-modify-dev-cd')
         uses: appleboy/scp-action@master
         with:
           source: 'docker-compose.dev.yml'
@@ -90,7 +90,7 @@ jobs:
 
       # EC2 인스턴스에 SSH로 접속하여 Docker 컨테이너를 업데이트하고 실행
       - name: Deploy to EC2 (develop)
-        if: contains(github.ref, 'develop')
+        if: contains(github.ref, 'develop') || contains(github.ref, 'feature/SWM-34-modify-dev-cd')
         uses: appleboy/ssh-action@master
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
