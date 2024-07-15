@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.Builder;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.entity.YouTubeInfo;
-import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 
 @Builder
 public record ContentRecommendResponse(
