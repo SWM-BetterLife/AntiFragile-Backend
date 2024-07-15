@@ -113,7 +113,7 @@ public class ContentService {
     }
 
     private List<String> extractRecommendContentUrls(DiaryAnalysis analysis) {
-        return analysis.getContents().stream()
+        return analysis.getRecommendContents().stream()
             .map(RecommendContent::getContentUrl)
             .toList();
     }

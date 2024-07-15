@@ -60,14 +60,15 @@ public class DiaryAnalysisService {
     ) {
         for (RecommendContent recommendContent : recommendContents) {
             Update pullUpdate = new Update().pull(
-                "contents",
+                "recommendContents",
                 new Query(Criteria.where("contentId").is(recommendContent.getContentId())));
             mongoTemplate.updateFirst(query, pullUpdate, DiaryAnalysis.class);
         }
     }
 
     private void saveNewRecommendContents(List<RecommendContent> recommendContents, Query query) {
-        Update pushUpdate = new Update().addToSet("contents").each(recommendContents.toArray());
+        Update pushUpdate = new Update().addToSet("recommendContents")
+            .each(recommendContents.toArray());
         mongoTemplate.updateFirst(query, pushUpdate, DiaryAnalysis.class);
     }
 
