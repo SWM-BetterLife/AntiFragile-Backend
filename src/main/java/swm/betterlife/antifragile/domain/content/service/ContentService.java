@@ -3,10 +3,8 @@ package swm.betterlife.antifragile.domain.content.service;
 import com.mongodb.client.result.UpdateResult;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.exception.ContentAlreadyLikedException;
 import swm.betterlife.antifragile.common.exception.ContentNotFoundException;
 import swm.betterlife.antifragile.common.exception.ContentNotLikedException;
-import swm.betterlife.antifragile.common.exception.RecommendedContentNotFoundException;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
@@ -43,7 +40,8 @@ public class ContentService {
 
     @Transactional
     public ContentRecommendResponse saveRecommendContents(String memberId, LocalDate date) {
-        DiaryAnalysis analysis = diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
+        DiaryAnalysis analysis =
+            diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
         List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis);
 
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
@@ -55,9 +53,44 @@ public class ContentService {
             .toList());
     }
 
+    @Transactional
+    public ContentRecommendResponse saveReRecommendContents(
+        String memberId,
+        LocalDate date,
+        String feedback
+    ) {
+        validateRecommendLimit(memberId);
+
+        DiaryAnalysis analysis =
+            diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
+        List<String> recommendedUrls = extractRecommendContentUrls(analysis);
+
+        List<Content> recommendedContents = getRecommendContentsByAnalysis(
+            analysis,
+            recommendedUrls,
+            feedback
+        );
+
+        List<Content> savedContents = saveOrUpdateContents(recommendedContents);
+
+        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
+
+        return ContentRecommendResponse.from(savedContents.stream()
+            .map(ContentRecommendResponse.ContentResponse::from).toList());
+    }
+
     private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis) {
         // TODO: gpt api와 youtube api를 통해서 추천 컨텐츠를 가져와야 함
         return MockDataProvider.getContents1();
+    }
+
+    private List<Content> getRecommendContentsByAnalysis(
+        DiaryAnalysis analysis,
+        List<String> recommendedUrls,
+        String feedback
+    ) {
+        // TODO: gpt api와 youtube api를 통해서 재추천 컨텐츠를 가져와야 함
+        return MockDataProvider.getContents2();
     }
 
     private List<Content> saveOrUpdateContents(List<Content> recommendedContents) {
@@ -79,30 +112,10 @@ public class ContentService {
         return contentRepository.saveAll(toSaveContents);
     }
 
-    @Transactional
-    public ContentRecommendResponse saveReRecommendContents(
-        String memberId,
-        LocalDate date,
-        String feedback
-    ) {
-        validateRecommendLimit(memberId);
-
-        DiaryAnalysis analysis = diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
-        List<String> recommendedUrls = extractRecommendedUrls(analysis);
-
-        List<Content> recommendedContents = getRecommendContentsByAnalysis(
-            analysis,
-            recommendedUrls,
-            feedback
-        );
-
-//        List<Content> savedContents = contentRepository.saveAll(
-//            recommendedContents.stream().map(this::saveOrUpdateContents).toList());
-//
-//        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
-//
-//        return ContentRecommendResponse.from(savedContents.stream()
-//            .map(ContentRecommendResponse.ContentResponse::from).toList());
+    private List<String> extractRecommendContentUrls(DiaryAnalysis analysis) {
+        return analysis.getContents().stream()
+            .map(RecommendContent::getContentUrl)
+            .toList();
     }
 
     @Transactional
@@ -141,6 +154,7 @@ public class ContentService {
 //                .map(ContentRecommendResponse.ContentResponse::from)
 //                .toList()
 //        );
+        return null;
     }
 
     @Transactional(readOnly = true)
@@ -158,21 +172,6 @@ public class ContentService {
         return contentRepository.findById(contentId).orElseThrow(ContentNotFoundException::new);
     }
 
-
-    private List<Content> getRecommendContentsByAnalysis(
-        DiaryAnalysis analysis,
-        List<String> recommendedUrls,
-        String feedback
-    ) {
-        // TODO: gpt api와 youtube api를 통해서 재추천 컨텐츠를 가져와야 함
-        return MockDataProvider.getContents2();
-    }
-
-    private List<String> extractRecommendedUrls(DiaryAnalysis analysis) {
-        return analysis.getRecommendContents().stream()
-            .map(RecommendContent::getContentId)
-            .toList();
-    }
 
     private void validateRecommendLimit(String memberId) {
         memberService.decrementRemainRecommendNumber(memberId);

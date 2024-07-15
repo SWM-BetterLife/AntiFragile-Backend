@@ -15,11 +15,14 @@ public class RecommendContent {
 
     private String contentId;
 
+    private String contentUrl;
+
     private LocalDateTime recommendAt;
 
     public static RecommendContent of(Content content) {
         return RecommendContent.builder()
             .contentId(content.getId())
+            .contentUrl(content.getUrl())
             .recommendAt(LocalDateTime.now())
             .build();
     }

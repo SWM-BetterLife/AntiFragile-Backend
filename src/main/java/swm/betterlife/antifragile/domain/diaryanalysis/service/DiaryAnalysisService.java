@@ -60,7 +60,7 @@ public class DiaryAnalysisService {
     ) {
         for (RecommendContent recommendContent : recommendContents) {
             Update pullUpdate = new Update().pull(
-                "recommendContents",
+                "contents",
                 new Query(Criteria.where("contentId").is(recommendContent.getContentId())));
             mongoTemplate.updateFirst(query, pullUpdate, DiaryAnalysis.class);
         }

@@ -35,7 +35,7 @@ public class DiaryAnalysis extends BaseTimeEntity {
 
     private LocalDate diaryDate;
 
-    private List<RecommendContent> recommendContents = new ArrayList<>();
+    private List<RecommendContent> contents = new ArrayList<>();
 
     private SelectedEmoticon emoticon;
 }
