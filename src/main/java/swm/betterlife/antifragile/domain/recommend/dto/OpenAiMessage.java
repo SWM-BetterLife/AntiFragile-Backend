@@ -1,6 +1,6 @@
 package swm.betterlife.antifragile.domain.recommend.dto;
 
-public record OpenAIMessage(
+public record OpenAiMessage(
     String role,
     String content
 ) {

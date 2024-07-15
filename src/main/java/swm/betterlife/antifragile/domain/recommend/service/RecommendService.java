@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import swm.betterlife.antifragile.domain.recommend.dto.request.OpenAIRequest;
-import swm.betterlife.antifragile.domain.recommend.dto.response.OpenAIResponse;
+import swm.betterlife.antifragile.domain.recommend.dto.request.OpenAiRequest;
+import swm.betterlife.antifragile.domain.recommend.dto.response.OpenAiResponse;
 
 @Slf4j
 @Service
@@ -18,11 +18,12 @@ public class RecommendService {
     private String model;
 
     @Value("${openai.api.url}")
-    private String apiURL;
-    public OpenAIResponse chatGpt(String prompt) {
-        OpenAIRequest request = new OpenAIRequest(
+    private String apiUrl;
+
+    public OpenAiResponse chatGpt(String prompt) {
+        OpenAiRequest request = new OpenAiRequest(
             model, prompt, 1, 256, 1, 2, 2);
         return restTemplate.postForObject(
-            apiURL, request, OpenAIResponse.class);
+            apiUrl, request, OpenAiResponse.class);
     }
 }

@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-public class OpenAIConfig {
+public class OpenAiConfig {
     @Value("${openai.api.key}")
     private String openAiKey;
 
     @Bean
-    public RestTemplate restTemplate(){
+    public RestTemplate restTemplate() {
         RestTemplate template = new RestTemplate();
         template.getInterceptors().add((request, body, execution) -> {
             request.getHeaders().add(

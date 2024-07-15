@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
-import swm.betterlife.antifragile.domain.recommend.dto.response.OpenAIResponse;
+import swm.betterlife.antifragile.domain.recommend.dto.response.OpenAiResponse;
 import swm.betterlife.antifragile.domain.recommend.service.RecommendService;
 
 @Slf4j
@@ -18,7 +18,7 @@ public class RecommendController {
     private final RecommendService recommendService;
 
     @GetMapping("/chatGpt")
-    public ResponseBody<OpenAIResponse> chatGpt(
+    public ResponseBody<OpenAiResponse> chatGpt(
         @RequestParam("prompt") String prompt
     ){
         return ResponseBody.ok(
