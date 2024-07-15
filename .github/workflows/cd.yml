@@ -100,5 +100,6 @@ jobs:
           script: |
             cd /home/ubuntu
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} docker-compose -f docker-compose.dev.yml pull
+            DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} docker-compose -f docker-compose.dev.yml down
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} docker-compose -f docker-compose.dev.yml up -d
             
