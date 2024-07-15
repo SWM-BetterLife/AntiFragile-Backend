@@ -12,22 +12,20 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.exception.DatabaseUpdateFailException;
 import swm.betterlife.antifragile.common.exception.DatabaseUpsertFailException;
 import swm.betterlife.antifragile.domain.content.entity.Content;
-import swm.betterlife.antifragile.domain.content.service.ContentService;
+import swm.betterlife.antifragile.domain.content.service.ContentQueryService;
 import swm.betterlife.antifragile.domain.recentcontent.entity.ContentRecord;
 import swm.betterlife.antifragile.domain.recentcontent.entity.RecentContent;
-import swm.betterlife.antifragile.domain.recentcontent.repository.RecentContentRepository;
 
 @Service
 @RequiredArgsConstructor
 public class RecentContentService {
 
-    private final RecentContentRepository recentContentRepository;
     private final MongoTemplate mongoTemplate;
-    private final ContentService contentService;
+    private final ContentQueryService contentQueryService;
 
     @Transactional
     public void addOrUpdateRecentContent(String memberId, String contentId) {
-        Content content = contentService.getContentById(contentId);
+        Content content = contentQueryService.getContentById(contentId);
 
         Query updateQuery = new Query(Criteria.where("memberId").is(memberId)
             .and("contentRecords.contentId").is(contentId));

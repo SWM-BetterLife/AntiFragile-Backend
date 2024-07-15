@@ -15,6 +15,7 @@ import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
+import swm.betterlife.antifragile.domain.content.service.ContentQueryService;
 import swm.betterlife.antifragile.domain.content.service.ContentService;
 
 @Slf4j
@@ -24,6 +25,7 @@ import swm.betterlife.antifragile.domain.content.service.ContentService;
 public class ContentController {
 
     private final ContentService contentService;
+    private final ContentQueryService contentQueryService;
 
     @PostMapping
     public ResponseBody<ContentRecommendResponse> addRecommendContents(
@@ -69,7 +71,7 @@ public class ContentController {
         @RequestParam("date") LocalDate date
     ) {
         return ResponseBody.ok(
-            contentService.getRecommendContents(principalDetails.memberId(), date));
+            contentQueryService.getRecommendContents(principalDetails.memberId(), date));
     }
 
     @GetMapping("/{contentId}")
@@ -78,6 +80,6 @@ public class ContentController {
         @PathVariable String contentId
     ) {
         return ResponseBody.ok(
-            contentService.getContentDetail(principalDetails.memberId(), contentId));
+            contentQueryService.getContentDetail(principalDetails.memberId(), contentId));
     }
 }

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.exception.ContentAlreadyLikedException;
 import swm.betterlife.antifragile.common.exception.ContentNotFoundException;
 import swm.betterlife.antifragile.common.exception.ContentNotLikedException;
-import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.repository.ContentRepository;
@@ -30,13 +29,10 @@ import swm.betterlife.antifragile.domain.member.service.MemberService;
 @RequiredArgsConstructor
 public class ContentService {
 
-    private final MongoTemplate mongoTemplate;
-
-    private final MemberService memberService;
-
-    private final DiaryAnalysisService diaryAnalysisService;
-
     private final ContentRepository contentRepository;
+    private final MongoTemplate mongoTemplate;
+    private final MemberService memberService;
+    private final DiaryAnalysisService diaryAnalysisService;
 
     @Transactional
     public ContentRecommendResponse saveRecommendContents(String memberId, LocalDate date) {
@@ -79,6 +75,32 @@ public class ContentService {
             .map(ContentRecommendResponse.ContentResponse::from).toList());
     }
 
+    @Transactional
+    public void likeContent(String memberId, String contentId) {
+        Query query = new Query(Criteria.where("id").is(contentId));
+        Update update = new Update().addToSet("likeMemberIds", memberId);
+        UpdateResult result = mongoTemplate.updateFirst(query, update, Content.class);
+
+        if (result.getMatchedCount() == 0) {
+            throw new ContentNotFoundException();
+        } else if (result.getModifiedCount() == 0) {
+            throw new ContentAlreadyLikedException();
+        }
+    }
+
+    @Transactional
+    public void unlikeContent(String memberId, String contentId) {
+        Query query = new Query(Criteria.where("id").is(contentId));
+        Update update = new Update().pull("likeMemberIds", memberId);
+        UpdateResult result = mongoTemplate.updateFirst(query, update, Content.class);
+
+        if (result.getMatchedCount() == 0) {
+            throw new ContentNotFoundException();
+        } else if (result.getModifiedCount() == 0) {
+            throw new ContentNotLikedException();
+        }
+    }
+
     private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis) {
         // TODO: gpt api와 youtube api를 통해서 추천 컨텐츠를 가져와야 함
         return MockDataProvider.getContents1();
@@ -112,72 +134,14 @@ public class ContentService {
         return contentRepository.saveAll(toSaveContents);
     }
 
+    private void validateRecommendLimit(String memberId) {
+        memberService.decrementRemainRecommendNumber(memberId);
+    }
+
+
     private List<String> extractRecommendContentUrls(DiaryAnalysis analysis) {
         return analysis.getRecommendContents().stream()
             .map(RecommendContent::getContentUrl)
             .toList();
-    }
-
-    @Transactional
-    public void likeContent(String memberId, String contentId) {
-        Query query = new Query(Criteria.where("id").is(contentId));
-        Update update = new Update().addToSet("likeMemberIds", memberId);
-        UpdateResult result = mongoTemplate.updateFirst(query, update, Content.class);
-
-        if (result.getMatchedCount() == 0) {
-            throw new ContentNotFoundException();
-        } else if (result.getModifiedCount() == 0) {
-            throw new ContentAlreadyLikedException();
-        }
-    }
-
-    @Transactional
-    public void unlikeContent(String memberId, String contentId) {
-        Query query = new Query(Criteria.where("id").is(contentId));
-        Update update = new Update().pull("likeMemberIds", memberId);
-        UpdateResult result = mongoTemplate.updateFirst(query, update, Content.class);
-
-        if (result.getMatchedCount() == 0) {
-            throw new ContentNotFoundException();
-        } else if (result.getModifiedCount() == 0) {
-            throw new ContentNotLikedException();
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public ContentRecommendResponse getRecommendContents(String memberId, LocalDate date) {
-//        DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
-//        if (analysis.getRecommendContents() == null || analysis.getRecommendContents().isEmpty()) {
-//            throw new RecommendedContentNotFoundException();
-//        }
-//
-//        return ContentRecommendResponse.from(
-//            analysis.getRecommendContents().stream()
-//                .sorted(Comparator.comparing(RecommendContent::getRecommendAt).reversed())
-//                .limit(5)
-//                .map(ContentRecommendResponse.ContentResponse::from)
-//                .toList()
-//        );
-        return null;
-    }
-
-    @Transactional(readOnly = true)
-    public ContentDetailResponse getContentDetail(String memberId, String contentId) {
-        Content content = getContentById(contentId);
-        Boolean isLiked = content.getLikeMemberIds().contains(memberId);
-        Boolean isSaved = content.getSaveMembers().stream()
-            .anyMatch(saveMember -> saveMember.getMemberId().equals(memberId));
-
-        return ContentDetailResponse.from(content, isLiked, isSaved);
-    }
-
-
-    public Content getContentById(String contentId) {
-        return contentRepository.findById(contentId).orElseThrow(ContentNotFoundException::new);
-    }
-
-
-    private void validateRecommendLimit(String memberId) {
-        memberService.decrementRemainRecommendNumber(memberId);
     }
 }
