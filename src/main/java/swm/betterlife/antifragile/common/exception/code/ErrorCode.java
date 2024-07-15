@@ -34,6 +34,8 @@ public enum ErrorCode {
 
     // Common
     ILLEGAL_OBJECT_ID("ObjectId가 올바르지 않습니다. 24자이어야 합니다"),
+    DATABASE_UPDATE_FAIL("데이터베이스 업데이트 작업을 실패하였습니다"),
+    DATABASE_UPSERT_FAIL("데이터베이스 업서트 작업을 실패하였습니다"),
 
     // S3
     S3_UPLOAD_FAIL("S3 업로드에 실패하였습니다"),
