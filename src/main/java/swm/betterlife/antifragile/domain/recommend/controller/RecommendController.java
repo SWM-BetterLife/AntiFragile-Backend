@@ -20,7 +20,7 @@ public class RecommendController {
     @GetMapping("/chatGpt")
     public ResponseBody<OpenAiResponse> chatGpt(
         @RequestParam("prompt") String prompt
-    ){
+    ) {
         return ResponseBody.ok(
             recommendService.chatGpt(prompt));
     }
