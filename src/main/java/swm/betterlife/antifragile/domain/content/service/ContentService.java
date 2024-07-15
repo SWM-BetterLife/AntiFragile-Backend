@@ -85,7 +85,7 @@ public class ContentService {
 
         if (result.getModifiedCount() == 0) {
             throw new ContentAlreadyLikedException();
-        }
+        }   //todo: contentId가 존재하지 않을때의 예외처리 필요
     }
 
     @Transactional
@@ -96,7 +96,7 @@ public class ContentService {
 
         if (result.getModifiedCount() == 0) {
             throw new ContentNotLikedException();
-        }
+        }   //todo: contentId가 존재하지 않을때의 예외처리 필요
     }
 
     @Transactional(readOnly = true)
@@ -104,7 +104,7 @@ public class ContentService {
         DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
         if (analysis.getContents() == null || analysis.getContents().isEmpty()) {
             throw new RecommendedContentNotFoundException();
-        }
+        }   //todo: diary Id가 존재하지 않을때의 예외처리 필요
 
         return ContentRecommendResponse.from(
             analysis.getContents().stream()

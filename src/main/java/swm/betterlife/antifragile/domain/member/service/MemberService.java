@@ -1,17 +1,22 @@
 package swm.betterlife.antifragile.domain.member.service;
 
+import static swm.betterlife.antifragile.common.util.S3ImageCategory.PROFILE;
+
+import com.mongodb.client.result.UpdateResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
+import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
-import swm.betterlife.antifragile.domain.member.dto.request.ProfileImgModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
 import swm.betterlife.antifragile.domain.member.entity.Member;
@@ -25,6 +30,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MongoTemplate mongoTemplate;
     private final MemberPointService memberPointService;
+    private final S3ImageComponent s3ImageComponent;
 
     @Transactional(readOnly = true)
     public MemberDetailResponse findMemberByEmail(String id) {
@@ -34,16 +40,32 @@ public class MemberService {
 
     @Transactional
     public void modifyNickname(NicknameModifyRequest request, String id) {
-        Member findMember = memberRepository.getMember(id);
-        findMember.updateNickname(request.nickname());
-        memberRepository.save(findMember);  //todo: MongoTemplate 변경
+        Query query = new Query(Criteria.where("id").is(id));
+        Update update = new Update().set("nickname", request.nickname());
+
+        UpdateResult result = mongoTemplate.upsert(query, update, Member.class);
+
+        if (result.getMatchedCount() == 0) {
+            throw new MemberNotFoundException();
+        }
     }
 
     @Transactional
-    public void modifyProfileImg(ProfileImgModifyRequest request, String id) {
-        Member findMember = memberRepository.getMember(id);
-        findMember.updateProfileImgUrl(request.profileImg()); //todo: S3 이미지 변경 코드 추가
-        memberRepository.save(findMember);  //todo: MongoTemplate 변경
+    public void modifyProfileImg(MultipartFile profileImgFile, String id) {
+
+        Member member = memberRepository.getMember(id);
+        String newProfileImgUrl = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
+        s3ImageComponent.deleteImage(member.getProfileImgUrl());
+        // todo: S3 이미지 업로드 트랜잭션 관리 멘토님께 물어보기
+
+        Query query = new Query(Criteria.where("id").is(id));
+        Update update = new Update().set("profileImgUrl", newProfileImgUrl);
+
+        UpdateResult result = mongoTemplate.upsert(query, update, Member.class);
+
+        if (result.getMatchedCount() == 0) {
+            throw new MemberNotFoundException();
+        }
     }
 
     public void decrementRemainRecommendNumber(String memberId) {
