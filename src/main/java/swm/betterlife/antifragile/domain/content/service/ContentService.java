@@ -124,7 +124,9 @@ public class ContentService {
         Update update = new Update().addToSet("likeMemberIds", memberId);
         UpdateResult result = mongoTemplate.updateFirst(query, update, Content.class);
 
-        if (result.getModifiedCount() == 0) {
+        if (result.getMatchedCount() == 0) {
+            throw new ContentNotFoundException();
+        } else if (result.getModifiedCount() == 0) {
             throw new ContentAlreadyLikedException();
         }
     }
@@ -135,7 +137,9 @@ public class ContentService {
         Update update = new Update().pull("likeMemberIds", memberId);
         UpdateResult result = mongoTemplate.updateFirst(query, update, Content.class);
 
-        if (result.getModifiedCount() == 0) {
+        if (result.getMatchedCount() == 0) {
+            throw new ContentNotFoundException();
+        } else if (result.getModifiedCount() == 0) {
             throw new ContentNotLikedException();
         }
     }
