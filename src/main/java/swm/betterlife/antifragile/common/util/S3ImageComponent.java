@@ -25,7 +25,7 @@ public class S3ImageComponent {
     @Value("${aws.s3.bucketName}")
     private String bucket;
 
-    public String uploadImage(String category, MultipartFile multipartFile) {
+    public String uploadImage(S3ImageCategory category, MultipartFile multipartFile) {
         String fileName = createFileName(
             category,
             Objects.requireNonNull(multipartFile.getOriginalFilename())
@@ -48,7 +48,7 @@ public class S3ImageComponent {
         return amazonS3.getUrl(bucket, fileName).toString();
     }
 
-    private String createFileName(String category, String originalFileName) {
+    private String createFileName(S3ImageCategory category, String originalFileName) {
         int fileExtensionIndex = originalFileName.lastIndexOf(".");
         String fileExtension = originalFileName.substring(fileExtensionIndex);
         String fileName = originalFileName.substring(0, fileExtensionIndex);
