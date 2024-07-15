@@ -16,9 +16,9 @@ public class ContentRecord {
 
     private LocalDateTime viewedAt;
 
-    public static ContentRecord of(Content content) {
+    public static ContentRecord of(String contentId) {
         return ContentRecord.builder()
-            .contentId(content.getId())
+            .contentId(contentId)
             .viewedAt(LocalDateTime.now())
             .build();
     }
