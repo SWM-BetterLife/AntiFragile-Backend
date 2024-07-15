@@ -2,9 +2,13 @@ package swm.betterlife.antifragile.domain.content.service;
 
 import com.mongodb.client.result.UpdateResult;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -39,16 +43,40 @@ public class ContentService {
 
     @Transactional
     public ContentRecommendResponse saveRecommendContents(String memberId, LocalDate date) {
-        DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
+        DiaryAnalysis analysis = diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
         List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis);
 
-        List<Content> savedContents = contentRepository.saveAll(
-            recommendedContents.stream().map(this::saveOrUpdateContent).toList());
+        List<Content> savedContents = saveOrUpdateContents(recommendedContents);
 
         diaryAnalysisService.saveRecommendContents(analysis, savedContents);
 
         return ContentRecommendResponse.from(savedContents.stream()
-            .map(ContentRecommendResponse.ContentResponse::from).toList());
+            .map(ContentRecommendResponse.ContentResponse::from)
+            .toList());
+    }
+
+    private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis) {
+        // TODO: gpt api와 youtube api를 통해서 추천 컨텐츠를 가져와야 함
+        return MockDataProvider.getContents1();
+    }
+
+    private List<Content> saveOrUpdateContents(List<Content> recommendedContents) {
+        List<String> urls = recommendedContents.stream().map(Content::getUrl).toList();
+        Map<String, Content> existingContents = contentRepository.findByUrlIn(urls).stream()
+            .collect(Collectors.toMap(Content::getUrl, Function.identity()));
+
+        List<Content> toSaveContents = new ArrayList<>();
+        for (Content content : recommendedContents) {
+            Content existingContent = existingContents.get(content.getUrl());
+            if (existingContent != null) {
+                existingContent.updateContent(content);
+                toSaveContents.add(existingContent);
+            } else {
+                toSaveContents.add(content);
+            }
+        }
+
+        return contentRepository.saveAll(toSaveContents);
     }
 
     @Transactional
@@ -59,7 +87,7 @@ public class ContentService {
     ) {
         validateRecommendLimit(memberId);
 
-        DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
+        DiaryAnalysis analysis = diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
         List<String> recommendedUrls = extractRecommendedUrls(analysis);
 
         List<Content> recommendedContents = getRecommendContentsByAnalysis(
@@ -68,13 +96,13 @@ public class ContentService {
             feedback
         );
 
-        List<Content> savedContents = contentRepository.saveAll(
-            recommendedContents.stream().map(this::saveOrUpdateContent).toList());
-
-        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
-
-        return ContentRecommendResponse.from(savedContents.stream()
-            .map(ContentRecommendResponse.ContentResponse::from).toList());
+//        List<Content> savedContents = contentRepository.saveAll(
+//            recommendedContents.stream().map(this::saveOrUpdateContents).toList());
+//
+//        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
+//
+//        return ContentRecommendResponse.from(savedContents.stream()
+//            .map(ContentRecommendResponse.ContentResponse::from).toList());
     }
 
     @Transactional
@@ -101,18 +129,18 @@ public class ContentService {
 
     @Transactional(readOnly = true)
     public ContentRecommendResponse getRecommendContents(String memberId, LocalDate date) {
-        DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
-        if (analysis.getContents() == null || analysis.getContents().isEmpty()) {
-            throw new RecommendedContentNotFoundException();
-        }
-
-        return ContentRecommendResponse.from(
-            analysis.getContents().stream()
-                .sorted(Comparator.comparing(RecommendContent::getRecommendAt).reversed())
-                .limit(5)
-                .map(ContentRecommendResponse.ContentResponse::from)
-                .toList()
-        );
+//        DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
+//        if (analysis.getRecommendContents() == null || analysis.getRecommendContents().isEmpty()) {
+//            throw new RecommendedContentNotFoundException();
+//        }
+//
+//        return ContentRecommendResponse.from(
+//            analysis.getRecommendContents().stream()
+//                .sorted(Comparator.comparing(RecommendContent::getRecommendAt).reversed())
+//                .limit(5)
+//                .map(ContentRecommendResponse.ContentResponse::from)
+//                .toList()
+//        );
     }
 
     @Transactional(readOnly = true)
@@ -130,14 +158,6 @@ public class ContentService {
         return contentRepository.findById(contentId).orElseThrow(ContentNotFoundException::new);
     }
 
-    private DiaryAnalysis getDiaryAnalysis(String memberId, LocalDate date) {
-        return diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
-    }
-
-    private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis) {
-        // TODO: gpt api와 youtube api를 통해서 추천 컨텐츠를 가져와야 함
-        return MockDataProvider.getContents1();
-    }
 
     private List<Content> getRecommendContentsByAnalysis(
         DiaryAnalysis analysis,
@@ -149,20 +169,9 @@ public class ContentService {
     }
 
     private List<String> extractRecommendedUrls(DiaryAnalysis analysis) {
-        return analysis.getContents().stream()
-            .map(RecommendContent::getUrl)
+        return analysis.getRecommendContents().stream()
+            .map(RecommendContent::getContentId)
             .toList();
-    }
-
-    public Content saveOrUpdateContent(Content recommendedContent) {
-        Optional<Content> existingContentOpt = contentRepository.findByUrl(
-            recommendedContent.getUrl());
-
-        if (existingContentOpt.isPresent()) {
-            return existingContentOpt.get().updateContent(recommendedContent);
-        }
-
-        return recommendedContent;
     }
 
     private void validateRecommendLimit(String memberId) {

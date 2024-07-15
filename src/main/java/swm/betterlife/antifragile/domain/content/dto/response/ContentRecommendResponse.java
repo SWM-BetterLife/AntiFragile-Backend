@@ -35,17 +35,6 @@ public record ContentRecommendResponse(
                 .videoStats(VideoStats.from(content.getYouTubeInfo()))
                 .build();
         }
-
-        public static ContentResponse from(RecommendContent recommendContent) {
-            return ContentResponse.builder()
-                .id(recommendContent.getId())
-                .title(recommendContent.getTitle())
-                .description(recommendContent.getDescription())
-                .channel(Channel.from(recommendContent.getYouTubeInfo()))
-                .thumbnailImg(recommendContent.getThumbnailImgUrl())
-                .videoStats(VideoStats.from(recommendContent.getYouTubeInfo()))
-                .build();
-        }
     }
 
     @Builder

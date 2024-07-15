@@ -44,8 +44,8 @@ public class DiaryAnalysisService {
     }
 
     @Transactional
-    public void saveRecommendContents(DiaryAnalysis diaryAnalysis, List<Content> contents) {
-        List<RecommendContent> recommendContents = contents.stream()
+    public void saveRecommendContents(DiaryAnalysis diaryAnalysis, List<Content> savedContents) {
+        List<RecommendContent> recommendContents = savedContents.stream()
             .map(RecommendContent::of).toList();
 
         Query query = new Query(Criteria.where("id").is(diaryAnalysis.getId()));
@@ -60,8 +60,8 @@ public class DiaryAnalysisService {
     ) {
         for (RecommendContent recommendContent : recommendContents) {
             Update pullUpdate = new Update().pull(
-                "contents",
-                new Query(Criteria.where("url").is(recommendContent.getUrl())));
+                "recommendContents",
+                new Query(Criteria.where("contentId").is(recommendContent.getContentId())));
             mongoTemplate.updateFirst(query, pullUpdate, DiaryAnalysis.class);
         }
     }

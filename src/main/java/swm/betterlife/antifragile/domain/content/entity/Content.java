@@ -41,11 +41,10 @@ public class Content extends BaseTimeEntity {
 
     private String url;
 
-    public Content updateContent(Content content) {
+    public void updateContent(Content content) {
         this.title = content.getTitle();
         this.description = content.getDescription();
         this.thumbnailImgUrl = content.getThumbnailImgUrl();
         this.youTubeInfo = content.getYouTubeInfo();
-        return this;
     }
 }
