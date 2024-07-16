@@ -30,12 +30,15 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MongoTemplate mongoTemplate;
     private final MemberPointService memberPointService;
+    private final MemberDiaryService memberDiaryService;
     private final S3ImageComponent s3ImageComponent;
 
     @Transactional(readOnly = true)
     public MemberDetailResponse findMemberByEmail(String id) {
         Integer point = memberPointService.getPointByMemberId(id);
-        return MemberDetailResponse.from(memberRepository.getMember(id), point);
+        Integer diaryTotalNum = memberDiaryService.getDiaryTotalNumByMemberId(id);
+        return MemberDetailResponse
+            .from(memberRepository.getMember(id), point, diaryTotalNum);
     }
 
     @Transactional

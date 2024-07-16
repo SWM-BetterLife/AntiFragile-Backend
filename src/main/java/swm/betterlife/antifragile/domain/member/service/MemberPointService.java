@@ -13,7 +13,7 @@ public class MemberPointService {
 
     @Transactional(readOnly = true)
     public Integer getPointByMemberId(String memberId) {
-        return memberPointRepository.getMemberPoint(memberId).getPoint();
+        return memberPointRepository.getMemberPoint("memberId").getPoint();
     }
 
 }
