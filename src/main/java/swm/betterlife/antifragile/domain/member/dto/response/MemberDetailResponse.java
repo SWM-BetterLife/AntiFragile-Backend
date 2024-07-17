@@ -11,15 +11,19 @@ public record MemberDetailResponse(
         String nickname,
         String profileImgUrl,
         Integer point,
-        LoginType loginType //todo: 연속 작성일 수, 총 작성일 수 추가
+        Integer diaryTotalNum,
+        LoginType loginType //todo: 연속 작성일 수 추가
 ) {
-    public static MemberDetailResponse from(Member member, Integer point) {
+    public static MemberDetailResponse from(
+        Member member, Integer point, Integer diaryTotalNum
+    ) {
         return MemberDetailResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
             .nickname(member.getNickname())
             .profileImgUrl(member.getProfileImgUrl())
             .point(point)
+            .diaryTotalNum(diaryTotalNum)
             .loginType(member.getLoginType())
             .build();
     }
