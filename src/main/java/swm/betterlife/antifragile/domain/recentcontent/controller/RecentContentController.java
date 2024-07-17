@@ -24,7 +24,7 @@ public class RecentContentController {
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable String contentId
     ) {
-        recentContentService.addRecentContent(principalDetails.memberId(), contentId);
+        recentContentService.addOrUpdateRecentContent(principalDetails.memberId(), contentId);
         return ResponseBody.ok();
     }
 }

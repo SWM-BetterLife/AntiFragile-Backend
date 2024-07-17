@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.Builder;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.entity.YouTubeInfo;
-import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 
 @Builder
 public record ContentRecommendResponse(
@@ -33,17 +32,6 @@ public record ContentRecommendResponse(
                 .channel(Channel.from(content.getYouTubeInfo()))
                 .thumbnailImg(content.getThumbnailImgUrl())
                 .videoStats(VideoStats.from(content.getYouTubeInfo()))
-                .build();
-        }
-
-        public static ContentResponse from(RecommendContent recommendContent) {
-            return ContentResponse.builder()
-                .id(recommendContent.getId())
-                .title(recommendContent.getTitle())
-                .description(recommendContent.getDescription())
-                .channel(Channel.from(recommendContent.getYouTubeInfo()))
-                .thumbnailImg(recommendContent.getThumbnailImgUrl())
-                .videoStats(VideoStats.from(recommendContent.getYouTubeInfo()))
                 .build();
         }
     }
