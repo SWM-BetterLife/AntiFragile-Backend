@@ -22,7 +22,7 @@ public class RecommendService {
 
     public OpenAiResponse chatGpt(String prompt) {
         OpenAiRequest request = new OpenAiRequest(
-            model, prompt, 1, 256, 1, 2, 2);
+            model, prompt, 1);
         return restTemplate.postForObject(
             apiUrl, request, OpenAiResponse.class);
     }

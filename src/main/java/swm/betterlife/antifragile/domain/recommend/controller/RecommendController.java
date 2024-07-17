@@ -17,7 +17,7 @@ import swm.betterlife.antifragile.domain.recommend.service.RecommendService;
 public class RecommendController {
     private final RecommendService recommendService;
 
-    @GetMapping("/chatGpt")
+    @GetMapping("/chat-gpt")
     public ResponseBody<OpenAiResponse> chatGpt(
         @RequestParam("prompt") String prompt
     ) {
