@@ -72,10 +72,3 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean build
-
-      # test.yml 확인
-      - name: Configure test.yml
-        run: |
-          git submodule status
-          ls ./src/main/resources
-          cat ./src/main/resources/test.yml
