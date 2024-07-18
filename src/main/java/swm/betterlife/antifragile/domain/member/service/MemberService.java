@@ -59,7 +59,7 @@ public class MemberService {
         Member member = memberRepository.getMember(id);
         String newProfileImgUrl = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
         String originProfileImgUrl = member.getProfileImgUrl();
-        if(originProfileImgUrl != null) {
+        if (originProfileImgUrl != null) {
             s3ImageComponent.deleteImage(originProfileImgUrl);
             // todo: S3 이미지 업로드 트랜잭션 관리 멘토님께 물어보기
         }
