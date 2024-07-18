@@ -58,8 +58,11 @@ public class MemberService {
 
         Member member = memberRepository.getMember(id);
         String newProfileImgUrl = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
-        s3ImageComponent.deleteImage(member.getProfileImgUrl());
-        // todo: S3 이미지 업로드 트랜잭션 관리 멘토님께 물어보기
+        String originProfileImgUrl = member.getProfileImgUrl();
+        if(originProfileImgUrl != null) {
+            s3ImageComponent.deleteImage(originProfileImgUrl);
+            // todo: S3 이미지 업로드 트랜잭션 관리 멘토님께 물어보기
+        }
 
         Query query = new Query(Criteria.where("id").is(id));
         Update update = new Update().set("profileImgUrl", newProfileImgUrl);
