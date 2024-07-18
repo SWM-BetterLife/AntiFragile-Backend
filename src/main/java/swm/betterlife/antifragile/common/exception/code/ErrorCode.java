@@ -25,6 +25,9 @@ public enum ErrorCode {
     CONTENT_ALREADY_LIKED("이미 좋아요를 누른 콘텐츠입니다"),
     CONTENT_NOT_LIKED("좋아요를 누르지 않은 콘텐츠입니다"),
 
+    // ContentInfo
+    CONTENT_INFO_NOT_FOUND("콘텐츠 정보를 찾을 수 없습니다"),
+
     // EmoticonTheme
     EMOTICON_THEME_NOT_FOUND("이모티콘 테마를 찾을 수 없습니다"),
     EMOTICON_THEME_ALREADY_PURCHASED("해당 이모티콘을 이미 구매하였습니다"),
