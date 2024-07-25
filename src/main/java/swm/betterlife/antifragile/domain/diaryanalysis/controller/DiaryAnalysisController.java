@@ -1,11 +1,13 @@
 package swm.betterlife.antifragile.domain.diaryanalysis.controller;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +16,8 @@ import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.ModifyDiaryAnalysisRequest;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.SaveDiaryAnalysisRequest;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.DailyEmotionsResponse;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.MonthEmoticonsResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisService;
 
 @Slf4j
@@ -35,15 +39,37 @@ public class DiaryAnalysisController {
         return ResponseBody.ok();
     }
 
-    @PutMapping
+    @PatchMapping
     public ResponseBody<Void> modifyDiaryAnalysis(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestBody ModifyDiaryAnalysisRequest request,
-        @RequestParam LocalDate date
+        @RequestParam("date") LocalDate date
     ) {
         diaryAnalysisService.modifyDiaryAnalysis(
             principalDetails.memberId(), request, date
         );
         return ResponseBody.ok();
+    }
+
+    @GetMapping("/emotions")
+    public ResponseBody<DailyEmotionsResponse> getDateEmotions(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestParam("date") LocalDate date
+    ) {
+        return ResponseBody.ok(
+            diaryAnalysisService.getDateEmotions(
+                principalDetails.memberId(), date)
+        );
+    }
+
+    @GetMapping("/emoticons") // 월간 감정일기 이모티콘 조회
+    public ResponseBody<MonthEmoticonsResponse> getMonthEmoticons(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestParam("year-month") YearMonth yearMonth
+    ) {
+        return ResponseBody.ok(
+            diaryAnalysisService.getMonthEmoticons(
+                principalDetails.memberId(), yearMonth)
+        );
     }
 }

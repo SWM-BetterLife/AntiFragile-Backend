@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import swm.betterlife.antifragile.domain.emoticontheme.entity.Emotion;
 
 @Getter
 @NoArgsConstructor
@@ -13,5 +14,5 @@ public class SelectedEmoticon {
 
     private String emoticonThemeId;
 
-    private String emotion;
+    private Emotion emotion;
 }
