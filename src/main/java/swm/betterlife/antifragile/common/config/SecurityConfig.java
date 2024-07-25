@@ -36,6 +36,7 @@ public class SecurityConfig {
 
     private static final String[] ALLOW_ORIGINS = {
         "http://localhost:8080",
+        "https://dev.better-life-api.com"
     };
 
     @Bean

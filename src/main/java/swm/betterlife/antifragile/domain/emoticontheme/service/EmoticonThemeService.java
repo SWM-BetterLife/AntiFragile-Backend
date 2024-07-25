@@ -83,5 +83,4 @@ public class EmoticonThemeService {
             throw new EmoticonThemeNotFoundException();
         }
     }
-
 }

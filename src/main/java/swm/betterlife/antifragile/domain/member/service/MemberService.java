@@ -16,8 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
-import swm.betterlife.antifragile.domain.member.dto.request.NicknameModifyRequest;
+import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
@@ -42,28 +43,37 @@ public class MemberService {
     }
 
     @Transactional
-    public void modifyNickname(NicknameModifyRequest request, String id) {
-        Query query = new Query(Criteria.where("id").is(id));
-        Update update = new Update().set("nickname", request.nickname());
+    public MemberProfileModifyResponse modifyProfile(
+        String id, MemberProfileModifyRequest request, MultipartFile profileImgFile
+    ) {
+        Query query = Query.query(Criteria.where("id").is(id));
+        Update update = new Update()
+            .set("nickname", request.nickname())
+            .set("age", request.age())
+            .set("gender", request.gender())
+            .set("job", request.job());
 
         UpdateResult result = mongoTemplate.upsert(query, update, Member.class);
 
         if (result.getMatchedCount() == 0) {
             throw new MemberNotFoundException();
         }
+
+        String profileImgUrl = modifyProfileImg(profileImgFile, id);
+        return new MemberProfileModifyResponse(
+            request.nickname(), request.age(),
+            request.gender(), request.job(), profileImgUrl
+        );
     }
 
-    @Transactional
-    public void modifyProfileImg(MultipartFile profileImgFile, String id) {
-
+    private String modifyProfileImg(MultipartFile profileImgFile, String id) {
         Member member = memberRepository.getMember(id);
-        String newProfileImgUrl = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
         String originProfileImgUrl = member.getProfileImgUrl();
         if (originProfileImgUrl != null) {
             s3ImageComponent.deleteImage(originProfileImgUrl);
-            // todo: S3 이미지 업로드 트랜잭션 관리 멘토님께 물어보기
         }
 
+        String newProfileImgUrl = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
         Query query = new Query(Criteria.where("id").is(id));
         Update update = new Update().set("profileImgUrl", newProfileImgUrl);
 
@@ -72,6 +82,7 @@ public class MemberService {
         if (result.getMatchedCount() == 0) {
             throw new MemberNotFoundException();
         }
+        return newProfileImgUrl;
     }
 
     public void decrementRemainRecommendNumber(String memberId) {
@@ -84,6 +95,7 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    @Transactional(readOnly = true)
     public MemberRemainNumberResponse getRemainRecommendNumber(String memberId) {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(MemberNotFoundException::new);
@@ -97,4 +109,5 @@ public class MemberService {
 
         mongoTemplate.updateMulti(query, update, Member.class);
     }
+
 }
