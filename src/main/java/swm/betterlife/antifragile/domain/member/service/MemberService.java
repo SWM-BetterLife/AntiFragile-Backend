@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
+import swm.betterlife.antifragile.domain.member.controller.MemberNicknameDuplResponse;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
@@ -83,6 +84,11 @@ public class MemberService {
             throw new MemberNotFoundException();
         }
         return newProfileImgUrl;
+    }
+
+    @Transactional(readOnly = true)
+    public MemberNicknameDuplResponse getNicknameDuplication(String nickname) {
+        return new MemberNicknameDuplResponse(memberRepository.existsByNickname(nickname));
     }
 
     public void decrementRemainRecommendNumber(String memberId) {

@@ -20,4 +20,6 @@ public interface MemberRepository extends MongoRepository<Member, String> {
     Optional<Member> findByEmailAndLoginType(String email, LoginType loginType);
 
     boolean existsByEmailAndLoginType(String email, LoginType loginType);
+
+    boolean existsByNickname(String nickname);
 }
