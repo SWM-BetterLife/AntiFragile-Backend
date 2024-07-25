@@ -50,7 +50,7 @@ public class AuthController {
         @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         authService.delete(principalDetails.memberId());
-       return ResponseBody.ok();
+        return ResponseBody.ok();
     }
 
 }
