@@ -51,7 +51,7 @@ public class MemberController {
         return ResponseBody.ok();
     }
 
-    @GetMapping("/re-recommend-number")
+    @GetMapping("/remain-recommend-number")
     public ResponseBody<MemberRemainNumberResponse> getRemainRecommendNumber(
         @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
