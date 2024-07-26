@@ -28,6 +28,13 @@ public class Member extends BaseTimeEntity {
 
     private String nickname;
 
+    private Integer age;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    private String job;
+
     private String profileImgUrl;
 
     private List<String> emoticonThemeIds = new ArrayList<>();
@@ -40,14 +47,6 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private RoleType roleType;
-
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public void updateProfileImgUrl(String profileImgUrl) {
-        this.profileImgUrl = profileImgUrl;
-    }
 
     public void decrementRemainRecommendNumber() {
         this.remainRecommendNumber--;
