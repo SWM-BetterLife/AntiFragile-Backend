@@ -49,7 +49,7 @@ public class DiaryAnalysisService {
         return diaryAnalysis;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void saveRecommendContents(DiaryAnalysis diaryAnalysis, List<Content> savedContents) {
         List<RecommendContent> recommendContents = savedContents.stream()
             .map(RecommendContent::of).toList();
