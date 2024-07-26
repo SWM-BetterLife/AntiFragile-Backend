@@ -89,6 +89,7 @@ public class EmoticonThemeService {
             throw new EmoticonThemeNotFoundException();
         }
     }
+
     @Transactional(readOnly = true)
     public String getEmoticonImgUrl(SelectedEmoticon selectedEmoticon) {
         EmoticonTheme emoticonTheme = emoticonThemeRepository.getEmoticonTheme(
