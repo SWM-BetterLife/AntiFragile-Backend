@@ -37,7 +37,7 @@ public class MemberController {
     @PostMapping("/profile")
     public ResponseBody<MemberProfileModifyResponse> modifyProfile(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestPart MultipartFile profileImgFile,
+        @RequestPart(required = false) MultipartFile profileImgFile,
         @RequestPart MemberProfileModifyRequest profileModifyRequest
     ) {
         return ResponseBody.ok(

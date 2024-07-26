@@ -60,7 +60,11 @@ public class MemberService {
             throw new MemberNotFoundException();
         }
 
-        String profileImgUrl = modifyProfileImg(profileImgFile, id);
+        String profileImgUrl = null;
+        if (profileImgFile != null) {
+            profileImgUrl = modifyProfileImg(profileImgFile, id);
+        }
+
         return new MemberProfileModifyResponse(
             request.nickname(), request.age(),
             request.gender(), request.job(), profileImgUrl
