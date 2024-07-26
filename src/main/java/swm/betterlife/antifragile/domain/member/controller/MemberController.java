@@ -54,7 +54,7 @@ public class MemberController {
         return ResponseBody.ok(memberService.getNicknameDuplication(nickname));
     }
 
-    @GetMapping("/re-recommend-number")
+    @GetMapping("/remain-recommend-number")
     public ResponseBody<MemberRemainNumberResponse> getRemainRecommendNumber(
         @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {

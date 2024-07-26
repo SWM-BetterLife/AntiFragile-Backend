@@ -6,6 +6,8 @@ import com.mongodb.client.result.UpdateResult;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,11 +21,14 @@ import swm.betterlife.antifragile.common.exception.EmoticonThemeAlreadyHasMember
 import swm.betterlife.antifragile.common.exception.EmoticonThemeNotFoundException;
 import swm.betterlife.antifragile.common.response.PagingResponse;
 import swm.betterlife.antifragile.common.util.ObjectIdGenerator;
+import swm.betterlife.antifragile.domain.diaryanalysis.entity.SelectedEmoticon;
+import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisService;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnDetailResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeSummaryResponse;
+import swm.betterlife.antifragile.domain.emoticontheme.entity.Emoticon;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.EmoticonTheme;
 import swm.betterlife.antifragile.domain.emoticontheme.repository.EmoticonThemeRepository;
 
@@ -35,6 +40,7 @@ public class EmoticonThemeService {
 
     private final EmoticonThemeRepository emoticonThemeRepository;
     private final MongoTemplate mongoTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(DiaryAnalysisService.class);
 
     @Transactional(readOnly = true)
     public PagingResponse<EmoticonThemeSummaryResponse> getAllEmoticonThemes(Pageable pageable) {
@@ -82,5 +88,17 @@ public class EmoticonThemeService {
         } else if (result.getModifiedCount() == 0) {
             throw new EmoticonThemeNotFoundException();
         }
+    }
+
+    @Transactional(readOnly = true)
+    public String getEmoticonImgUrl(SelectedEmoticon selectedEmoticon) {
+        EmoticonTheme emoticonTheme = emoticonThemeRepository.getEmoticonTheme(
+            selectedEmoticon.getEmoticonThemeId());
+
+        return emoticonTheme.getEmoticons().stream()
+            .filter(emoticon -> emoticon.getEmotion().equals(selectedEmoticon.getEmotion()))
+            .map(Emoticon::getImgUrl)
+            .findFirst()
+            .orElse("");
     }
 }

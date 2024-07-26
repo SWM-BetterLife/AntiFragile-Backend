@@ -1,7 +1,9 @@
 package swm.betterlife.antifragile.domain.diaryanalysis.service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import swm.betterlife.antifragile.common.exception.DiaryAnalysisAlreadyExistedException;
 import swm.betterlife.antifragile.common.exception.DiaryAnalysisNotFoundException;
 import swm.betterlife.antifragile.domain.content.entity.Content;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.ModifyDiaryAnalysisRequest;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.SaveDiaryAnalysisRequest;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisModifyRequest;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisSaveRequest;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonMonthlyResponse;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmotionDailyResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.DiaryAnalysis;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 import swm.betterlife.antifragile.domain.diaryanalysis.repository.DiaryAnalysisRepository;
+import swm.betterlife.antifragile.domain.emoticontheme.service.EmoticonThemeService;
 
 @Slf4j
 @Service
@@ -28,6 +33,7 @@ public class DiaryAnalysisService {
 
     private final DiaryAnalysisRepository diaryAnalysisRepository;
     private final MongoTemplate mongoTemplate;
+    private final EmoticonThemeService emoticonThemeService;
 
     @Transactional(readOnly = true)
     public DiaryAnalysis getDiaryAnalysisByMemberIdAndDate(String memberId, LocalDate date) {
@@ -74,10 +80,12 @@ public class DiaryAnalysisService {
 
     @Transactional
     public void saveDiaryAnalysis(
-        String memberId, SaveDiaryAnalysisRequest request
+        String memberId, DiaryAnalysisSaveRequest request
     ) {
+        LocalDate currentDate = LocalDate.now();
+
         Query query = new Query(Criteria.where("memberId").is(memberId)
-            .and("diaryDate").is(request.diaryDate()));
+            .and("diaryDate").is(currentDate));
 
         DiaryAnalysis existingDiaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
 
@@ -88,7 +96,7 @@ public class DiaryAnalysisService {
         // DiaryAnalysis 객체 생성
         DiaryAnalysis newDiaryAnalysis = DiaryAnalysis.builder()
             .memberId(memberId)
-            .diaryDate(request.diaryDate())
+            .diaryDate(currentDate)
             .emotions(request.emotions())
             .event(request.event())
             .thought(request.thought())
@@ -103,7 +111,7 @@ public class DiaryAnalysisService {
 
     @Transactional
     public void modifyDiaryAnalysis(
-        String memberId, ModifyDiaryAnalysisRequest request, LocalDate date
+        String memberId, DiaryAnalysisModifyRequest request, LocalDate date
     ) {
         // 다이어리 분석을 가져오기 위한 쿼리 생성
         Query query = new Query(Criteria.where("memberId").is(memberId)
@@ -124,4 +132,53 @@ public class DiaryAnalysisService {
             throw new DiaryAnalysisNotFoundException();
         }
     }
+
+    @Transactional(readOnly = true)
+    public EmotionDailyResponse getDateEmotions(
+        String memberId, LocalDate date
+    ) {
+        Query query = new Query(Criteria.where("memberId").is(memberId)
+            .and("diaryDate").is(date));
+
+        DiaryAnalysis diaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
+
+        if (diaryAnalysis != null) {
+            return EmotionDailyResponse.from(diaryAnalysis.getEmotions());
+        } else {
+            throw new DiaryAnalysisNotFoundException();
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public EmoticonMonthlyResponse getMonthEmoticons(
+        String memberId, YearMonth yearMonth
+    ) {
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+
+        Query query = new Query(Criteria.where("memberId").is(memberId)
+            .and("diaryDate").gte(startDate).lte(endDate));
+
+        List<DiaryAnalysis> diaryAnalyses = mongoTemplate.find(query, DiaryAnalysis.class);
+
+        if (diaryAnalyses.isEmpty()) {
+            throw new DiaryAnalysisNotFoundException();
+        }
+
+        List<EmoticonMonthlyResponse.EmoticonEntry> emoticonEntries = diaryAnalyses.stream()
+            .map(this::createEmoticonEntry)
+            .collect(Collectors.toList());
+
+        return EmoticonMonthlyResponse.from(emoticonEntries);
+    }
+
+    public EmoticonMonthlyResponse.EmoticonEntry createEmoticonEntry(DiaryAnalysis diaryAnalysis) {
+        String imgUrl = emoticonThemeService.getEmoticonImgUrl(diaryAnalysis.getEmoticon());
+
+        return EmoticonMonthlyResponse.EmoticonEntry.builder()
+            .imgUrl(imgUrl)
+            .diaryDate(diaryAnalysis.getDiaryDate())
+            .build();
+    }
+
 }
