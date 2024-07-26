@@ -35,7 +35,7 @@ public class SecurityConfig {
     };
 
     private static final String[] ALLOW_ORIGINS = {
-        "http://localhost:8080",
+        "http://localhost:8080"
     };
 
     @Bean

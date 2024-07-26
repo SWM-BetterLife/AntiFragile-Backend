@@ -2,15 +2,22 @@ package swm.betterlife.antifragile.domain.auth.service;
 
 import static swm.betterlife.antifragile.domain.member.entity.RoleType.ROLE_USER;
 
+import com.mongodb.client.result.UpdateResult;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLogoutRequest;
@@ -40,6 +47,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final MongoTemplate mongoTemplate;
 
     @Transactional
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
@@ -82,6 +90,19 @@ public class AuthService {
     @Transactional
     public void logout(AuthLogoutRequest authLogoutRequest) {
         tokenService.deleteToken(authLogoutRequest.refreshToken());
+    }
+
+    @Transactional
+    public void delete(String memberId) {
+        Query query = Query.query(Criteria.where("id").is(memberId));
+        Update update = new Update()
+            .set("deletedAt", LocalDateTime.now());
+
+        UpdateResult result = mongoTemplate.upsert(query, update, Member.class);
+
+        if (result.getMatchedCount() == 0) {
+            throw new MemberNotFoundException();
+        }
     }
 
     private Authentication getAuthenticate(String username, String password) {
