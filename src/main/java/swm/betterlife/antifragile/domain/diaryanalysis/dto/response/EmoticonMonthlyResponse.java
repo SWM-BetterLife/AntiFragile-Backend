@@ -5,11 +5,11 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record MonthEmoticonsResponse(
+public record EmoticonMonthlyResponse(
     List<EmoticonEntry> emoticons
 ) {
-    public static MonthEmoticonsResponse from(List<EmoticonEntry> emoticons) {
-        return MonthEmoticonsResponse.builder()
+    public static EmoticonMonthlyResponse from(List<EmoticonEntry> emoticons) {
+        return EmoticonMonthlyResponse.builder()
             .emoticons(emoticons)
             .build();
     }

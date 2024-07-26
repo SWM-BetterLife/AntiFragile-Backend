@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.ModifyDiaryAnalysisRequest;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.SaveDiaryAnalysisRequest;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.DailyEmotionsResponse;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.MonthEmoticonsResponse;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisModifyRequest;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisSaveRequest;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmotionDailyResponse;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonMonthlyResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisService;
 
 @Slf4j
@@ -31,7 +31,7 @@ public class DiaryAnalysisController {
     @PostMapping
     public ResponseBody<Void> saveDiaryAnalysis(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody SaveDiaryAnalysisRequest request
+        @RequestBody DiaryAnalysisSaveRequest request
     ) {
         diaryAnalysisService.saveDiaryAnalysis(
             principalDetails.memberId(), request
@@ -42,7 +42,7 @@ public class DiaryAnalysisController {
     @PatchMapping
     public ResponseBody<Void> modifyDiaryAnalysis(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
-        @RequestBody ModifyDiaryAnalysisRequest request,
+        @RequestBody DiaryAnalysisModifyRequest request,
         @RequestParam("date") LocalDate date
     ) {
         diaryAnalysisService.modifyDiaryAnalysis(
@@ -52,7 +52,7 @@ public class DiaryAnalysisController {
     }
 
     @GetMapping("/emotions")
-    public ResponseBody<DailyEmotionsResponse> getDateEmotions(
+    public ResponseBody<EmotionDailyResponse> getDateEmotions(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam("date") LocalDate date
     ) {
@@ -63,7 +63,7 @@ public class DiaryAnalysisController {
     }
 
     @GetMapping("/emoticons") // 월간 감정일기 이모티콘 조회
-    public ResponseBody<MonthEmoticonsResponse> getMonthEmoticons(
+    public ResponseBody<EmoticonMonthlyResponse> getMonthEmoticons(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam("year-month") YearMonth yearMonth
     ) {

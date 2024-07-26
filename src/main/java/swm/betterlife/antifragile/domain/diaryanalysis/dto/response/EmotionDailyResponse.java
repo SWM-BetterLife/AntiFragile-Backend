@@ -4,11 +4,11 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record DailyEmotionsResponse(
+public record EmotionDailyResponse(
     List<String> emotions
 ) {
-    public static DailyEmotionsResponse from(List<String> emotions) {
-        return DailyEmotionsResponse.builder()
+    public static EmotionDailyResponse from(List<String> emotions) {
+        return EmotionDailyResponse.builder()
             .emotions(emotions)
             .build();
     }
