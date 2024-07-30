@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.Emoticon;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.EmoticonTheme;
+import swm.betterlife.antifragile.domain.emoticontheme.entity.EmoticonThemeName;
 
 @Slf4j
 @Builder
 public record EmoticonThemeOwnDetailResponse(
     String id,
-    String name,
+    EmoticonThemeName name,
     List<EmoticonInfoResponse> emoticons
 ) {
     public static EmoticonThemeOwnDetailResponse from(EmoticonTheme emoticonTheme) {
