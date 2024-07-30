@@ -62,7 +62,7 @@ public class EmoticonThemeService {
     }
 
     @Transactional(readOnly = true)
-    public EmoticonEntireResponse getAllEmoticonsByEmoticonThemeName(String emoticonThemeName) {
+    public EmoticonEntireResponse getAllEmoticonsByEmoticonThemeId(String emoticonThemeName) {
         EmoticonTheme emoticonTheme
             = emoticonThemeRepository.getEmoticonTheme(emoticonThemeName);
         List<EmoticonInfoResponse> emoticonDtoList

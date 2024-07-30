@@ -42,12 +42,12 @@ public class EmoticonThemeController {
         return ResponseBody.ok(emoticonThemeService.getAllOwnEmoticonThemes(memberId));
     }
 
-    @GetMapping("/{emoticonThemeName}/emoticons")
+    @GetMapping("/{emoticonThemeId}/emoticons")
     public ResponseBody<EmoticonEntireResponse> getEntireEmoticonsFromEmoticonTheme(
-        @PathVariable String emoticonThemeName
+        @PathVariable String emoticonThemeId
     ) {
         return ResponseBody.ok(
-            emoticonThemeService.getAllEmoticonsByEmoticonThemeName(emoticonThemeName)
+            emoticonThemeService.getAllEmoticonsByEmoticonThemeId(emoticonThemeId)
         );
     }
 
