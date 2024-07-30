@@ -43,10 +43,12 @@ public class EmoticonThemeController {
     }
 
     @GetMapping("/{emoticonThemeId}/emoticons")
-    public ResponseBody<EmoticonEntireResponse> getEntireEmoticons(
+    public ResponseBody<EmoticonEntireResponse> getEntireEmoticonsFromEmoticonTheme(
         @PathVariable String emoticonThemeId
     ) {
-        return ResponseBody.ok(emoticonThemeService.getAllEmoticons(emoticonThemeId));
+        return ResponseBody.ok(
+            emoticonThemeService.getAllEmoticonsByEmoticonThemeId(emoticonThemeId)
+        );
     }
 
     @PostMapping("/{emoticonThemeId}/purchase")

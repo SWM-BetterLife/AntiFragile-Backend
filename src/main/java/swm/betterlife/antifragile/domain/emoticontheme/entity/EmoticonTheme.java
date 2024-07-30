@@ -1,5 +1,7 @@
 package swm.betterlife.antifragile.domain.emoticontheme.entity;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -20,7 +22,8 @@ public class EmoticonTheme extends BaseTimeEntity {
     @Id
     private String id;
 
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private EmoticonThemeName name;
 
     private Integer price;
 
