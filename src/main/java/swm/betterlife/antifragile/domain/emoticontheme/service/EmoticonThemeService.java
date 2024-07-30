@@ -62,9 +62,9 @@ public class EmoticonThemeService {
     }
 
     @Transactional(readOnly = true)
-    public EmoticonEntireResponse getAllEmoticonsByEmoticonThemeId(String emoticonThemeName) {
+    public EmoticonEntireResponse getAllEmoticonsByEmoticonThemeId(String emoticonThemeId) {
         EmoticonTheme emoticonTheme
-            = emoticonThemeRepository.getEmoticonTheme(emoticonThemeName);
+            = emoticonThemeRepository.getEmoticonTheme(emoticonThemeId);
         List<EmoticonInfoResponse> emoticonDtoList
             = emoticonTheme.getEmoticons().stream().map(EmoticonInfoResponse::from).toList();
         return new EmoticonEntireResponse(emoticonDtoList);
