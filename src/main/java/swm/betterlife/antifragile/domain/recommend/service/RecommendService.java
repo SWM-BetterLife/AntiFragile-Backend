@@ -55,10 +55,9 @@ public class RecommendService {
         YouTube youtube = new YouTube.Builder(
             new com.google.api.client.http.javanet.NetHttpTransport(),
             jsonFactory,
-            request -> {}
-        )
-        .setApplicationName("Antifragile")
-        .build();
+            request -> {})
+            .setApplicationName("Antifragile")
+            .build();
 
         // YouTube Search API를 사용하여 동영상 검색을 위한 요청 객체 생성
         YouTube.Search.List search = youtube.search()
