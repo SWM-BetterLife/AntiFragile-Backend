@@ -1,7 +1,6 @@
 package swm.betterlife.antifragile.domain.recommend.controller;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +30,7 @@ public class RecommendController {
     @GetMapping("/recommend")
     public ResponseBody<YouTubeResponse> youTubeRecommend(
         @RequestParam("prompt") String prompt
-    ) throws IOException, GeneralSecurityException {
+    ) throws IOException {
         return ResponseBody.ok(
             recommendService.youTubeRecommend(prompt));
     }

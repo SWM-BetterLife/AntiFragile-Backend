@@ -9,7 +9,6 @@ import com.google.api.services.youtube.model.ChannelStatistics;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +45,7 @@ public class RecommendService {
             apiUrl, request, OpenAiResponse.class);
     }
 
-    public YouTubeResponse youTubeRecommend(String prompt) throws IOException, GeneralSecurityException {
+    public YouTubeResponse youTubeRecommend(String prompt) throws IOException {
         OpenAiResponse openAiResponse = chatGpt(prompt);
         String recommendedKeyword = openAiResponse.choices().get(0).message().content();
         logger.info("Recommended Keyword: {}", recommendedKeyword);
@@ -58,7 +57,8 @@ public class RecommendService {
             jsonFactory,
             request -> {}
         )
-        .setApplicationName("Antifragile").build();
+        .setApplicationName("Antifragile")
+        .build();
 
         // YouTube Search API를 사용하여 동영상 검색을 위한 요청 객체 생성
         YouTube.Search.List search = youtube.search()
@@ -89,7 +89,8 @@ public class RecommendService {
                 // 동영상의 제목, 설명, 썸네일 이미지 URL 가져오기
                 String videoTitle = searchResult.getSnippet().getTitle();
                 String videoDescription = searchResult.getSnippet().getDescription();
-                String thumbnailUrl = searchResult.getSnippet().getThumbnails().getDefault().getUrl();
+                String thumbnailUrl = searchResult.getSnippet()
+                    .getThumbnails().getDefault().getUrl();
                 String channelId = searchResult.getSnippet().getChannelId();
                 String channelTitle = searchResult.getSnippet().getChannelTitle();
 
