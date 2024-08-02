@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -105,8 +106,10 @@ public class RecommendService {
 
                 // 채널의 구독자 수 및 채널 이미지 URL 가져오기
                 ChannelStatistics statistics = channel.getStatistics();
-                Long subscriberCount = (statistics != null) ?
-                    statistics.getSubscriberCount().longValue() : null;
+                Long subscriberCount = Optional.ofNullable(statistics)
+                    .map(ChannelStatistics::getSubscriberCount)
+                    .map(Number::longValue)
+                    .orElse(null);
                 String channelImageUrl = channel
                     .getSnippet().getThumbnails().getDefault().getUrl();
 
