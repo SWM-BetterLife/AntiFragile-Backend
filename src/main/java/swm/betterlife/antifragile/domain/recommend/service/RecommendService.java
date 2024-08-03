@@ -83,7 +83,9 @@ public class RecommendService {
                     }
 
                     String videoId = searchResult.getId().getVideoId();
-                    if (videoId == null) continue;
+                    if (videoId == null) {
+                        continue;
+                    }
 
                     String videoTitle = searchResult.getSnippet().getTitle();
                     String videoDescription = searchResult.getSnippet().getDescription();
