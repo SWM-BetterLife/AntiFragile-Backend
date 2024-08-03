@@ -125,7 +125,9 @@ public class RecommendService {
                 }
             }
             nextPageToken = searchResponse.getNextPageToken();
-            if (nextPageToken == null) break;
+            if (nextPageToken == null) {
+                break;
+            }
         }
         return new YouTubeResponse(youTubeApiInfos);
     }
