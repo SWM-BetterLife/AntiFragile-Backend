@@ -59,7 +59,6 @@ public class RecommendService {
             .setApplicationName("Antifragile")
             .build();
 
-        List<YouTubeResponse.YouTubeApiInfo> youTubeApiInfos = new ArrayList<>();
         // YouTube Search API를 사용하여 동영상 검색을 위한 요청 객체 생성
         YouTube.Search.List search = youtube.search()
             .list(Collections.singletonList("id,snippet"));
@@ -69,6 +68,8 @@ public class RecommendService {
         search.setType(Collections.singletonList("video"));
         search.setMaxResults(50L);
 
+        List<YouTubeResponse.YouTubeApiInfo> youTubeApiInfos = new ArrayList<>();
+
         String nextPageToken = null;
         while (youTubeApiInfos.size() < 5) {
             search.setPageToken(nextPageToken);
@@ -77,7 +78,9 @@ public class RecommendService {
 
             if (searchResultList != null && !searchResultList.isEmpty()) {
                 for (SearchResult searchResult : searchResultList) {
-                    if (youTubeApiInfos.size() >= 5) break;
+                    if (youTubeApiInfos.size() >= 5) {
+                        break;
+                    }
 
                     String videoId = searchResult.getId().getVideoId();
                     if (videoId == null) continue;
