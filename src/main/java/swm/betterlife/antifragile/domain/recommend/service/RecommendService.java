@@ -18,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.recommend.dto.request.OpenAiRequest;
-import swm.betterlife.antifragile.domain.recommend.dto.request.RecommendPromptRequest;
 import swm.betterlife.antifragile.domain.recommend.dto.response.OpenAiResponse;
 import swm.betterlife.antifragile.domain.recommend.dto.response.YouTubeResponse;
 
@@ -38,14 +38,26 @@ public class RecommendService {
     @Value("${youtube.api.key}")
     private String apiKey;
 
-    public OpenAiResponse chatGpt(RecommendPromptRequest request) {
+    public String createPrompt(List<String> emotions, Member member) {
+
+        String emotionString = String.join(", ", emotions);
+
+        return String.format(
+            "%s 감정을 가진 나이가 %d인 %s에게 추천할만한 영상의 키워드를 하나만 반환해줘.",
+            emotionString,
+            member.getAge(),
+            member.getJob()
+        );
+    }
+
+    public OpenAiResponse chatGpt(String prompt) {
         OpenAiRequest openAiRequest = new OpenAiRequest(
-            model, request.prompt(), 1);
+            model, prompt, 1);
         return restTemplate.postForObject(
             apiUrl, openAiRequest, OpenAiResponse.class);
     }
 
-    public YouTubeResponse youTubeRecommend(RecommendPromptRequest prompt) throws IOException {
+    public YouTubeResponse youTubeRecommend(String prompt) throws IOException {
         OpenAiResponse openAiResponse = chatGpt(prompt);
         String recommendedKeyword = openAiResponse.choices().get(0).message().content();
         log.info("Recommended Keyword: {}", recommendedKeyword);

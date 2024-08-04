@@ -1,6 +1,7 @@
 package swm.betterlife.antifragile.domain.content.service;
 
 import com.mongodb.client.result.UpdateResult;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.exception.ContentAlreadyLikedException;
 import swm.betterlife.antifragile.common.exception.ContentNotFoundException;
 import swm.betterlife.antifragile.common.exception.ContentNotLikedException;
+import swm.betterlife.antifragile.common.exception.YouTubeApiException;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.repository.ContentRepository;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.DiaryAnalysis;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisService;
+import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
+import swm.betterlife.antifragile.domain.recommend.dto.response.YouTubeResponse;
+import swm.betterlife.antifragile.domain.recommend.service.RecommendService;
 
 @Service
 @RequiredArgsConstructor
@@ -33,15 +38,16 @@ public class ContentService {
     private final MongoTemplate mongoTemplate;
     private final MemberService memberService;
     private final DiaryAnalysisService diaryAnalysisService;
+    private final RecommendService recommendService;
 
     @Transactional
     public ContentRecommendResponse saveRecommendContents(String memberId, LocalDate date) {
         DiaryAnalysis analysis =
             diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
-        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis);
+        Member member = memberService.getMemberById(memberId);
+        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member);
 
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
-
         diaryAnalysisService.saveRecommendContents(analysis, savedContents);
 
         return ContentRecommendResponse.from(savedContents.stream()
@@ -59,13 +65,11 @@ public class ContentService {
 
         DiaryAnalysis analysis =
             diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
+        Member member = memberService.getMemberById(memberId);
         List<String> recommendedUrls = extractRecommendContentUrls(analysis);
 
-        List<Content> recommendedContents = getRecommendContentsByAnalysis(
-            analysis,
-            recommendedUrls,
-            feedback
-        );
+        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member);
+        // TODO: 추후에 feedback을 통해서 재추천 컨텐츠를 가져와야 함
 
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
 
@@ -101,9 +105,16 @@ public class ContentService {
         }
     }
 
-    private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis) {
-        // TODO: gpt api와 youtube api를 통해서 추천 컨텐츠를 가져와야 함
-        return MockDataProvider.getContents1();
+    private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis, Member member) {
+
+        String prompt = recommendService.createPrompt(analysis.getEmotions(), member);
+
+        try {
+            YouTubeResponse youTubeResponse = recommendService.youTubeRecommend(prompt);
+            return youTubeResponse.toContentList();
+        } catch (IOException e) {
+            throw new YouTubeApiException();
+        }
     }
 
     private List<Content> getRecommendContentsByAnalysis(
@@ -112,7 +123,7 @@ public class ContentService {
         String feedback
     ) {
         // TODO: gpt api와 youtube api를 통해서 재추천 컨텐츠를 가져와야 함
-        return MockDataProvider.getContents2();
+        return null;
     }
 
     private List<Content> saveOrUpdateContents(List<Content> recommendedContents) {

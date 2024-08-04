@@ -25,7 +25,7 @@ public class RecommendController {
         @RequestBody RecommendPromptRequest request
     ) {
         return ResponseBody.ok(
-            recommendService.chatGpt(request));
+            recommendService.chatGpt(request.prompt()));
     }
 
     @PostMapping("/youtube")
@@ -33,6 +33,6 @@ public class RecommendController {
         @RequestBody RecommendPromptRequest prompt
     ) throws IOException {
         return ResponseBody.ok(
-            recommendService.youTubeRecommend(prompt));
+            recommendService.youTubeRecommend(prompt.prompt()));
     }
 }

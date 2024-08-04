@@ -33,12 +33,6 @@ public class Content extends BaseTimeEntity {
 
     private YouTubeInfo youTubeInfo;
 
-    @Builder.Default
-    private Long appViewNumber = 0L; // TODO: Aggregation으로 변경
-
-    @Builder.Default
-    private Long appLikeNumber = 0L; // TODO: Aggregation으로 변경
-
     private String url;
 
     public void updateContent(Content content) {
