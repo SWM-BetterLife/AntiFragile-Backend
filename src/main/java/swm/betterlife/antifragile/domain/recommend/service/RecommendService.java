@@ -102,43 +102,13 @@ public class RecommendService {
                         continue;
                     }
 
-                    String videoTitle = searchResult.getSnippet().getTitle();
-                    String videoDescription = searchResult.getSnippet().getDescription();
-                    String thumbnailUrl = searchResult.getSnippet()
-                        .getThumbnails().getDefault().getUrl();
-                    String channelId = searchResult.getSnippet().getChannelId();
-                    String channelTitle = searchResult.getSnippet().getChannelTitle();
-
-                    // 채널 정보 요청 생성
-                    YouTube.Channels.List channelRequest = youtube.channels()
-                        .list(Collections.singletonList("snippet,statistics"));
-                    channelRequest.setKey(apiKey);
-                    channelRequest.setId(Collections.singletonList(channelId));
-
-                    // 채널 요청 실행 및 응답 받아오기
-                    ChannelListResponse channelResponse = channelRequest.execute();
-                    Channel channel = channelResponse.getItems().get(0);
-
-                    // 채널의 구독자 수 및 채널 이미지 URL 가져오기
-                    ChannelStatistics statistics = channel.getStatistics();
-                    Long subscriberCount = Optional.ofNullable(statistics)
-                        .map(ChannelStatistics::getSubscriberCount)
-                        .map(Number::longValue)
-                        .orElse(null);
-                    String channelImageUrl = channel.getSnippet()
-                        .getThumbnails().getDefault().getUrl();
-
-                    // 비디오 정보 요청 생성
+                    // 비디오 정보 가져오기
                     YouTube.Videos.List videoRequest = youtube.videos()
                         .list(Collections.singletonList("statistics"));
                     videoRequest.setKey(apiKey);
                     videoRequest.setId(Collections.singletonList(videoId));
-
-                    // 비디오 요청 실행 및 응답 받아오기
                     VideoListResponse videoResponse = videoRequest.execute();
                     Video video = videoResponse.getItems().get(0);
-
-                    // 비디오의 조회수 및 좋아요 수 가져오기
                     VideoStatistics videoStatistics = video.getStatistics();
                     Long viewCount = Optional.ofNullable(videoStatistics)
                         .map(VideoStatistics::getViewCount)
@@ -148,6 +118,28 @@ public class RecommendService {
                         .map(VideoStatistics::getLikeCount)
                         .map(Number::longValue)
                         .orElse(0L);
+
+                    String videoTitle = searchResult.getSnippet().getTitle();
+                    String videoDescription = searchResult.getSnippet().getDescription();
+                    String thumbnailUrl = searchResult.getSnippet()
+                        .getThumbnails().getDefault().getUrl();
+                    String channelId = searchResult.getSnippet().getChannelId();
+                    String channelTitle = searchResult.getSnippet().getChannelTitle();
+
+                    // 채널 정보 요청 생성 및 실행
+                    YouTube.Channels.List channelRequest = youtube.channels()
+                        .list(Collections.singletonList("snippet,statistics"));
+                    channelRequest.setKey(apiKey);
+                    channelRequest.setId(Collections.singletonList(channelId));
+                    ChannelListResponse channelResponse = channelRequest.execute();
+                    Channel channel = channelResponse.getItems().get(0);
+                    ChannelStatistics statistics = channel.getStatistics();
+                    Long subscriberCount = Optional.ofNullable(statistics)
+                        .map(ChannelStatistics::getSubscriberCount)
+                        .map(Number::longValue)
+                        .orElse(null);
+                    String channelImageUrl = channel.getSnippet()
+                        .getThumbnails().getDefault().getUrl();
 
                     youTubeApiInfos.add(new YouTubeResponse.YouTubeApiInfo(
                         videoTitle,
