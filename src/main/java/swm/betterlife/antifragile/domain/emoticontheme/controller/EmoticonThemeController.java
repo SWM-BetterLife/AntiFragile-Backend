@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.PagingResponse;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
+import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnEntireResponse;
@@ -55,12 +56,12 @@ public class EmoticonThemeController {
     }
 
     @GetMapping("/emoticons/{emotion}")
-    public ResponseBody<List<EmoticonInfoFromEmotionResponse>> getEntireEmoticonsFromEmotion(
+    public ResponseBody<EmoticonEntireFromEmotionResponse> getEntireEmoticonsFromEmotion(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @PathVariable Emotion emotion
     ) {
         return ResponseBody.ok(
-            emoticonThemeService.getAllEmoticonsForAllThemesByEmotion(
+            emoticonThemeService.getAllEmoticonsForOwnThemesByEmotion(
                 principalDetails.memberId(), emotion
             )
         );

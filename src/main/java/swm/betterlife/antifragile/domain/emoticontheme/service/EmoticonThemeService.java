@@ -22,6 +22,7 @@ import swm.betterlife.antifragile.common.exception.EmoticonThemeNotFoundExceptio
 import swm.betterlife.antifragile.common.response.PagingResponse;
 import swm.betterlife.antifragile.common.util.ObjectIdGenerator;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.SelectedEmoticon;
+import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoResponse;
@@ -78,12 +79,12 @@ public class EmoticonThemeService {
     }
 
     @Transactional(readOnly = true)
-    public List<EmoticonInfoFromEmotionResponse> getAllEmoticonsForAllThemesByEmotion(
+    public EmoticonEntireFromEmotionResponse getAllEmoticonsForOwnThemesByEmotion(
         String memberId, Emotion emotion
     ) {
         List<EmoticonTheme> ownEmoticonThemes = getOwnEmoticonThemeEntityList(memberId);
 
-        return ownEmoticonThemes.stream()
+        List<EmoticonInfoFromEmotionResponse> emoticonDtoList =  ownEmoticonThemes.stream()
             .flatMap(
                 emoticonTheme -> emoticonTheme.getEmoticons().stream()
                     .filter(emoticon -> emoticon.getEmotion().equals(emotion))
@@ -92,7 +93,9 @@ public class EmoticonThemeService {
                             .imgUrl(emoticon.getImgUrl())
                             .build()
                     )
-            ).collect(Collectors.toList());
+            ).toList();
+
+        return new EmoticonEntireFromEmotionResponse(emoticonDtoList);
     }
 
     @Transactional
