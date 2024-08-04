@@ -30,9 +30,9 @@ public class RecommendController {
 
     @PostMapping("/youtube")
     public ResponseBody<YouTubeResponse> youTubeRecommend(
-        @RequestBody RecommendPromptRequest prompt
+        @RequestBody RecommendPromptRequest request
     ) throws IOException {
         return ResponseBody.ok(
-            recommendService.youTubeRecommend(prompt.prompt()));
+            recommendService.youTubeRecommend(request.prompt()));
     }
 }

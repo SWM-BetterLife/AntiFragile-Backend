@@ -15,7 +15,9 @@ public record YouTubeResponse(
         Long subscriberNumber,
         String channelName,
         String channelImgUrl,
-        String videoUrl
+        String videoUrl,
+        Long viewNumber,
+        Long likeNumber
     ) {}
 
     public List<Content> toContentList() {
@@ -28,8 +30,8 @@ public record YouTubeResponse(
                     .subscriberNumber(apiInfo.subscriberNumber())
                     .channelName(apiInfo.channelName())
                     .channelImg(apiInfo.channelImgUrl())
-                    .viewNumber(0L)
-                    .likeNumber(0L)
+                    .viewNumber(apiInfo.viewNumber())
+                    .likeNumber(apiInfo.likeNumber())
                     .build())
                 .url(apiInfo.videoUrl())
                 .build())

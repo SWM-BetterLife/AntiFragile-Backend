@@ -8,6 +8,9 @@ import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.ChannelStatistics;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.api.services.youtube.model.VideoStatistics;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -125,6 +128,27 @@ public class RecommendService {
                     String channelImageUrl = channel.getSnippet()
                         .getThumbnails().getDefault().getUrl();
 
+                    // 비디오 정보 요청 생성
+                    YouTube.Videos.List videoRequest = youtube.videos()
+                        .list(Collections.singletonList("statistics"));
+                    videoRequest.setKey(apiKey);
+                    videoRequest.setId(Collections.singletonList(videoId));
+
+                    // 비디오 요청 실행 및 응답 받아오기
+                    VideoListResponse videoResponse = videoRequest.execute();
+                    Video video = videoResponse.getItems().get(0);
+
+                    // 비디오의 조회수 및 좋아요 수 가져오기
+                    VideoStatistics videoStatistics = video.getStatistics();
+                    Long viewCount = Optional.ofNullable(videoStatistics)
+                        .map(VideoStatistics::getViewCount)
+                        .map(Number::longValue)
+                        .orElse(0L);
+                    Long likeCount = Optional.ofNullable(videoStatistics)
+                        .map(VideoStatistics::getLikeCount)
+                        .map(Number::longValue)
+                        .orElse(0L);
+
                     youTubeApiInfos.add(new YouTubeResponse.YouTubeApiInfo(
                         videoTitle,
                         videoDescription,
@@ -132,7 +156,9 @@ public class RecommendService {
                         subscriberCount,
                         channelTitle,
                         channelImageUrl,
-                        "https://www.youtube.com/watch?v=" + videoId
+                        "https://www.youtube.com/watch?v=" + videoId,
+                        viewCount,
+                        likeCount
                     ));
                 }
             }
