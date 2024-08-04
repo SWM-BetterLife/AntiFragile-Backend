@@ -1,6 +1,5 @@
 package swm.betterlife.antifragile.domain.emoticontheme.repository;
 
-import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import swm.betterlife.antifragile.common.exception.EmoticonThemeNotFoundException;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.EmoticonTheme;

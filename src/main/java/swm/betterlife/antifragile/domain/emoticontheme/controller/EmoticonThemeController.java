@@ -1,5 +1,6 @@
 package swm.betterlife.antifragile.domain.emoticontheme.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -14,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.PagingResponse;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
+import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
+import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeSummaryResponse;
+import swm.betterlife.antifragile.domain.emoticontheme.entity.Emotion;
 import swm.betterlife.antifragile.domain.emoticontheme.service.EmoticonThemeService;
 
 @Slf4j
@@ -48,6 +52,18 @@ public class EmoticonThemeController {
     ) {
         return ResponseBody.ok(
             emoticonThemeService.getAllEmoticonsByEmoticonThemeId(emoticonThemeId)
+        );
+    }
+
+    @GetMapping("/emoticons/{emotion}")
+    public ResponseBody<EmoticonEntireFromEmotionResponse> getEntireEmoticonsFromEmotion(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @PathVariable Emotion emotion
+    ) {
+        return ResponseBody.ok(
+            emoticonThemeService.getAllEmoticonsForOwnThemesByEmotion(
+                principalDetails.memberId(), emotion
+            )
         );
     }
 

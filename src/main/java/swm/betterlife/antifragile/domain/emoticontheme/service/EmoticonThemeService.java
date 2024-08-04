@@ -1,9 +1,11 @@
 package swm.betterlife.antifragile.domain.emoticontheme.service;
 
 import static swm.betterlife.antifragile.common.util.CollectionName.EMOTICON_THEMES;
+import static swm.betterlife.antifragile.domain.emoticontheme.entity.EmoticonThemeName.DEFAULT;
 
 import com.mongodb.client.result.UpdateResult;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,13 +22,16 @@ import swm.betterlife.antifragile.common.exception.EmoticonThemeNotFoundExceptio
 import swm.betterlife.antifragile.common.response.PagingResponse;
 import swm.betterlife.antifragile.common.util.ObjectIdGenerator;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.SelectedEmoticon;
+import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
+import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnDetailResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeSummaryResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.Emoticon;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.EmoticonTheme;
+import swm.betterlife.antifragile.domain.emoticontheme.entity.Emotion;
 import swm.betterlife.antifragile.domain.emoticontheme.repository.EmoticonThemeRepository;
 
 @Slf4j
@@ -46,19 +51,22 @@ public class EmoticonThemeService {
 
     @Transactional(readOnly = true)
     public EmoticonThemeOwnEntireResponse getAllOwnEmoticonThemes(String memberId) {
-        Criteria priceCriteria = Criteria.where("price").is(null);
-        Criteria buyerIdsCriteria = Criteria.where("buyer_ids").in(memberId);
-        Query query = new Query()
-            .addCriteria(new Criteria().orOperator(priceCriteria, buyerIdsCriteria));
-
-        List<EmoticonTheme> ownEmoticonThemes
-            = mongoTemplate.find(query, EmoticonTheme.class, EMOTICON_THEMES.getName());
+        List<EmoticonTheme> ownEmoticonThemes = getOwnEmoticonThemeEntityList(memberId);
 
         List<EmoticonThemeOwnDetailResponse> emoticonThemeDtoList = ownEmoticonThemes.stream()
             .map(EmoticonThemeOwnDetailResponse::from)
             .toList();
 
         return new EmoticonThemeOwnEntireResponse(emoticonThemeDtoList);
+    }
+
+    private List<EmoticonTheme> getOwnEmoticonThemeEntityList(String memberId) {
+        Criteria priceCriteria = Criteria.where("name").is(DEFAULT.name());
+        Criteria buyerIdsCriteria = Criteria.where("buyer_ids").in(memberId);
+        Query query = new Query()
+            .addCriteria(new Criteria().orOperator(priceCriteria, buyerIdsCriteria));
+
+        return mongoTemplate.find(query, EmoticonTheme.class, EMOTICON_THEMES.getName());
     }
 
     @Transactional(readOnly = true)
@@ -68,6 +76,26 @@ public class EmoticonThemeService {
         List<EmoticonInfoResponse> emoticonDtoList
             = emoticonTheme.getEmoticons().stream().map(EmoticonInfoResponse::from).toList();
         return new EmoticonEntireResponse(emoticonDtoList);
+    }
+
+    @Transactional(readOnly = true)
+    public EmoticonEntireFromEmotionResponse getAllEmoticonsForOwnThemesByEmotion(
+        String memberId, Emotion emotion
+    ) {
+        List<EmoticonTheme> ownEmoticonThemes = getOwnEmoticonThemeEntityList(memberId);
+
+        List<EmoticonInfoFromEmotionResponse> emoticonDtoList =  ownEmoticonThemes.stream()
+            .flatMap(
+                emoticonTheme -> emoticonTheme.getEmoticons().stream()
+                    .filter(emoticon -> emoticon.getEmotion().equals(emotion))
+                    .map(emoticon -> EmoticonInfoFromEmotionResponse.builder()
+                            .emoticonThemeId(emoticonTheme.getId())
+                            .imgUrl(emoticon.getImgUrl())
+                            .build()
+                    )
+            ).toList();
+
+        return new EmoticonEntireFromEmotionResponse(emoticonDtoList);
     }
 
     @Transactional
