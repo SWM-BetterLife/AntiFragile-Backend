@@ -43,6 +43,10 @@ public class MemberService {
             .from(memberRepository.getMember(id), point, diaryTotalNum);
     }
 
+    public Member getMemberById(String id) {
+        return memberRepository.getMember(id);
+    }
+
     @Transactional
     public MemberProfileModifyResponse modifyProfile(
         String id, MemberProfileModifyRequest request, MultipartFile profileImgFile

@@ -42,7 +42,10 @@ public enum ErrorCode {
 
     // S3
     S3_UPLOAD_FAIL("S3 업로드에 실패하였습니다"),
-    S3_DELETE_FAIL("S3 삭제에 실패하였습니다")
+    S3_DELETE_FAIL("S3 삭제에 실패하였습니다"),
+
+    // YouTube
+    YOUTUBE_API_FAIL("유튜브 API 요청에 실패하였습니다"),
 
     ;
 
