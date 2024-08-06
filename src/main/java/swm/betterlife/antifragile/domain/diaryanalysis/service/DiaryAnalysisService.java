@@ -143,10 +143,23 @@ public class DiaryAnalysisService {
         DiaryAnalysis diaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
 
         if (diaryAnalysis != null) {
-            return EmotionDailyResponse.from(diaryAnalysis.getEmotions());
+            return EmotionDailyResponse.from(
+                diaryAnalysis.getEmotions(),
+                createEmoticonDetails(diaryAnalysis)
+            );
         } else {
             throw new DiaryAnalysisNotFoundException();
         }
+    }
+
+    public EmotionDailyResponse.EmoticonDetails createEmoticonDetails(DiaryAnalysis diaryAnalysis) {
+        String imgUrl = emoticonThemeService.getEmoticonImgUrl(diaryAnalysis.getEmoticon());
+
+        return EmotionDailyResponse.EmoticonDetails.builder()
+            .imgUrl(imgUrl)
+            .emoticonThemeId(diaryAnalysis.getEmoticon().getEmoticonThemeId())
+            .emotion(diaryAnalysis.getEmoticon().getEmotion())
+            .build();
     }
 
     @Transactional(readOnly = true)
