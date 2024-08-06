@@ -20,7 +20,7 @@ import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysis
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisSaveRequest;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonEntry;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonMonthlyResponse;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmotionDailyResponse;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonDailyResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.DiaryAnalysis;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 import swm.betterlife.antifragile.domain.diaryanalysis.repository.DiaryAnalysisRepository;
@@ -135,7 +135,7 @@ public class DiaryAnalysisService {
     }
 
     @Transactional(readOnly = true)
-    public EmotionDailyResponse getDateEmotions(
+    public EmoticonDailyResponse getDateEmotions(
         String memberId, LocalDate date
     ) {
         Query query = new Query(Criteria.where("memberId").is(memberId)
@@ -144,7 +144,7 @@ public class DiaryAnalysisService {
         DiaryAnalysis diaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
 
         if (diaryAnalysis != null) {
-            return EmotionDailyResponse.from(
+            return EmoticonDailyResponse.from(
                 diaryAnalysis.getEmotions(),
                 createEmoticonEntry(diaryAnalysis)
             );

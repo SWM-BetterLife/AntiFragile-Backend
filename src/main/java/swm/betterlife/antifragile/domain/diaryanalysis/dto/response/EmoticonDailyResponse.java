@@ -4,15 +4,15 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record EmotionDailyResponse(
+public record EmoticonDailyResponse(
     List<String> emotions,
     EmoticonEntry emoticon
 ) {
-    public static EmotionDailyResponse from(
+    public static EmoticonDailyResponse from(
         List<String> emotions,
         EmoticonEntry emoticon
     ) {
-        return EmotionDailyResponse.builder()
+        return EmoticonDailyResponse.builder()
             .emotions(emotions)
             .emoticon(emoticon)
             .build();
