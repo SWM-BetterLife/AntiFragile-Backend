@@ -5,11 +5,16 @@ import lombok.Builder;
 
 @Builder
 public record EmotionDailyResponse(
-    List<String> emotions
+    List<String> emotions,
+    EmoticonEntry emoticon
 ) {
-    public static EmotionDailyResponse from(List<String> emotions) {
+    public static EmotionDailyResponse from(
+        List<String> emotions,
+        EmoticonEntry emoticon
+    ) {
         return EmotionDailyResponse.builder()
             .emotions(emotions)
+            .emoticon(emoticon)
             .build();
     }
 }

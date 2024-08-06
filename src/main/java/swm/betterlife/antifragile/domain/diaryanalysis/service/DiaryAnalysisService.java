@@ -18,6 +18,7 @@ import swm.betterlife.antifragile.common.exception.DiaryAnalysisNotFoundExceptio
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisModifyRequest;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisSaveRequest;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonEntry;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonMonthlyResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmotionDailyResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.DiaryAnalysis;
@@ -143,7 +144,10 @@ public class DiaryAnalysisService {
         DiaryAnalysis diaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
 
         if (diaryAnalysis != null) {
-            return EmotionDailyResponse.from(diaryAnalysis.getEmotions());
+            return EmotionDailyResponse.from(
+                diaryAnalysis.getEmotions(),
+                createEmoticonEntry(diaryAnalysis)
+            );
         } else {
             throw new DiaryAnalysisNotFoundException();
         }
@@ -165,17 +169,17 @@ public class DiaryAnalysisService {
             throw new DiaryAnalysisNotFoundException();
         }
 
-        List<EmoticonMonthlyResponse.EmoticonEntry> emoticonEntries = diaryAnalyses.stream()
+        List<EmoticonEntry> emoticonEntries = diaryAnalyses.stream()
             .map(this::createEmoticonEntry)
             .collect(Collectors.toList());
 
         return EmoticonMonthlyResponse.from(emoticonEntries);
     }
 
-    public EmoticonMonthlyResponse.EmoticonEntry createEmoticonEntry(DiaryAnalysis diaryAnalysis) {
+    public EmoticonEntry createEmoticonEntry(DiaryAnalysis diaryAnalysis) {
         String imgUrl = emoticonThemeService.getEmoticonImgUrl(diaryAnalysis.getEmoticon());
 
-        return EmoticonMonthlyResponse.EmoticonEntry.builder()
+        return EmoticonEntry.builder()
             .imgUrl(imgUrl)
             .diaryDate(diaryAnalysis.getDiaryDate())
             .build();
