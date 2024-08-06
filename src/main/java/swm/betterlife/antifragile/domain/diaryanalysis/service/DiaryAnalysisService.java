@@ -18,9 +18,8 @@ import swm.betterlife.antifragile.common.exception.DiaryAnalysisNotFoundExceptio
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisModifyRequest;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisSaveRequest;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonDailyResponse;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonEntry;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonMonthlyResponse;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmotionDailyResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.DiaryAnalysis;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.RecommendContent;
 import swm.betterlife.antifragile.domain.diaryanalysis.repository.DiaryAnalysisRepository;
@@ -135,7 +134,7 @@ public class DiaryAnalysisService {
     }
 
     @Transactional(readOnly = true)
-    public EmoticonDailyResponse getDateEmotions(
+    public EmotionDailyResponse getDateEmotions(
         String memberId, LocalDate date
     ) {
         Query query = new Query(Criteria.where("memberId").is(memberId)
@@ -144,13 +143,23 @@ public class DiaryAnalysisService {
         DiaryAnalysis diaryAnalysis = mongoTemplate.findOne(query, DiaryAnalysis.class);
 
         if (diaryAnalysis != null) {
-            return EmoticonDailyResponse.from(
+            return EmotionDailyResponse.from(
                 diaryAnalysis.getEmotions(),
-                createEmoticonEntry(diaryAnalysis)
+                createEmoticonDetails(diaryAnalysis)
             );
         } else {
             throw new DiaryAnalysisNotFoundException();
         }
+    }
+
+    public EmotionDailyResponse.EmoticonDetails createEmoticonDetails(DiaryAnalysis diaryAnalysis) {
+        String imgUrl = emoticonThemeService.getEmoticonImgUrl(diaryAnalysis.getEmoticon());
+
+        return EmotionDailyResponse.EmoticonDetails.builder()
+            .imgUrl(imgUrl)
+            .emoticonThemeId(diaryAnalysis.getEmoticon().getEmoticonThemeId())
+            .emotion(diaryAnalysis.getEmoticon().getEmotion())
+            .build();
     }
 
     @Transactional(readOnly = true)
@@ -169,17 +178,17 @@ public class DiaryAnalysisService {
             throw new DiaryAnalysisNotFoundException();
         }
 
-        List<EmoticonEntry> emoticonEntries = diaryAnalyses.stream()
+        List<EmoticonMonthlyResponse.EmoticonEntry> emoticonEntries = diaryAnalyses.stream()
             .map(this::createEmoticonEntry)
             .collect(Collectors.toList());
 
         return EmoticonMonthlyResponse.from(emoticonEntries);
     }
 
-    public EmoticonEntry createEmoticonEntry(DiaryAnalysis diaryAnalysis) {
+    public EmoticonMonthlyResponse.EmoticonEntry createEmoticonEntry(DiaryAnalysis diaryAnalysis) {
         String imgUrl = emoticonThemeService.getEmoticonImgUrl(diaryAnalysis.getEmoticon());
 
-        return EmoticonEntry.builder()
+        return EmoticonMonthlyResponse.EmoticonEntry.builder()
             .imgUrl(imgUrl)
             .diaryDate(diaryAnalysis.getDiaryDate())
             .build();

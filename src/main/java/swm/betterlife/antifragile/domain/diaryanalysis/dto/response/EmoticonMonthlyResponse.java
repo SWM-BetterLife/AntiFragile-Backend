@@ -1,5 +1,6 @@
 package swm.betterlife.antifragile.domain.diaryanalysis.dto.response;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
 
@@ -12,4 +13,10 @@ public record EmoticonMonthlyResponse(
             .emoticons(emoticons)
             .build();
     }
+
+    @Builder
+    public record EmoticonEntry(
+        String imgUrl,
+        LocalDate diaryDate
+    ) {}
 }
