@@ -16,8 +16,8 @@ import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisModifyRequest;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.request.DiaryAnalysisSaveRequest;
-import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonMonthlyResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonDailyResponse;
+import swm.betterlife.antifragile.domain.diaryanalysis.dto.response.EmoticonMonthlyResponse;
 import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisService;
 
 @Slf4j
