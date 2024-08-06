@@ -18,6 +18,7 @@ public record EmotionDailyResponse(
             .emoticon(emoticon)
             .build();
     }
+
     @Builder
     public record EmoticonDetails(
         String imgUrl,
