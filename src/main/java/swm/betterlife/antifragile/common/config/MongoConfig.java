@@ -16,7 +16,9 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import swm.betterlife.antifragile.common.converter.ReadingLocalDateTimeToKstConverter;
+import swm.betterlife.antifragile.common.converter.ReadingLocalDateToKstConverter;
 import swm.betterlife.antifragile.common.converter.WritingLocalDateTimeToKstConverter;
+import swm.betterlife.antifragile.common.converter.WritingLocalDateToKstConverter;
 
 @Configuration
 @EnableTransactionManagement
@@ -59,11 +61,14 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Bean
     public MongoCustomConversions customConversions(
         WritingLocalDateTimeToKstConverter writingLocalDateTimeToKstConverter,
-        ReadingLocalDateTimeToKstConverter readingLocalDateTimeToKstConverter
+        ReadingLocalDateTimeToKstConverter readingLocalDateTimeToKstConverter,
+        WritingLocalDateToKstConverter writingLocalDateToKstConverter,
+        ReadingLocalDateToKstConverter readingLocalDateToKstConverter
     ) {
         return new MongoCustomConversions(
             Arrays.asList(
-                writingLocalDateTimeToKstConverter, readingLocalDateTimeToKstConverter
+                writingLocalDateTimeToKstConverter, readingLocalDateTimeToKstConverter,
+                writingLocalDateToKstConverter, readingLocalDateToKstConverter
             )
         );
     }
