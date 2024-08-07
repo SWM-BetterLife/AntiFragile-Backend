@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @ReadingConverter
 @Component
-public class ReadingKstConverter implements Converter<Date, LocalDateTime> {
+public class ReadingLocalDateTimeToKstConverter implements Converter<Date, LocalDateTime> {
     @Override
     public LocalDateTime convert(Date source) {
         return source.toInstant()
