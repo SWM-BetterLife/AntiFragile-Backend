@@ -15,6 +15,6 @@ public class MemberPoint {
 
     String memberId;
 
-    Integer point;
+    Integer balance;
 
 }
