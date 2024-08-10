@@ -1,6 +1,5 @@
 package swm.betterlife.antifragile.domain.emoticontheme.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +16,6 @@ import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
-import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonInfoFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeOwnEntireResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonThemeSummaryResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.entity.Emotion;

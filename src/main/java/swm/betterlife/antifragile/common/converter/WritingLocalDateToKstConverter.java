@@ -2,7 +2,6 @@ package swm.betterlife.antifragile.common.converter;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.WritingConverter;
