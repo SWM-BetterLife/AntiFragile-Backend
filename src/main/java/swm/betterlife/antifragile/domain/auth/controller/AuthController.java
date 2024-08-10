@@ -26,7 +26,9 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseBody<AuthLoginResponse> login(@RequestBody AuthLoginRequest authLoginRequest) {
+    public ResponseBody<AuthLoginResponse> login(
+        @RequestBody AuthLoginRequest authLoginRequest
+    ) {
         return ResponseBody.ok(authService.login(authLoginRequest));
     }
 
@@ -45,7 +47,7 @@ public class AuthController {
         return ResponseBody.ok();
     }
 
-    @DeleteMapping
+    @DeleteMapping()
     public ResponseBody<Void> delete(
         @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {

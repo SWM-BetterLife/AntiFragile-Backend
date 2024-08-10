@@ -51,10 +51,10 @@ public class AuthService {
 
     @Transactional
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
-        String password = getPasswordByLoginType(authLoginRequest.loginType());
-
         String username
             = authLoginRequest.loginType().name() + ":" + authLoginRequest.email(); //todo: common분리
+        String password = authLoginRequest.password();
+
         Authentication authentication = getAuthenticate(username, password);
 
         Member member = memberRepository.getMember(

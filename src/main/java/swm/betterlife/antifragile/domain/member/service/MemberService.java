@@ -19,8 +19,10 @@ import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.member.controller.MemberNicknameDuplResponse;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberExistenceResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
+import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
 
@@ -114,6 +116,15 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(MemberNotFoundException::new);
         return MemberRemainNumberResponse.from(member.getRemainRecommendNumber());
+    }
+
+    @Transactional(readOnly = true)
+    public MemberExistenceResponse checkMemberExistence(
+        String email, LoginType loginType
+    ) {
+        return new MemberExistenceResponse(
+            memberRepository.existsByEmailAndLoginType(email, loginType)
+        );
     }
 
     @Scheduled(cron = "0 0 0 * * *")
