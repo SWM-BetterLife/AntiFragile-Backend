@@ -99,12 +99,6 @@ public class RecommendService {
                         continue;
                     }
 
-                    // 비디오 정보 가져오기
-                    YouTube.Videos.List videoRequest = youtube.videos()
-                        .list(Collections.singletonList("statistics"));
-                    videoRequest.setKey(apiKey);
-                    videoRequest.setId(Collections.singletonList(videoId));
-
                     String videoTitle = searchResult.getSnippet().getTitle();
                     String videoDescription = searchResult.getSnippet().getDescription();
                     String thumbnailUrl = searchResult.getSnippet()
