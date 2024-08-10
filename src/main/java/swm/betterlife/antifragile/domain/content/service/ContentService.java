@@ -1,5 +1,7 @@
 package swm.betterlife.antifragile.domain.content.service;
 
+import static java.util.stream.Collectors.toList;
+
 import com.mongodb.client.result.UpdateResult;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -19,7 +21,7 @@ import swm.betterlife.antifragile.common.exception.ContentAlreadyLikedException;
 import swm.betterlife.antifragile.common.exception.ContentNotFoundException;
 import swm.betterlife.antifragile.common.exception.ContentNotLikedException;
 import swm.betterlife.antifragile.common.exception.YouTubeApiException;
-import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
+import swm.betterlife.antifragile.domain.content.dto.response.ContentListResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.repository.ContentRepository;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.DiaryAnalysis;
@@ -34,6 +36,7 @@ import swm.betterlife.antifragile.domain.recommend.service.RecommendService;
 @RequiredArgsConstructor
 public class ContentService {
 
+    private final ContentQueryService contentQueryService;
     private final ContentRepository contentRepository;
     private final MongoTemplate mongoTemplate;
     private final MemberService memberService;
@@ -41,7 +44,7 @@ public class ContentService {
     private final RecommendService recommendService;
 
     @Transactional
-    public ContentRecommendResponse saveRecommendContents(String memberId, LocalDate date) {
+    public ContentListResponse saveRecommendContents(String memberId, LocalDate date) {
         DiaryAnalysis analysis =
             diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
         Member member = memberService.getMemberById(memberId);
@@ -50,13 +53,18 @@ public class ContentService {
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
         diaryAnalysisService.saveRecommendContents(analysis, savedContents);
 
-        return ContentRecommendResponse.from(savedContents.stream()
-            .map(ContentRecommendResponse.ContentResponse::from)
-            .toList());
+        return ContentListResponse.from(
+            savedContents.stream()
+                .map(content -> ContentListResponse.ContentResponse.from(
+                    content,
+                    contentQueryService.getContentLikeNumber(content),
+                    contentQueryService.isLiked(memberId, content)
+                )).toList()
+        );
     }
 
     @Transactional
-    public ContentRecommendResponse saveReRecommendContents(
+    public ContentListResponse saveReRecommendContents(
         String memberId,
         LocalDate date,
         String feedback
@@ -75,8 +83,14 @@ public class ContentService {
 
         diaryAnalysisService.saveRecommendContents(analysis, savedContents);
 
-        return ContentRecommendResponse.from(savedContents.stream()
-            .map(ContentRecommendResponse.ContentResponse::from).toList());
+        return ContentListResponse.from(
+            savedContents.stream()
+                .map(content -> ContentListResponse.ContentResponse.from(
+                    content,
+                    contentQueryService.getContentLikeNumber(content),
+                    contentQueryService.isLiked(memberId, content)
+                )).toList()
+        );
     }
 
     @Transactional
@@ -148,7 +162,6 @@ public class ContentService {
     private void validateRecommendLimit(String memberId) {
         memberService.decrementRemainRecommendNumber(memberId);
     }
-
 
     private List<String> extractRecommendContentUrls(DiaryAnalysis analysis) {
         return analysis.getRecommendContents().stream()

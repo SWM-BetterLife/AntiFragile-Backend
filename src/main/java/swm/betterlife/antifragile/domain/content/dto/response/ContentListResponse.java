@@ -5,11 +5,11 @@ import lombok.Builder;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 
 @Builder
-public record ContentRecommendResponse(
+public record ContentListResponse(
         List<ContentResponse> contents
 ) {
-    public static ContentRecommendResponse from(List<ContentResponse> contents) {
-        return ContentRecommendResponse.builder()
+    public static ContentListResponse from(List<ContentResponse> contents) {
+        return ContentListResponse.builder()
                 .contents(contents)
                 .build();
     }

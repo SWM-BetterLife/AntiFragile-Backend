@@ -107,17 +107,6 @@ public class RecommendService {
                         .list(Collections.singletonList("statistics"));
                     videoRequest.setKey(apiKey);
                     videoRequest.setId(Collections.singletonList(videoId));
-                    VideoListResponse videoResponse = videoRequest.execute();
-                    Video video = videoResponse.getItems().get(0);
-                    VideoStatistics videoStatistics = video.getStatistics();
-                    Long viewCount = Optional.ofNullable(videoStatistics)
-                        .map(VideoStatistics::getViewCount)
-                        .map(Number::longValue)
-                        .orElse(0L);
-                    Long likeCount = Optional.ofNullable(videoStatistics)
-                        .map(VideoStatistics::getLikeCount)
-                        .map(Number::longValue)
-                        .orElse(0L);
 
                     String videoTitle = searchResult.getSnippet().getTitle();
                     String videoDescription = searchResult.getSnippet().getDescription();
@@ -148,9 +137,7 @@ public class RecommendService {
                         subscriberCount,
                         channelTitle,
                         channelImageUrl,
-                        "https://www.youtube.com/watch?v=" + videoId,
-                        viewCount,
-                        likeCount
+                        "https://www.youtube.com/watch?v=" + videoId
                     ));
                 }
             }
