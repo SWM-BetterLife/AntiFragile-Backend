@@ -3,7 +3,6 @@ package swm.betterlife.antifragile.domain.content.dto.response;
 import java.util.List;
 import lombok.Builder;
 import swm.betterlife.antifragile.domain.content.entity.Content;
-import swm.betterlife.antifragile.domain.content.entity.YouTubeInfo;
 
 @Builder
 public record ContentRecommendResponse(
@@ -19,46 +18,23 @@ public record ContentRecommendResponse(
     public record ContentResponse(
             String id,
             String title,
-            String description,
-            Channel channel,
+            ChannelResponse channel,
             String thumbnailImg,
-            VideoStats videoStats
+            Long likeNumber,
+            Boolean isLiked
     ) {
-        public static ContentResponse from(Content content) {
+        public static ContentResponse from(
+            Content content,
+            Long likeNumber,
+            Boolean isLiked
+        ) {
             return ContentResponse.builder()
                 .id(content.getId())
                 .title(content.getTitle())
-                .description(content.getDescription())
-                .channel(Channel.from(content.getYouTubeInfo()))
+                .channel(ChannelResponse.from(content.getYouTubeInfo()))
                 .thumbnailImg(content.getThumbnailImgUrl())
-                .videoStats(VideoStats.from(content.getYouTubeInfo()))
-                .build();
-        }
-    }
-
-    @Builder
-    public record Channel(
-            String name,
-            String img,
-            Long subscribeNumber
-    ) {
-        public static Channel from(YouTubeInfo youtubeInfo) {
-            return Channel.builder()
-                .name(youtubeInfo.getChannelName())
-                .img(youtubeInfo.getChannelImg())
-                .subscribeNumber(youtubeInfo.getSubscriberNumber())
-                .build();
-        }
-    }
-
-    @Builder
-    public record VideoStats(
-            Long viewNumber, Long likeNumber
-    ) {
-        public static VideoStats from(YouTubeInfo youtubeInfo) {
-            return VideoStats.builder()
-                .viewNumber(youtubeInfo.getViewNumber())
-                .likeNumber(youtubeInfo.getLikeNumber())
+                .likeNumber(likeNumber)
+                .isLiked(isLiked)
                 .build();
         }
     }
