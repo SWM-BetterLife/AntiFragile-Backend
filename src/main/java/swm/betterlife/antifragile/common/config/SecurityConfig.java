@@ -16,8 +16,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthFilter;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthenticationEntryPoint;
 import swm.betterlife.antifragile.common.jwt.filter.JwtExceptionFilter;
-import swm.betterlife.antifragile.common.oauth.Oauth2LoginSuccessHandler;
-import swm.betterlife.antifragile.common.oauth.Oauth2UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -27,8 +25,6 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final Oauth2UserService oauth2UserService;
-    private final Oauth2LoginSuccessHandler oauth2LoginSuccessHandler;
 
     private static final String[] PERMIT_PATHS = {
         "/auth/**", "/token/re-issuance", "/**"
@@ -56,12 +52,6 @@ public class SecurityConfig {
         http.exceptionHandling(exceptionHandling -> {
             exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint);
         });
-
-        http.oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(
-                        userInfoEndpoint -> userInfoEndpoint.userService(oauth2UserService))
-                .successHandler(oauth2LoginSuccessHandler)
-        );
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
