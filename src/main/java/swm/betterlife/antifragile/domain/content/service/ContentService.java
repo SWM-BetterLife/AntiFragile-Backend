@@ -1,7 +1,5 @@
 package swm.betterlife.antifragile.domain.content.service;
 
-import static java.util.stream.Collectors.toList;
-
 import com.mongodb.client.result.UpdateResult;
 import java.io.IOException;
 import java.time.LocalDate;
