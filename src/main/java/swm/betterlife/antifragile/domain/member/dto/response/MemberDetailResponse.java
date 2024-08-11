@@ -9,7 +9,7 @@ public record MemberDetailResponse(
         String id,
         String email,
         String nickname,
-        String profileImgUrl,
+        String profileImgFilename,
         Integer point,
         Integer diaryTotalNum,
         LoginType loginType //todo: 연속 작성일 수 추가
@@ -21,7 +21,7 @@ public record MemberDetailResponse(
             .id(member.getId())
             .email(member.getEmail())
             .nickname(member.getNickname())
-            .profileImgUrl(member.getProfileImgUrl())
+            .profileImgFilename(member.getProfileImgFilename())
             .point(point)
             .diaryTotalNum(diaryTotalNum)
             .loginType(member.getLoginType())

@@ -10,12 +10,14 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.S3DeleteFailException;
 import swm.betterlife.antifragile.common.exception.S3UploadFailException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class S3ImageComponent {
@@ -45,7 +47,7 @@ public class S3ImageComponent {
             throw new S3UploadFailException();
         }
 
-        return amazonS3.getUrl(bucket, fileName).toString();
+        return fileName;
     }
 
     private String createFileName(S3ImageCategory category, String originalFileName) {
@@ -57,12 +59,15 @@ public class S3ImageComponent {
         return category + "/" + fileName + "_" + random + fileExtension;
     }
 
-    public void deleteImage(String imageUrl) {
-        String[] deleteUrl = imageUrl.split("/", 4);
+    public void deleteImage(String filename) {
         try {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, deleteUrl[3]));
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, filename));
         } catch (AmazonS3Exception e) {
             throw new S3DeleteFailException();
         }
+    }
+
+    public String getUrl(String filename) {
+        return amazonS3.getUrl(bucket, filename).toString();
     }
 }

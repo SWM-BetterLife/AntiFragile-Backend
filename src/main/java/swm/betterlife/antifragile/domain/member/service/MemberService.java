@@ -66,34 +66,34 @@ public class MemberService {
             throw new MemberNotFoundException();
         }
 
-        String profileImgUrl = null;
+        String newFilename = null;
         if (profileImgFile != null) {
-            profileImgUrl = modifyProfileImg(profileImgFile, id);
+            newFilename = modifyProfileImg(profileImgFile, id);
         }
 
         return new MemberProfileModifyResponse(
             request.nickname(), request.age(),
-            request.gender(), request.job(), profileImgUrl
+            request.gender(), request.job(), newFilename
         );
     }
 
     private String modifyProfileImg(MultipartFile profileImgFile, String id) {
         Member member = memberRepository.getMember(id);
-        String originProfileImgUrl = member.getProfileImgUrl();
-        if (originProfileImgUrl != null) {
-            s3ImageComponent.deleteImage(originProfileImgUrl);
+        String originFilename = member.getProfileImgFilename();
+        if (originFilename != null) {
+            s3ImageComponent.deleteImage(originFilename);
         }
 
-        String newProfileImgUrl = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
+        String newFilename = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
         Query query = new Query(Criteria.where("id").is(id));
-        Update update = new Update().set("profileImgUrl", newProfileImgUrl);
+        Update update = new Update().set("profileImgFilename", newFilename);
 
         UpdateResult result = mongoTemplate.upsert(query, update, Member.class);
 
         if (result.getMatchedCount() == 0) {
             throw new MemberNotFoundException();
         }
-        return newProfileImgUrl;
+        return newFilename;
     }
 
     @Transactional(readOnly = true)

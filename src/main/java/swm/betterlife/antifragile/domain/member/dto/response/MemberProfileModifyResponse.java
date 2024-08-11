@@ -7,6 +7,6 @@ public record MemberProfileModifyResponse(
     Integer age,
     Gender gender,
     String job,
-    String profileImgUrl
+    String profileImgFilename
 ) {
 }

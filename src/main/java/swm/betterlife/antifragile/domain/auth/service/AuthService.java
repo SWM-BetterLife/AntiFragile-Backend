@@ -17,8 +17,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
+import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLogoutRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthSignUpRequest;
@@ -48,6 +50,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
     private final MongoTemplate mongoTemplate;
+    private final S3ImageComponent s3ImageComponent;
 
     @Transactional
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
@@ -66,7 +69,9 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthSignUpResponse signUp(AuthSignUpRequest authSignUpRequest) {
+    public AuthSignUpResponse signUp(
+        AuthSignUpRequest authSignUpRequest, MultipartFile profileImgFile
+    ) {
         if (memberRepository.existsByEmailAndLoginType(
             authSignUpRequest.email(), authSignUpRequest.loginType())
         ) {
@@ -77,11 +82,14 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(password);
 
         Member member = Member.builder()
-                .email(authSignUpRequest.email())
-                .password(encodedPassword)
-                .loginType(authSignUpRequest.loginType())
-                .roleType(ROLE_USER)
-                .build();
+            .email(authSignUpRequest.email())
+            .password(encodedPassword)
+            .loginType(authSignUpRequest.loginType())
+            .age(authSignUpRequest.age())
+            .gender(authSignUpRequest.gender())
+            .job(authSignUpRequest.job())
+            .roleType(ROLE_USER)
+            .build();
 
         return AuthSignUpResponse.from(memberRepository.save(member));
 

@@ -12,7 +12,6 @@ public record AuthLoginResponse(
     String email,
     String nickname,
     LoginType loginType,
-    MemberDetailResponse memberDetail,
     TokenIssueResponse tokenIssue
 ) {
     public static AuthLoginResponse from(
