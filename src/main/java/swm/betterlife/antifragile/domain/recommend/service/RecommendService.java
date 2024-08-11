@@ -8,9 +8,6 @@ import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.ChannelStatistics;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
-import com.google.api.services.youtube.model.Video;
-import com.google.api.services.youtube.model.VideoListResponse;
-import com.google.api.services.youtube.model.VideoStatistics;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,23 +99,6 @@ public class RecommendService {
                         continue;
                     }
 
-                    // 비디오 정보 가져오기
-                    YouTube.Videos.List videoRequest = youtube.videos()
-                        .list(Collections.singletonList("statistics"));
-                    videoRequest.setKey(apiKey);
-                    videoRequest.setId(Collections.singletonList(videoId));
-                    VideoListResponse videoResponse = videoRequest.execute();
-                    Video video = videoResponse.getItems().get(0);
-                    VideoStatistics videoStatistics = video.getStatistics();
-                    Long viewCount = Optional.ofNullable(videoStatistics)
-                        .map(VideoStatistics::getViewCount)
-                        .map(Number::longValue)
-                        .orElse(0L);
-                    Long likeCount = Optional.ofNullable(videoStatistics)
-                        .map(VideoStatistics::getLikeCount)
-                        .map(Number::longValue)
-                        .orElse(0L);
-
                     String videoTitle = searchResult.getSnippet().getTitle();
                     String videoDescription = searchResult.getSnippet().getDescription();
                     String thumbnailUrl = searchResult.getSnippet()
@@ -148,9 +128,7 @@ public class RecommendService {
                         subscriberCount,
                         channelTitle,
                         channelImageUrl,
-                        "https://www.youtube.com/watch?v=" + videoId,
-                        viewCount,
-                        likeCount
+                        "https://www.youtube.com/watch?v=" + videoId
                     ));
                 }
             }

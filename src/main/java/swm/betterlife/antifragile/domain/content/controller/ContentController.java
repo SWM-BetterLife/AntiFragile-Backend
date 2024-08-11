@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
-import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
+import swm.betterlife.antifragile.domain.content.dto.response.ContentListResponse;
 import swm.betterlife.antifragile.domain.content.service.ContentQueryService;
 import swm.betterlife.antifragile.domain.content.service.ContentService;
 
@@ -28,7 +28,7 @@ public class ContentController {
     private final ContentQueryService contentQueryService;
 
     @PostMapping
-    public ResponseBody<ContentRecommendResponse> addRecommendContents(
+    public ResponseBody<ContentListResponse> addRecommendContents(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam("date") LocalDate date
     ) {
@@ -37,7 +37,7 @@ public class ContentController {
     }
 
     @PostMapping("/re")
-    public ResponseBody<ContentRecommendResponse> addReRecommendContents(
+    public ResponseBody<ContentListResponse> addReRecommendContents(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam("date") LocalDate date,
         @RequestParam("feedback") String feedback
@@ -66,7 +66,7 @@ public class ContentController {
     }
 
     @GetMapping
-    public ResponseBody<ContentRecommendResponse> getRecommendContents(
+    public ResponseBody<ContentListResponse> getRecommendContents(
         @AuthenticationPrincipal PrincipalDetails principalDetails,
         @RequestParam("date") LocalDate date
     ) {

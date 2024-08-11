@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swm.betterlife.antifragile.common.exception.RecommendedContentNotFoundException;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
-import swm.betterlife.antifragile.domain.content.dto.response.ContentRecommendResponse;
+import swm.betterlife.antifragile.domain.content.dto.response.ContentListResponse;
 import swm.betterlife.antifragile.domain.content.entity.Content;
 import swm.betterlife.antifragile.domain.content.entity.ContentInfo;
 import swm.betterlife.antifragile.domain.content.repository.ContentInfoRepository;
@@ -26,7 +26,7 @@ public class ContentQueryService {
     private final DiaryAnalysisService diaryAnalysisService;
 
     @Transactional(readOnly = true)
-    public ContentRecommendResponse getRecommendContents(String memberId, LocalDate date) {
+    public ContentListResponse getRecommendContents(String memberId, LocalDate date) {
         DiaryAnalysis analysis = getDiaryAnalysis(memberId, date);
 
         List<String> recommendContentUrls = analysis.getRecommendContents().stream()
@@ -37,9 +37,13 @@ public class ContentQueryService {
 
         List<Content> recommendContents = contentRepository.findByUrlIn(recommendContentUrls);
 
-        return ContentRecommendResponse.from(
+        return ContentListResponse.from(
             recommendContents.stream()
-                .map(ContentRecommendResponse.ContentResponse::from)
+                .map(content -> ContentListResponse.ContentResponse.from(
+                    content,
+                    getContentLikeNumber(content),
+                    isLiked(memberId, content)
+                ))
                 .toList()
         );
     }
@@ -47,15 +51,12 @@ public class ContentQueryService {
     @Transactional(readOnly = true)
     public ContentDetailResponse getContentDetail(String memberId, String contentId) {
         Content content = getContentById(contentId);
-        Boolean isLiked = content.getLikeMemberIds().contains(memberId);
-        Boolean isSaved = content.getSaveMembers().stream()
-            .anyMatch(saveMember -> saveMember.getMemberId().equals(memberId));
 
         return ContentDetailResponse.from(
             content,
-            getContentInfos(content.getId()),
-            isLiked,
-            isSaved
+            getContentLikeNumber(content),
+            isLiked(memberId, content),
+            isSaved(memberId, content)
         );
     }
 
@@ -71,6 +72,28 @@ public class ContentQueryService {
 
     private ContentInfo getContentInfos(String contentId) {
         return contentInfoRepository.getContentInfo(contentId);
+    }
+
+    public Boolean isLiked(String memberId, Content content) {
+        if (content.getLikeMemberIds() == null) {
+            return false;
+        }
+        return content.getLikeMemberIds().contains(memberId);
+    }
+
+    public Boolean isSaved(String memberId, Content content) {
+        if (content.getSaveMembers() == null) {
+            return false;
+        }
+        return content.getSaveMembers().stream()
+            .anyMatch(saveMember -> saveMember.getMemberId().equals(memberId));
+    }
+
+    public Long getContentLikeNumber(Content content) {
+        if (content.getLikeMemberIds() == null) {
+            return 0L;
+        }
+        return (long) content.getLikeMemberIds().size();
     }
 
     public Content getContentById(String contentId) {

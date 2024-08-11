@@ -16,8 +16,4 @@ public class YouTubeInfo {
     private String channelName;
 
     private String channelImg;
-
-    private Long viewNumber;
-
-    private Long likeNumber;
 }
