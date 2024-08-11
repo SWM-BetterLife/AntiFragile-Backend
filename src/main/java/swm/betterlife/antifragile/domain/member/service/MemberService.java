@@ -41,8 +41,11 @@ public class MemberService {
     public MemberDetailResponse findMemberByEmail(String id) {
         Integer point = memberPointService.getPointByMemberId(id);
         Integer diaryTotalNum = memberDiaryService.getDiaryTotalNumByMemberId(id);
-        return MemberDetailResponse
-            .from(memberRepository.getMember(id), point, diaryTotalNum);
+        Member member = memberRepository.getMember(id);
+        return MemberDetailResponse.from(
+            member, point, diaryTotalNum,
+            s3ImageComponent.getUrl(member.getProfileImgFilename())
+        );
     }
 
     public Member getMemberById(String id) {
@@ -66,14 +69,14 @@ public class MemberService {
             throw new MemberNotFoundException();
         }
 
-        String newFilename = null;
+        String profileImgUrl = null;
         if (profileImgFile != null) {
-            newFilename = modifyProfileImg(profileImgFile, id);
+            profileImgUrl = modifyProfileImg(profileImgFile, id);
         }
 
         return new MemberProfileModifyResponse(
             request.nickname(), request.age(),
-            request.gender(), request.job(), newFilename
+            request.gender(), request.job(), profileImgUrl
         );
     }
 
@@ -93,7 +96,7 @@ public class MemberService {
         if (result.getMatchedCount() == 0) {
             throw new MemberNotFoundException();
         }
-        return newFilename;
+        return s3ImageComponent.getUrl(newFilename);
     }
 
     @Transactional(readOnly = true)

@@ -9,19 +9,19 @@ public record MemberDetailResponse(
         String id,
         String email,
         String nickname,
-        String profileImgFilename,
+        String profileImgUrl,
         Integer point,
         Integer diaryTotalNum,
         LoginType loginType //todo: 연속 작성일 수 추가
 ) {
     public static MemberDetailResponse from(
-        Member member, Integer point, Integer diaryTotalNum
+        Member member, Integer point, Integer diaryTotalNum, String profileImgUrl
     ) {
         return MemberDetailResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
             .nickname(member.getNickname())
-            .profileImgFilename(member.getProfileImgFilename())
+            .profileImgUrl(profileImgUrl)
             .point(point)
             .diaryTotalNum(diaryTotalNum)
             .loginType(member.getLoginType())

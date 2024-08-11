@@ -68,6 +68,9 @@ public class S3ImageComponent {
     }
 
     public String getUrl(String filename) {
-        return amazonS3.getUrl(bucket, filename).toString();
+        if(filename != null) {
+            return amazonS3.getUrl(bucket, filename).toString();
+        }
+        return null;
     }
 }

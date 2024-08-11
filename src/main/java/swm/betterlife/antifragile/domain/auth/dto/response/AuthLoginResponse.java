@@ -1,7 +1,6 @@
 package swm.betterlife.antifragile.domain.auth.dto.response;
 
 import lombok.Builder;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.token.dto.response.TokenIssueResponse;
