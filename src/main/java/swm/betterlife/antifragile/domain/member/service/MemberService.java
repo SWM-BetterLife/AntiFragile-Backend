@@ -41,8 +41,11 @@ public class MemberService {
     public MemberDetailResponse findMemberByEmail(String id) {
         Integer point = memberPointService.getPointByMemberId(id);
         Integer diaryTotalNum = memberDiaryService.getDiaryTotalNumByMemberId(id);
-        return MemberDetailResponse
-            .from(memberRepository.getMember(id), point, diaryTotalNum);
+        Member member = memberRepository.getMember(id);
+        return MemberDetailResponse.from(
+            member, point, diaryTotalNum,
+            s3ImageComponent.getUrl(member.getProfileImgFilename())
+        );
     }
 
     public Member getMemberById(String id) {
@@ -79,21 +82,21 @@ public class MemberService {
 
     private String modifyProfileImg(MultipartFile profileImgFile, String id) {
         Member member = memberRepository.getMember(id);
-        String originProfileImgUrl = member.getProfileImgUrl();
-        if (originProfileImgUrl != null) {
-            s3ImageComponent.deleteImage(originProfileImgUrl);
+        String originFilename = member.getProfileImgFilename();
+        if (originFilename != null) {
+            s3ImageComponent.deleteImage(originFilename);
         }
 
-        String newProfileImgUrl = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
+        String newFilename = s3ImageComponent.uploadImage(PROFILE, profileImgFile);
         Query query = new Query(Criteria.where("id").is(id));
-        Update update = new Update().set("profileImgUrl", newProfileImgUrl);
+        Update update = new Update().set("profileImgFilename", newFilename);
 
         UpdateResult result = mongoTemplate.upsert(query, update, Member.class);
 
         if (result.getMatchedCount() == 0) {
             throw new MemberNotFoundException();
         }
-        return newProfileImgUrl;
+        return s3ImageComponent.getUrl(newFilename);
     }
 
     @Transactional(readOnly = true)

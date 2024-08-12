@@ -35,7 +35,7 @@ public class Member extends BaseTimeEntity {
 
     private String job;
 
-    private String profileImgUrl;
+    private String profileImgFilename;
 
     private List<String> emoticonThemeIds = new ArrayList<>();
 

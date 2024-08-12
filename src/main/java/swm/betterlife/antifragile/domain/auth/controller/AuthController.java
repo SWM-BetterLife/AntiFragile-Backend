@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
@@ -34,9 +36,10 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     public ResponseBody<AuthSignUpResponse> signUp(
-        @RequestBody AuthSignUpRequest authSignUpRequest
+        @RequestPart(required = false) MultipartFile profileImgFile,
+        @RequestPart AuthSignUpRequest authSignUpRequest
     ) {
-        return ResponseBody.ok(authService.signUp(authSignUpRequest));
+        return ResponseBody.ok(authService.signUp(authSignUpRequest, profileImgFile));
     }
 
     @PostMapping("/logout")

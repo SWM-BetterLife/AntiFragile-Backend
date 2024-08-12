@@ -15,5 +15,5 @@ public class ReviewMember {
 
     private String nickname;
 
-    private String profileImgUrl;
+    private String profileImgFilename;
 }

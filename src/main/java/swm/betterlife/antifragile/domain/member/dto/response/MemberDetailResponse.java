@@ -15,13 +15,14 @@ public record MemberDetailResponse(
         LoginType loginType //todo: 연속 작성일 수 추가
 ) {
     public static MemberDetailResponse from(
-        Member member, Integer point, Integer diaryTotalNum
+        Member member, Integer point,
+        Integer diaryTotalNum, String profileImgUrl
     ) {
         return MemberDetailResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
             .nickname(member.getNickname())
-            .profileImgUrl(member.getProfileImgUrl())
+            .profileImgUrl(profileImgUrl)
             .point(point)
             .diaryTotalNum(diaryTotalNum)
             .loginType(member.getLoginType())
