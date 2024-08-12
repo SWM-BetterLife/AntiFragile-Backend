@@ -56,18 +56,16 @@ public class AuthService {
 
     @Transactional
     public AuthLoginResponse login(AuthLoginRequest authLoginRequest) {
-        String username
-            = authLoginRequest.loginType().name() + ":" + authLoginRequest.email(); //todo: common분리
         String password = authLoginRequest.password();
 
-        Authentication authentication = getAuthenticate(username, password);
+        Authentication authentication
+            = getAuthenticate(authLoginRequest.email(), password, authLoginRequest.loginType());
 
         Member member = memberRepository.getMember(
             authLoginRequest.email(), authLoginRequest.loginType()
         );
-        TokenIssueResponse tokenIssueResponse
-                = jwtProvider.issueToken(authentication);
-        return AuthLoginResponse.from(member, tokenIssueResponse);
+        TokenIssueResponse tokenIssue = jwtProvider.issueToken(authentication);
+        return AuthLoginResponse.from(member, tokenIssue);
     }
 
     @Transactional
@@ -98,8 +96,13 @@ public class AuthService {
             .roleType(ROLE_USER)
             .build();
 
-        return AuthSignUpResponse.from(memberRepository.save(member));
+        Member savedMember = memberRepository.save(member);
 
+        Authentication authentication =
+            getAuthenticate(authSignUpRequest.email(), password, authSignUpRequest.loginType());
+        TokenIssueResponse tokenIssue = jwtProvider.issueToken(authentication);
+
+        return AuthSignUpResponse.from(savedMember, tokenIssue);
     }
 
     @Transactional
@@ -120,7 +123,11 @@ public class AuthService {
         }
     }
 
-    private Authentication getAuthenticate(String username, String password) {
+    private Authentication getAuthenticate(
+        String email, String password,
+        LoginType loginType
+    ) {
+        String username = loginType.name() + ":" + email;
         UsernamePasswordAuthenticationToken authenticationToken
             = new UsernamePasswordAuthenticationToken(username, password);
         return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
