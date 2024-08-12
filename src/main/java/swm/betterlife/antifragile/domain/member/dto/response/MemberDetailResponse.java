@@ -15,7 +15,8 @@ public record MemberDetailResponse(
         LoginType loginType //todo: 연속 작성일 수 추가
 ) {
     public static MemberDetailResponse from(
-        Member member, Integer point, Integer diaryTotalNum, String profileImgUrl
+        Member member, Integer point,
+        Integer diaryTotalNum, String profileImgUrl
     ) {
         return MemberDetailResponse.builder()
             .id(member.getId())

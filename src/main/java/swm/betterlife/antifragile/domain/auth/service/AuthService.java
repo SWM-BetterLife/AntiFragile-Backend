@@ -5,6 +5,7 @@ import static swm.betterlife.antifragile.domain.member.entity.RoleType.ROLE_USER
 
 import com.mongodb.client.result.UpdateResult;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
-import swm.betterlife.antifragile.common.util.S3ImageCategory;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLogoutRequest;
@@ -90,7 +90,11 @@ public class AuthService {
             .age(authSignUpRequest.age())
             .gender(authSignUpRequest.gender())
             .job(authSignUpRequest.job())
-            .profileImgFilename(s3ImageComponent.uploadImage(PROFILE, profileImgFile))
+            .profileImgFilename(
+                Optional.ofNullable(profileImgFile)
+                .map(file -> s3ImageComponent.uploadImage(PROFILE, file))
+                .orElse(null)
+            )
             .roleType(ROLE_USER)
             .build();
 
