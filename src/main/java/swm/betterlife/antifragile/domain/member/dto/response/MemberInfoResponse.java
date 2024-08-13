@@ -5,7 +5,7 @@ import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 
 @Builder
-public record MemberDetailResponse(
+public record MemberInfoResponse(
         String id,
         String email,
         String nickname,
@@ -14,11 +14,11 @@ public record MemberDetailResponse(
         Integer diaryTotalNum,
         LoginType loginType //todo: 연속 작성일 수 추가
 ) {
-    public static MemberDetailResponse from(
+    public static MemberInfoResponse from(
         Member member, Integer point,
         Integer diaryTotalNum, String profileImgUrl
     ) {
-        return MemberDetailResponse.builder()
+        return MemberInfoResponse.builder()
             .id(member.getId())
             .email(member.getEmail())
             .nickname(member.getNickname())

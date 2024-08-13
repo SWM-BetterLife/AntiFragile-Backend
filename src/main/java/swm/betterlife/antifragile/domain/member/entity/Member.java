@@ -2,6 +2,7 @@ package swm.betterlife.antifragile.domain.member.entity;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class Member extends BaseTimeEntity {
 
     private String nickname;
 
-    private Integer age;
+    private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;

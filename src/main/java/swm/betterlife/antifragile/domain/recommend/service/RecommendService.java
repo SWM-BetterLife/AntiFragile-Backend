@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import swm.betterlife.antifragile.common.util.AgeConverter;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.recommend.dto.request.OpenAiRequest;
 import swm.betterlife.antifragile.domain.recommend.dto.response.OpenAiResponse;
@@ -45,7 +46,7 @@ public class RecommendService {
         return String.format(
             "%s 감정을 가진 나이가 %d인 %s에게 추천할만한 영상의 키워드를 하나만 반환해줘.",
             emotionString,
-            member.getAge(),
+            AgeConverter.convertDateToAge(member.getBirthDate()),
             member.getJob()
         );
     }

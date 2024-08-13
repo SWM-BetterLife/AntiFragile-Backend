@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import swm.betterlife.antifragile.common.exception.EmoticonThemeAlreadyHasMemberId;
 import swm.betterlife.antifragile.common.exception.EmoticonThemeNotFoundException;
 import swm.betterlife.antifragile.common.response.PagingResponse;
-import swm.betterlife.antifragile.common.util.ObjectIdGenerator;
 import swm.betterlife.antifragile.domain.diaryanalysis.entity.SelectedEmoticon;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireFromEmotionResponse;
 import swm.betterlife.antifragile.domain.emoticontheme.dto.response.EmoticonEntireResponse;
@@ -101,7 +100,7 @@ public class EmoticonThemeService {
     public void addMemberIdToEmoticonTheme(String memberId, String emoticonThemeId) {
 
         Query query = Query.query(
-            Criteria.where("_id").is(ObjectIdGenerator.generate(emoticonThemeId))
+            Criteria.where("_id").is(emoticonThemeId)
         );
         Update update = new Update().addToSet("buyer_ids", memberId);
         UpdateResult result = mongoTemplate.updateFirst(query, update, EMOTICON_THEMES.getName());
