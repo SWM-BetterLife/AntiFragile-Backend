@@ -85,7 +85,8 @@ public class AuthService {
             .email(authSignUpRequest.email())
             .password(encodedPassword)
             .loginType(authSignUpRequest.loginType())
-            .age(authSignUpRequest.age())
+            .nickname(authSignUpRequest.nickname())
+            .birthDate(authSignUpRequest.birthDate())
             .gender(authSignUpRequest.gender())
             .job(authSignUpRequest.job())
             .profileImgFilename(

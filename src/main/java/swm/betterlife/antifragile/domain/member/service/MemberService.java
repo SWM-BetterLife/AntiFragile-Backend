@@ -59,7 +59,7 @@ public class MemberService {
         Query query = Query.query(Criteria.where("id").is(id));
         Update update = new Update()
             .set("nickname", request.nickname())
-            .set("age", request.age())
+            .set("birthDate", request.birthDate())
             .set("gender", request.gender())
             .set("job", request.job());
 
@@ -75,7 +75,7 @@ public class MemberService {
         }
 
         return new MemberProfileModifyResponse(
-            request.nickname(), request.age(),
+            request.nickname(), request.birthDate(),
             request.gender(), request.job(), profileImgUrl
         );
     }
