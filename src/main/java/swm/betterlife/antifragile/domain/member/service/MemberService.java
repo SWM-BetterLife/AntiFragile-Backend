@@ -18,7 +18,8 @@ import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.member.controller.MemberNicknameDuplResponse;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberExistenceResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
@@ -38,14 +39,21 @@ public class MemberService {
     private final S3ImageComponent s3ImageComponent;
 
     @Transactional(readOnly = true)
-    public MemberDetailResponse findMemberByEmail(String id) {
+    public MemberInfoResponse findMemberById(String id) {
         Integer point = memberPointService.getPointByMemberId(id);
         Integer diaryTotalNum = memberDiaryService.getDiaryTotalNumByMemberId(id);
         Member member = memberRepository.getMember(id);
-        return MemberDetailResponse.from(
+        return MemberInfoResponse.from(
             member, point, diaryTotalNum,
             s3ImageComponent.getUrl(member.getProfileImgFilename())
         );
+    }
+
+    @Transactional(readOnly = true)
+    public MemberDetailInfoResponse findMemberDetailById(String id) {
+        Member member = memberRepository.getMember(id);
+        return MemberDetailInfoResponse
+            .from(member, s3ImageComponent.getUrl(member.getProfileImgFilename()));
     }
 
     public Member getMemberById(String id) {

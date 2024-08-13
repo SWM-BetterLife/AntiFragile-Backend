@@ -13,7 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberExistenceResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
@@ -29,11 +30,20 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping
-    public ResponseBody<MemberDetailResponse> findMember(
+    public ResponseBody<MemberInfoResponse> findMember(
         @AuthenticationPrincipal PrincipalDetails principalDetails
     ) {
         return ResponseBody.ok(
-            memberService.findMemberByEmail(principalDetails.memberId()));
+            memberService.findMemberById(principalDetails.memberId()));
+    }
+
+    @GetMapping("/detail")
+    public ResponseBody<MemberDetailInfoResponse> findMemberDetail(
+        @AuthenticationPrincipal PrincipalDetails principalDetails
+    ) {
+        return ResponseBody.ok(
+            memberService.findMemberDetailById(principalDetails.memberId())
+        );
     }
 
     @PostMapping("/profile")
