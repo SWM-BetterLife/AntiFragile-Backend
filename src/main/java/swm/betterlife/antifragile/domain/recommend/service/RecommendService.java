@@ -8,6 +8,9 @@ import com.google.api.services.youtube.model.ChannelListResponse;
 import com.google.api.services.youtube.model.ChannelStatistics;
 import com.google.api.services.youtube.model.SearchListResponse;
 import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoListResponse;
+import com.google.api.services.youtube.model.VideoStatus;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,10 +103,22 @@ public class RecommendService {
                         continue;
                     }
 
+                    // 영상의 임베딩 가능 여부 확인
+                    YouTube.Videos.List videoRequest = youtube.videos()
+                        .list(Collections.singletonList("status"));
+                    videoRequest.setKey(apiKey);
+                    videoRequest.setId(Collections.singletonList(videoId));
+                    VideoListResponse videoResponse = videoRequest.execute();
+                    Video video = videoResponse.getItems().get(0);
+                    VideoStatus status = video.getStatus();
+
+                    if (status.getEmbeddable() == null || !status.getEmbeddable()) {
+                        continue; // 임베딩이 불가능한 동영상 건너뛰기
+                    }
+
                     String videoTitle = searchResult.getSnippet().getTitle();
                     String videoDescription = searchResult.getSnippet().getDescription();
-                    String thumbnailUrl = searchResult.getSnippet()
-                        .getThumbnails().getDefault().getUrl();
+                    String thumbnailUrl = "https://img.youtube.com/vi/" + videoId + "/sddefault.jpg";
                     String channelId = searchResult.getSnippet().getChannelId();
                     String channelTitle = searchResult.getSnippet().getChannelTitle();
 
