@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] PERMIT_PATHS = {
-        "/auth/**", "/token/re-issuance", "/**"
+        "/auth/**", "/token/re-issuance", "/llm-models", "/**"
     };
 
     private static final String[] ALLOW_ORIGINS = {
