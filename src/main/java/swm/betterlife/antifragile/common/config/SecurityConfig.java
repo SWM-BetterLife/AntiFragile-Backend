@@ -32,7 +32,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] PERMIT_PATHS = {
-        "/auth", "/auth/**", "token/**"
+        "/auth", "/auth/**", "token/**", "/health-check"
     };
 
     private static final String[] PERMIT_QUERY_PARAM_PATHS = {
