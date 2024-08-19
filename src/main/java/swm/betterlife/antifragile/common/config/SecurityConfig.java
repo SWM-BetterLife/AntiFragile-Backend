@@ -32,11 +32,11 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] PERMIT_PATHS = {
-        "/auth", "/auth/**", "token/**"
+        "/auth", "/auth/**", "token/**", "/health-check"
     };
 
     private static final String[] PERMIT_QUERY_PARAM_PATHS = {
-        "/members/duplication-check", "/members/existence", "/llm-models"
+        "/members/duplication-check", "/members/status", "/llm-models"
     };
 
     private static final String[] AUTH_DELETE_PATHS = {
