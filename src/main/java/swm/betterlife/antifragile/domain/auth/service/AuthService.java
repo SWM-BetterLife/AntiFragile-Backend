@@ -64,6 +64,9 @@ public class AuthService {
         Member member = memberRepository.getMember(
             authLoginRequest.email(), authLoginRequest.loginType()
         );
+
+        modifyDeletedAt(member.getId(), null);
+
         TokenIssueResponse tokenIssue = jwtProvider.issueToken(authentication);
         return AuthLoginResponse.from(member, tokenIssue);
     }
@@ -113,9 +116,13 @@ public class AuthService {
 
     @Transactional
     public void delete(String memberId) {
+        modifyDeletedAt(memberId, LocalDateTime.now());
+    }
+
+    private void modifyDeletedAt(String memberId, LocalDateTime localDateTime) {
         Query query = Query.query(Criteria.where("id").is(memberId));
         Update update = new Update()
-            .set("deletedAt", LocalDateTime.now());
+            .set("deletedAt", localDateTime);
 
         UpdateResult result = mongoTemplate.upsert(query, update, Member.class);
 
