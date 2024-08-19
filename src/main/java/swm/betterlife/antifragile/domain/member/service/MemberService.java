@@ -143,9 +143,9 @@ public class MemberService {
 
         Member member = memberRepository.getMember(email, loginType);
 
-        return (member.getDeletedAt() != null) ?
-            new MemberStatusResponse(HUMAN) :
-            new MemberStatusResponse(EXISTENCE);
+        return (member.getDeletedAt() != null)
+            ? new MemberStatusResponse(HUMAN)
+            : new MemberStatusResponse(EXISTENCE);
 
     }
 
