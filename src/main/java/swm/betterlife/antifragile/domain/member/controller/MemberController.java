@@ -14,10 +14,10 @@ import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberStatusResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberStatusResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
 
