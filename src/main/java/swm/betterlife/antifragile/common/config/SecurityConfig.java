@@ -1,5 +1,8 @@
 package swm.betterlife.antifragile.common.config;
 
+import static org.springframework.http.HttpMethod.DELETE;
+
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthFilter;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthenticationEntryPoint;
 import swm.betterlife.antifragile.common.jwt.filter.JwtExceptionFilter;
+import swm.betterlife.antifragile.common.jwt.filter.SoftDeleteFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,10 +28,19 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final SoftDeleteFilter softDeleteFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] PERMIT_PATHS = {
-        "/auth/**", "/token/re-issuance", "/llm-models", "/**"
+        "/auth", "/auth/**", "token/**"
+    };
+
+    private static final String[] PERMIT_QUERY_PARAM_PATHS = {
+        "/members/duplication-check", "/members/existence", "/llm-models"
+    };
+
+    private static final String[] AUTH_DELETE_PATHS = {
+        "/auth",
     };
 
     private static final String[] ALLOW_ORIGINS = {
@@ -45,8 +58,13 @@ public class SecurityConfig {
         );
 
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(PERMIT_PATHS).permitAll()
-                .anyRequest().authenticated()
+            .requestMatchers(DELETE, AUTH_DELETE_PATHS).authenticated()
+            .requestMatchers(PERMIT_PATHS).permitAll()
+            .requestMatchers(
+                request -> Arrays.stream(PERMIT_QUERY_PARAM_PATHS)
+                    .anyMatch(path -> request.getRequestURI().startsWith(path))
+            ).permitAll()
+            .anyRequest().authenticated()
         );
 
         http.exceptionHandling(exceptionHandling -> {
@@ -54,7 +72,8 @@ public class SecurityConfig {
         });
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
+                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
+                .addFilterAfter(softDeleteFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

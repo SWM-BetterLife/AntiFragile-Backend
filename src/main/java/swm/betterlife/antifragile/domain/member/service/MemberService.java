@@ -1,6 +1,9 @@
 package swm.betterlife.antifragile.domain.member.service;
 
 import static swm.betterlife.antifragile.common.util.S3ImageCategory.PROFILE;
+import static swm.betterlife.antifragile.domain.member.dto.response.MemberStatusResponse.Status.EXISTENCE;
+import static swm.betterlife.antifragile.domain.member.dto.response.MemberStatusResponse.Status.HUMAN;
+import static swm.betterlife.antifragile.domain.member.dto.response.MemberStatusResponse.Status.NOT_EXISTENCE;
 
 import com.mongodb.client.result.UpdateResult;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +22,10 @@ import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.member.controller.MemberNicknameDuplResponse;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberExistenceResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberStatusResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.repository.MemberRepository;
@@ -130,12 +133,20 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public MemberExistenceResponse checkMemberExistence(
+    public MemberStatusResponse checkMemberStatus(
         String email, LoginType loginType
     ) {
-        return new MemberExistenceResponse(
-            memberRepository.existsByEmailAndLoginType(email, loginType)
-        );
+
+        if (!memberRepository.existsByEmailAndLoginType(email, loginType)) {
+            return new MemberStatusResponse(NOT_EXISTENCE);
+        }
+
+        Member member = memberRepository.getMember(email, loginType);
+
+        return (member.getDeletedAt() != null)
+            ? new MemberStatusResponse(HUMAN)
+            : new MemberStatusResponse(EXISTENCE);
+
     }
 
     @Scheduled(cron = "0 0 0 * * *")

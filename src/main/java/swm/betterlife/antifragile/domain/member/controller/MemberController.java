@@ -14,10 +14,10 @@ import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
-import swm.betterlife.antifragile.domain.member.dto.response.MemberExistenceResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberRemainNumberResponse;
+import swm.betterlife.antifragile.domain.member.dto.response.MemberStatusResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
 
@@ -74,12 +74,12 @@ public class MemberController {
             memberService.getRemainRecommendNumber(principalDetails.memberId()));
     }
 
-    @GetMapping("/existence")
-    public ResponseBody<MemberExistenceResponse> checkMemberExists(
+    @GetMapping("/status")
+    public ResponseBody<MemberStatusResponse> checkMemberStatus(
         @RequestParam String email, @RequestParam LoginType loginType
     ) {
         return ResponseBody.ok(
-            memberService.checkMemberExistence(email, loginType)
+            memberService.checkMemberStatus(email, loginType)
         );
     }
 }
