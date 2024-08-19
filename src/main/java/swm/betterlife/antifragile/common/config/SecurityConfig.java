@@ -36,7 +36,7 @@ public class SecurityConfig {
     };
 
     private static final String[] PERMIT_QUERY_PARAM_PATHS = {
-        "/members/duplication-check", "/members/existence"
+        "/members/duplication-check", "/members/status"
     };
 
     private static final String[] AUTH_DELETE_PATHS = {
