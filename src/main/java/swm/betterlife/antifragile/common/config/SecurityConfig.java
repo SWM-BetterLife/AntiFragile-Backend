@@ -7,7 +7,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,6 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthFilter;
 import swm.betterlife.antifragile.common.jwt.filter.JwtAuthenticationEntryPoint;
 import swm.betterlife.antifragile.common.jwt.filter.JwtExceptionFilter;
+import swm.betterlife.antifragile.common.jwt.filter.SoftDeleteFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +28,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
+    private final SoftDeleteFilter softDeleteFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] PERMIT_PATHS = {
@@ -71,7 +72,8 @@ public class SecurityConfig {
         });
 
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
+                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
+                .addFilterAfter(softDeleteFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
