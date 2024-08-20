@@ -1,6 +1,7 @@
 package swm.betterlife.antifragile.common.config;
 
 import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +33,15 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] PERMIT_PATHS = {
-        "/auth", "/auth/**", "token/**", "/health-check"
+        "/auth", "/auth/**", "token/**", "/health-check",
     };
 
     private static final String[] PERMIT_QUERY_PARAM_PATHS = {
-        "/members/duplication-check", "/members/status"
+        "/members/duplication-check", "/members/status",
+    };
+
+    private static final String[] PERMIT_GET_PATHS = {
+        "/llm-models",
     };
 
     private static final String[] AUTH_DELETE_PATHS = {
@@ -60,6 +65,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
             .requestMatchers(DELETE, AUTH_DELETE_PATHS).authenticated()
             .requestMatchers(PERMIT_PATHS).permitAll()
+            .requestMatchers(GET, PERMIT_GET_PATHS).permitAll()
             .requestMatchers(
                 request -> Arrays.stream(PERMIT_QUERY_PARAM_PATHS)
                     .anyMatch(path -> request.getRequestURI().startsWith(path))

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.S3DeleteFailException;
 import swm.betterlife.antifragile.common.exception.S3UploadFailException;
+import swm.betterlife.antifragile.common.exception.S3UrlGenerationFailException;
 
 @Slf4j
 @Component
@@ -72,5 +73,14 @@ public class S3ImageComponent {
             return amazonS3.getUrl(bucket, filename).toString();
         }
         return null;
+    }
+
+    public String getModelUrl(String fileName) {
+        String fullPath = "MODEL/" + fileName;
+        try {
+            return amazonS3.getUrl(bucket, fullPath).toString();
+        } catch (Exception e) {
+            throw new S3UrlGenerationFailException();
+        }
     }
 }
