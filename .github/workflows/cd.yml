@@ -43,7 +43,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
-      - run: apt-get update && apt-get install -y wget
+      - run: sudo apt-get update && sudo apt-get install -y wget
 
       # wget
       - run: wget -O dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
