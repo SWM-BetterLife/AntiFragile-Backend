@@ -43,10 +43,16 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
-      - run: sudo apt-get update && sudo apt-get install -y wget
+      - name: Install wget
+        run: sudo apt-get update && sudo apt-get install -y wget
 
-      # wget
-      - run: wget -O dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
+      # wget으로 dd-java-agent.jar 다운로드
+      - name: Download Datadog Java Agent
+        run: wget -O dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
+
+      # Docker 빌드를 위한 준비 - dd-java-agent.jar을 Docker 컨텍스트에 복사
+      - name: Copy Datadog Agent to Docker context
+        run: cp dd-java-agent.jar .
 
       # Docker 이미지를 빌드할 준비
       - name: Set up Docker Buildx
@@ -107,4 +113,5 @@ jobs:
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} docker-compose -f docker-compose.dev.yml pull
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} docker-compose -f docker-compose.dev.yml down
             DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }} docker-compose -f docker-compose.dev.yml up -d
-            
+      
+      
