@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import swm.betterlife.antifragile.common.exception.HumanMemberCannotBeAccessedException;
 import swm.betterlife.antifragile.common.exception.TokenExpiredException;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 
@@ -35,7 +36,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(request, response);
-        } catch (TokenExpiredException e) {
+        } catch (TokenExpiredException | HumanMemberCannotBeAccessedException e) {
             ResponseBody<Void> responseBody
                     = ResponseBody.fail(e.getMessage());
             setErrorResponse(response, e, responseBody, FORBIDDEN.value());
