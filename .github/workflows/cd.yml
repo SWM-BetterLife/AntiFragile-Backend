@@ -50,10 +50,6 @@ jobs:
       - name: Download Datadog Java Agent
         run: wget -O dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
 
-      # Docker 빌드를 위한 준비 - dd-java-agent.jar을 Docker 컨텍스트에 복사
-      - name: Copy Datadog Agent to Docker context
-        run: cp dd-java-agent.jar .
-
       # Docker 이미지를 빌드할 준비
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
