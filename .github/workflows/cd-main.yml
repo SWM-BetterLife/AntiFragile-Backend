@@ -1,0 +1,70 @@
+name: Dockerizing to Amazon ECR for Prod
+
+on:
+    push:
+        branches: [ "main" ]
+
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: antifragile
+
+jobs:
+  deploy_job:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 레포지토리 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.ACTION_TOKEN }}
+
+      - name: Update submodule
+        run: |
+          git submodule update --remote --recursive
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # gradle caching - 빌드 시간 향상
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: prod
+        run: |
+          # Use the Dockerfile.prod and build the image
+          docker build -f Dockerfile.main --build-arg SPRING_PROFILES_ACTIVE=main -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          # Push the image to ECR
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

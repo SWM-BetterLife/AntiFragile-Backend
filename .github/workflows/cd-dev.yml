@@ -1,8 +1,8 @@
-name: Deploy to EC2 with Docker
+name: Dockerizing to Amazon EC2 for Dev
 
 on:
   push:
-    branches: [ "release", "develop" ]
+    branches: [ "develop" ]
 
 jobs:
   deploy_job:
@@ -63,7 +63,6 @@ jobs:
 
       # Develop에 Docker 이미지를 build, push
       - name: Build and push Docker image to develop
-        if: contains(github.ref, 'develop')
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -73,21 +72,8 @@ jobs:
           build-args: |
             SPRING_PROFILES_ACTIVE=develop
 
-      # Release에 Docker 이미지를 build, push
-      - name: Build and push Docker image to release
-        if: contains(github.ref, 'release')
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/antifragile-release:latest
-          build-args: |
-            SPRING_PROFILES_ACTIVE=release
-
       # docker-compose 파일을 EC2로 복사
       - name: Copy docker-compose file to EC2
-        if: contains(github.ref, 'develop')
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -98,7 +84,6 @@ jobs:
 
       # EC2 인스턴스에 SSH로 접속하여 Docker 컨테이너를 업데이트하고 실행
       - name: Deploy to EC2 (develop)
-        if: contains(github.ref, 'develop')
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
