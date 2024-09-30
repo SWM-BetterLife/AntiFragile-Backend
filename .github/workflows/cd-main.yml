@@ -61,12 +61,20 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push image to Amazon ECR
-        id: build-image
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: prod
-        run: |
-          # Use the Dockerfile.prod and build the image
-          docker build -f Dockerfile.main --build-arg SPRING_PROFILES_ACTIVE=main -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          # Push the image to ECR
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile.main
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:prod
+          build-args: SPRING_PROFILES_ACTIVE=prod
+#      - name: Build, tag, and push image to Amazon ECR
+#        id: build-image
+#        env:
+#          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#          IMAGE_TAG: prod
+#        run: |
+#          # Use the Dockerfile.prod and build the image
+#          docker build -f Dockerfile.main --build-arg SPRING_PROFILES_ACTIVE=main -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#          # Push the image to ECR
+#          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

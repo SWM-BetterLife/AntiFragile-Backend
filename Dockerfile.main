@@ -4,8 +4,8 @@ FROM openjdk:17-jdk
 ARG JAR_FILE=build/libs/*SNAPSHOT.jar
 COPY ${JAR_FILE} antifragile.jar
 
-# 프로덕션용 환경 변수 설정
-ENV SPRING_PROFILES_ACTIVE=prod
+# 환경 변수 설정
+ENV SPRING_PROFILES_ACTIVE=main
 
 # 프로덕션용 진입점 설정
-ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-jar", "/antifragile.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "/antifragile.jar"]
