@@ -60,14 +60,17 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      # Docker 이미지 빌드, 태그 및 Amazon ECR에 푸시
       - name: Build, tag, and push image to Amazon ECR
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile.main
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:prod
-          build-args: SPRING_PROFILES_ACTIVE=prod
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:prod
+          build-args: |
+            SPRING_PROFILES_ACTIVE=main
+
 #      - name: Build, tag, and push image to Amazon ECR
 #        id: build-image
 #        env:
