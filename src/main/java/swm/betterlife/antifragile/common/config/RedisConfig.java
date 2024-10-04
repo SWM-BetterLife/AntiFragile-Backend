@@ -22,24 +22,15 @@ public class RedisConfig {
     private int port;
 
     @Bean
-    @Profile("prod")
-    public RedisConnectionFactory redisClusterConnectionFactory() {
-        RedisClusterConfiguration clusterConfig = new RedisClusterConfiguration();
-        clusterConfig.clusterNode(host, port);
-        return new LettuceConnectionFactory(clusterConfig);
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
+        return new LettuceConnectionFactory(config);
     }
 
     @Bean
-    @Profile({"develop", "local", "test"})
-    public RedisConnectionFactory redisStandaloneConnectionFactory() {
-        RedisStandaloneConfiguration standaloneConfig = new RedisStandaloneConfiguration(host, port);
-        return new LettuceConnectionFactory(standaloneConfig);
-    }
-
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+    public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
 
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
