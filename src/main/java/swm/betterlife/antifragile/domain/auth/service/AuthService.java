@@ -81,7 +81,9 @@ public class AuthService {
             throw new RuntimeException("이미 존재하는 이메일입니다.");  //todo: Custom Ex
         }
 
-        String password = getPasswordByLoginType(authSignUpRequest.loginType());
+        String password = getPasswordByLoginType(
+                authSignUpRequest.loginType(), authSignUpRequest.password()
+            );
         String encodedPassword = passwordEncoder.encode(password);
 
         Member member = Member.builder()
@@ -141,8 +143,9 @@ public class AuthService {
         return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     }
 
-    private String getPasswordByLoginType(LoginType loginType) {
+    private String getPasswordByLoginType(LoginType loginType, String password) {
         return switch (loginType) {
+            case NORMAL -> password;
             case GOOGLE -> googlePassword;
             case KAKAO -> kakaoPassword;
             case NAVER -> naverPassword;
