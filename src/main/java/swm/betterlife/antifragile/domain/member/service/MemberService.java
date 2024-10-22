@@ -19,11 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
-import swm.betterlife.antifragile.common.exception.PasswordSameException;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.member.controller.MemberNicknameDuplResponse;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
-import swm.betterlife.antifragile.domain.member.dto.request.PasswordModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
@@ -152,26 +150,6 @@ public class MemberService {
             ? new MemberStatusResponse(HUMAN)
             : new MemberStatusResponse(EXISTENCE);
 
-    }
-
-    @Transactional
-    public void modifyPassword(
-        String memberId, PasswordModifyRequest passwordModifyRequest
-    ) {
-        String curPassword = passwordModifyRequest.curPassword();
-        String newPassword = passwordModifyRequest.newPassword();
-        if (curPassword.equals(newPassword)) {
-            throw new PasswordSameException();
-        }
-        String encodedPassword = passwordEncoder.encode(newPassword);
-        Query query = new Query(Criteria.where("id").is(memberId));
-        Update update = new Update().set("password", encodedPassword);
-
-        UpdateResult result = mongoTemplate.updateFirst(query, update, Member.class);
-
-        if (result.getMatchedCount() == 0) {
-            throw new MemberNotFoundException();
-        }
     }
 
     @Scheduled(cron = "0 0 0 * * *")

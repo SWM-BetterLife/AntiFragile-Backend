@@ -1,4 +1,4 @@
-package swm.betterlife.antifragile.domain.member.dto.request;
+package swm.betterlife.antifragile.domain.auth.dto.request;
 
 public record PasswordModifyRequest(
     String curPassword,

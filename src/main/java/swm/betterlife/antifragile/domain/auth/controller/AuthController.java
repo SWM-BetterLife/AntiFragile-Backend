@@ -15,6 +15,7 @@ import swm.betterlife.antifragile.common.security.PrincipalDetails;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLogoutRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthSignUpRequest;
+import swm.betterlife.antifragile.domain.auth.dto.request.PasswordModifyRequest;
 import swm.betterlife.antifragile.domain.auth.dto.response.AuthLoginResponse;
 import swm.betterlife.antifragile.domain.auth.dto.response.AuthSignUpResponse;
 import swm.betterlife.antifragile.domain.auth.service.AuthService;
@@ -47,6 +48,18 @@ public class AuthController {
         @RequestBody AuthLogoutRequest authLogoutRequest
     ) {
         authService.logout(authLogoutRequest);
+        return ResponseBody.ok();
+    }
+
+    @PostMapping("/password")
+    public ResponseBody<Void> modifyPassword(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestBody PasswordModifyRequest passwordModifyRequest
+    ) {
+        authService.modifyPassword(
+            principalDetails.email(), principalDetails.memberId(),
+            principalDetails.loginType(), passwordModifyRequest
+        );
         return ResponseBody.ok();
     }
 
