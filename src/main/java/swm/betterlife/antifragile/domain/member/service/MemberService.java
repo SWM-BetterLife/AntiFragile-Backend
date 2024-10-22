@@ -13,13 +13,18 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
+import swm.betterlife.antifragile.common.exception.PasswordSameException;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
+import swm.betterlife.antifragile.domain.auth.dto.request.PasswordModifyRequest;
 import swm.betterlife.antifragile.domain.member.controller.MemberNicknameDuplResponse;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
@@ -42,6 +47,8 @@ public class MemberService {
     private final MemberDiaryService memberDiaryService;
     private final S3ImageComponent s3ImageComponent;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
 
 
     @Transactional(readOnly = true)
@@ -152,12 +159,46 @@ public class MemberService {
 
     }
 
+    @Transactional
+    public void modifyPassword(
+        String email, String memberId,
+        LoginType loginType, PasswordModifyRequest passwordModifyRequest
+    ) {
+        String curPassword = passwordModifyRequest.curPassword();
+        String newPassword = passwordModifyRequest.newPassword();
+        Authentication authentication
+            = getAuthenticate(email, curPassword, loginType);
+
+        if (curPassword.equals(newPassword)) {
+            throw new PasswordSameException();
+        }
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        Query query = new Query(Criteria.where("id").is(memberId));
+        Update update = new Update().set("password", encodedPassword);
+
+        UpdateResult result = mongoTemplate.updateFirst(query, update, Member.class);
+
+        if (result.getMatchedCount() == 0) {
+            throw new MemberNotFoundException();
+        }
+    }
+
     @Scheduled(cron = "0 0 0 * * *")
     public void resetRemainRecommendNumber() {
         Query query = new Query();
         Update update = new Update().set("remainRecommendNumber", 3);
 
         mongoTemplate.updateMulti(query, update, Member.class);
+    }
+
+    private Authentication getAuthenticate(
+        String email, String password,
+        LoginType loginType
+    ) {
+        String username = loginType.name() + ":" + email;
+        UsernamePasswordAuthenticationToken authenticationToken
+            = new UsernamePasswordAuthenticationToken(username, password);
+        return authenticationManagerBuilder.getObject().authenticate(authenticationToken);
     }
 
 }

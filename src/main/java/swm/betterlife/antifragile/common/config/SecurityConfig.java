@@ -49,10 +49,6 @@ public class SecurityConfig {
         "/auth",
     };
 
-    private static final String[] AUTH_POST_PATHS = {
-        "/auth/password"
-    };
-
     private static final String[] ALLOW_ORIGINS = {
         "http://localhost:8080"
     };
@@ -69,7 +65,6 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize -> authorize
             .requestMatchers(DELETE, AUTH_DELETE_PATHS).authenticated()
-            .requestMatchers(POST, AUTH_POST_PATHS).authenticated()
             .requestMatchers(PERMIT_PATHS).permitAll()
             .requestMatchers(GET, PERMIT_GET_PATHS).permitAll()
             .requestMatchers(
