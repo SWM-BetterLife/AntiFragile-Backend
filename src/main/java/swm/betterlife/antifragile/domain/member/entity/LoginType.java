@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum LoginType {
-    GOOGLE("구글"), NAVER("네이버"), KAKAO("카카오");
+    NORMAL("일반"), GOOGLE("구글"), NAVER("네이버"), KAKAO("카카오");
 
     private final String toKorean;
 }

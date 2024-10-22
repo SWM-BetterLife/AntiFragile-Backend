@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.member.controller.MemberNicknameDuplResponse;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
+import swm.betterlife.antifragile.domain.member.dto.request.PasswordModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberProfileModifyResponse;
@@ -40,6 +42,8 @@ public class MemberService {
     private final MemberPointService memberPointService;
     private final MemberDiaryService memberDiaryService;
     private final S3ImageComponent s3ImageComponent;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Transactional(readOnly = true)
     public MemberInfoResponse findMemberById(String id) {
@@ -147,6 +151,21 @@ public class MemberService {
             ? new MemberStatusResponse(HUMAN)
             : new MemberStatusResponse(EXISTENCE);
 
+    }
+
+    @Transactional
+    public void modifyPassword(
+        String memberId, PasswordModifyRequest passwordModifyRequest
+    ) {
+        String encodedPassword = passwordEncoder.encode(passwordModifyRequest.password());
+        Query query = new Query(Criteria.where("id").is(memberId));
+        Update update = new Update().set("password", encodedPassword);
+
+        UpdateResult result = mongoTemplate.updateFirst(query, update, Member.class);
+
+        if (result.getMatchedCount() == 0) {
+            throw new MemberNotFoundException();
+        }
     }
 
     @Scheduled(cron = "0 0 0 * * *")
