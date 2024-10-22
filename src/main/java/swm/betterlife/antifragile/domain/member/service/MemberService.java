@@ -160,7 +160,7 @@ public class MemberService {
     ) {
         String curPassword = passwordModifyRequest.curPassword();
         String newPassword = passwordModifyRequest.newPassword();
-        if(curPassword.equals(newPassword)) throw new PasswordSameException();
+        if (curPassword.equals(newPassword)) throw new PasswordSameException();
         String encodedPassword = passwordEncoder.encode(newPassword);
         Query query = new Query(Criteria.where("id").is(memberId));
         Update update = new Update().set("password", encodedPassword);
