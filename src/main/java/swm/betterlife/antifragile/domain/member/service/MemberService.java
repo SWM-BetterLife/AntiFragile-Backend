@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.ExcessRecommendLimitException;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
+import swm.betterlife.antifragile.common.exception.PasswordSameException;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.member.controller.MemberNicknameDuplResponse;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
@@ -157,7 +158,12 @@ public class MemberService {
     public void modifyPassword(
         String memberId, PasswordModifyRequest passwordModifyRequest
     ) {
-        String encodedPassword = passwordEncoder.encode(passwordModifyRequest.password());
+        String curPassword = passwordModifyRequest.curPassword();
+        String newPassword = passwordModifyRequest.newPassword();
+        if (curPassword.equals(newPassword)) {
+            throw new PasswordSameException();
+        }
+        String encodedPassword = passwordEncoder.encode(newPassword);
         Query query = new Query(Criteria.where("id").is(memberId));
         Update update = new Update().set("password", encodedPassword);
 
