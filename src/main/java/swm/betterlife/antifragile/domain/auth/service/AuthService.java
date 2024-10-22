@@ -21,13 +21,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.exception.MemberNotFoundException;
-import swm.betterlife.antifragile.common.exception.PasswordSameException;
 import swm.betterlife.antifragile.common.jwt.util.JwtProvider;
 import swm.betterlife.antifragile.common.util.S3ImageComponent;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLoginRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthLogoutRequest;
 import swm.betterlife.antifragile.domain.auth.dto.request.AuthSignUpRequest;
-import swm.betterlife.antifragile.domain.auth.dto.request.PasswordModifyRequest;
 import swm.betterlife.antifragile.domain.auth.dto.response.AuthLoginResponse;
 import swm.betterlife.antifragile.domain.auth.dto.response.AuthSignUpResponse;
 import swm.betterlife.antifragile.domain.member.entity.LoginType;
@@ -121,30 +119,6 @@ public class AuthService {
     @Transactional
     public void delete(String memberId) {
         modifyDeletedAt(memberId, LocalDateTime.now());
-    }
-
-    @Transactional
-    public void modifyPassword(
-        String email, String memberId,
-        LoginType loginType, PasswordModifyRequest passwordModifyRequest
-    ) {
-        String curPassword = passwordModifyRequest.curPassword();
-        String newPassword = passwordModifyRequest.newPassword();
-        Authentication authentication
-            = getAuthenticate(email, curPassword, loginType);
-
-        if (curPassword.equals(newPassword)) {
-            throw new PasswordSameException();
-        }
-        String encodedPassword = passwordEncoder.encode(newPassword);
-        Query query = new Query(Criteria.where("id").is(memberId));
-        Update update = new Update().set("password", encodedPassword);
-
-        UpdateResult result = mongoTemplate.updateFirst(query, update, Member.class);
-
-        if (result.getMatchedCount() == 0) {
-            throw new MemberNotFoundException();
-        }
     }
 
     private void modifyDeletedAt(String memberId, LocalDateTime localDateTime) {
