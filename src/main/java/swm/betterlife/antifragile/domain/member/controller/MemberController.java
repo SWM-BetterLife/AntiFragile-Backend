@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import swm.betterlife.antifragile.common.response.ResponseBody;
 import swm.betterlife.antifragile.common.security.PrincipalDetails;
+import swm.betterlife.antifragile.domain.auth.dto.request.PasswordModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.request.MemberProfileModifyRequest;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberDetailInfoResponse;
 import swm.betterlife.antifragile.domain.member.dto.response.MemberInfoResponse;
@@ -81,5 +83,17 @@ public class MemberController {
         return ResponseBody.ok(
             memberService.checkMemberStatus(email, loginType)
         );
+    }
+
+    @PostMapping("/password")
+    public ResponseBody<Void> modifyPassword(
+        @AuthenticationPrincipal PrincipalDetails principalDetails,
+        @RequestBody PasswordModifyRequest passwordModifyRequest
+    ) {
+        memberService.modifyPassword(
+            principalDetails.email(), principalDetails.memberId(),
+            principalDetails.loginType(), passwordModifyRequest
+        );
+        return ResponseBody.ok();
     }
 }

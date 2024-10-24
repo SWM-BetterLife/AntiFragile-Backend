@@ -50,6 +50,7 @@ public class AuthController {
         return ResponseBody.ok();
     }
 
+
     @DeleteMapping()
     public ResponseBody<Void> delete(
         @AuthenticationPrincipal PrincipalDetails principalDetails

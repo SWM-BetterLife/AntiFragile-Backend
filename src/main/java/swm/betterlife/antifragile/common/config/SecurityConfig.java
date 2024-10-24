@@ -2,6 +2,7 @@ package swm.betterlife.antifragile.common.config;
 
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 import java.util.Arrays;
 import java.util.List;
