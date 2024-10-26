@@ -14,6 +14,7 @@ public enum ErrorCode {
     // Member
     MEMBER_NOT_FOUND("멤버를 찾을 수 없습니다"),
     HUMAN_MEMBER_CANNOT_BE_ACCESSED("휴먼 계정의 아이디의 정보는 조회할 수 없습니다"),
+    PASSWORD_SAME("새로운 비밀번호는 기존 비밀번호와 달라야합니다."),
 
     // DiaryAnalysis
     DIARY_ANALYSIS_NOT_FOUND("해당 날짜에 사용자의 일기 분석을 찾을 수 없습니다"),

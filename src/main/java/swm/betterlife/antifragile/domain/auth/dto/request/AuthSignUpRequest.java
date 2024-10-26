@@ -7,6 +7,7 @@ import swm.betterlife.antifragile.domain.member.entity.LoginType;
 
 public record AuthSignUpRequest(
     String email,
+    String password,
     LoginType loginType,
     String nickname,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd")
