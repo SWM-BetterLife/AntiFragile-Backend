@@ -5,6 +5,7 @@ import swm.betterlife.antifragile.domain.diaryanalysis.entity.SelectedEmoticon;
 
 public record DiaryAnalysisModifyRequest(
     List<String> emotions,
+    String embedding,
     String event,
     String thought,
     String action,
