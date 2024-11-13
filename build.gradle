@@ -55,6 +55,15 @@ dependencies {
 	implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
 	implementation 'com.google.apis:google-api-services-youtube:v3-rev20230816-2.0.0'
 	implementation 'com.google.http-client:google-http-client-jackson2:1.39.2'
+
+	// jackson
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.0'
+
+	// AWS SDK v2 BOM (버전 호환성 관리)
+	implementation platform('software.amazon.awssdk:bom:2.20.6')
+
+	// AWS STS 서비스 의존성
+	implementation 'software.amazon.awssdk:sts'
 }
 
 tasks.named('test') {
