@@ -183,12 +183,13 @@ public class MemberService {
         }
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
     public void resetRemainRecommendNumber() {
         Query query = new Query();
         Update update = new Update().set("remainRecommendNumber", 3);
 
-        mongoTemplate.updateMulti(query, update, Member.class);
+        UpdateResult result = mongoTemplate.updateMulti(query, update, Member.class);
+        log.info("Daily recommend number reset completed. Modified count: {}",
+            result.getModifiedCount());
     }
 
     private Authentication getAuthenticate(
