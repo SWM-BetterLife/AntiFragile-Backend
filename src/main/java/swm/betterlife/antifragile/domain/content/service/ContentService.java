@@ -50,11 +50,11 @@ public class ContentService {
         Member member = memberService.getMemberById(memberId);
         List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member);
 
-        List<Content> savedContents = saveOrUpdateContents(recommendedContents);
-        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
+//        List<Content> savedContents = saveOrUpdateContents(recommendedContents);
+//        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
 
         return ContentListResponse.from(
-            savedContents.stream()
+            recommendedContents.stream()
                 .map(content -> ContentListResponse.ContentResponse.from(
                     content,
                     contentQueryService.getContentLikeNumber(content),
@@ -74,10 +74,8 @@ public class ContentService {
         DiaryAnalysis analysis =
             diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
         Member member = memberService.getMemberById(memberId);
-        List<String> recommendedUrls = extractRecommendContentUrls(analysis);
 
-        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member);
-        // TODO: 추후에 feedback을 통해서 재추천 컨텐츠를 가져와야 함
+        List<Content> recommendedContents = getReRecommendContentsByAnalysis(analysis, member);
 
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
 
@@ -134,13 +132,18 @@ public class ContentService {
         }
     }
 
-    private List<Content> getRecommendContentsByAnalysis(
-        DiaryAnalysis analysis,
-        List<String> recommendedUrls,
-        String feedback
-    ) {
-        // TODO: gpt api와 youtube api를 통해서 재추천 컨텐츠를 가져와야 함
-        return null;
+
+    private List<Content> getReRecommendContentsByAnalysis(DiaryAnalysis analysis, Member member) {
+
+        String prompt = recommendService.createPrompt(
+            analysis.getEmotions(), analysis.getEvent(), member);
+
+        try {
+            YouTubeResponse youTubeResponse = recommendService.youTubeRecommend(prompt);
+            return youTubeResponse.toContentList();
+        } catch (IOException e) {
+            throw new YouTubeApiException();
+        }
     }
 
     private List<Content> saveOrUpdateContents(List<Content> recommendedContents) {
