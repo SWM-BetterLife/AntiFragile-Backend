@@ -22,14 +22,13 @@ public class LambdaService {
 
     private final ObjectMapper objectMapper;
     private final AWSLambda awsLambda;
-    private static final String FUNCTION_NAME = "bedrock_api"; // Lambda 함수 이름
+    private static final String FUNCTION_NAME = "bedrock_api";
 
-    public List<String> getRecommendations(String emotion, String diarySummary) {
+    public List<String> getRecommendations(String prompt) {
         try {
             // 요청 데이터 구성
             Map<String, String> payload = new HashMap<>();
-            payload.put("emotion", emotion);
-            payload.put("diary_summary", diarySummary);
+            payload.put("prompt", prompt);
 
             // Lambda 호출 요청 생성
             InvokeRequest request = new InvokeRequest()
@@ -49,7 +48,7 @@ public class LambdaService {
             String response = new String(result.getPayload().array(), StandardCharsets.UTF_8);
             log.info("Lambda response: {}", response);
 
-            // 응답 파싱 (Lambda 응답 형식에 맞게 수정 필요)
+            // 응답 파싱
             return parseLambdaResponse(response);
 
         } catch (Exception e) {
@@ -68,10 +67,10 @@ public class LambdaService {
             // body가 문자열로 된 JSON이라면 다시 파싱
             JsonNode bodyNode = objectMapper.readTree(body);
 
-            if (bodyNode.has("recommendations")) {
-                JsonNode recommendationsNode = bodyNode.get("recommendations");
-                if (recommendationsNode.isArray()) {
-                    for (JsonNode item : recommendationsNode) {
+            if (bodyNode.has("video_ids")) {
+                JsonNode videoIdsNode = bodyNode.get("video_ids");
+                if (videoIdsNode.isArray()) {
+                    for (JsonNode item : videoIdsNode) {
                         recommendations.add(item.asText());
                     }
                 }

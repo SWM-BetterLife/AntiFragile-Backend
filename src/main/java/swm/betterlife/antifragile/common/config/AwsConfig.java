@@ -20,15 +20,18 @@ public class AwsConfig {
     @Value("${aws.secretKey}")
     private String secretKey;
 
-    @Value("${aws.region}")
-    private String region;
+    @Value("${aws.s3.region}")
+    private String s3Region;
+
+    @Value("${aws.lambda.region}")
+    private String lambdaRegion;
 
     @Bean
     public AmazonS3 amazonS3() {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
 
         return AmazonS3ClientBuilder.standard()
-            .withRegion(Regions.fromName(region))
+            .withRegion(Regions.fromName(s3Region))
             .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
             .build();
     }
@@ -39,7 +42,7 @@ public class AwsConfig {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
 
         return AWSLambdaClientBuilder.standard()
-            .withRegion(Regions.fromName(region))
+            .withRegion(Regions.fromName(lambdaRegion))
             .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
             .build();
     }
