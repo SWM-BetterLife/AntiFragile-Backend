@@ -188,8 +188,6 @@ public class MemberService {
         Update update = new Update().set("remainRecommendNumber", 3);
 
         UpdateResult result = mongoTemplate.updateMulti(query, update, Member.class);
-        log.info("Daily recommend number reset completed. Modified count: {}",
-            result.getModifiedCount());
     }
 
     private Authentication getAuthenticate(

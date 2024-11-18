@@ -121,7 +121,8 @@ public class ContentService {
 
     private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis, Member member) {
 
-        String prompt = recommendService.createPrompt(analysis.getEmotions(), analysis.getEvent(), member);
+        String prompt = recommendService.createPrompt(
+            analysis.getEmotions(), analysis.getEvent(), member);
 
         List<String> videoIds = lambdaService.getRecommendations(prompt);
 
