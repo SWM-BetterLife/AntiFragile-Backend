@@ -28,6 +28,7 @@ import swm.betterlife.antifragile.domain.diaryanalysis.service.DiaryAnalysisServ
 import swm.betterlife.antifragile.domain.member.entity.Member;
 import swm.betterlife.antifragile.domain.member.service.MemberService;
 import swm.betterlife.antifragile.domain.recommend.dto.response.YouTubeResponse;
+import swm.betterlife.antifragile.domain.recommend.service.LambdaService;
 import swm.betterlife.antifragile.domain.recommend.service.RecommendService;
 
 @Service
@@ -40,6 +41,7 @@ public class ContentService {
     private final MemberService memberService;
     private final DiaryAnalysisService diaryAnalysisService;
     private final RecommendService recommendService;
+    private final LambdaService lambdaService;
 
     @Transactional
     public ContentListResponse saveRecommendContents(String memberId, LocalDate date) {
@@ -119,10 +121,13 @@ public class ContentService {
 
     private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis, Member member) {
 
-        String prompt = recommendService.createPrompt(analysis.getEmotions(), member);
+        String prompt = recommendService.createPrompt(
+            analysis.getEmotions(), analysis.getEvent(), member);
+
+        List<String> videoIds = lambdaService.getRecommendations(prompt);
 
         try {
-            YouTubeResponse youTubeResponse = recommendService.youTubeRecommend(prompt);
+            YouTubeResponse youTubeResponse = recommendService.getYoutubeInfo(videoIds);
             return youTubeResponse.toContentList();
         } catch (IOException e) {
             throw new YouTubeApiException();

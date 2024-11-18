@@ -42,16 +42,85 @@ public class RecommendService {
     @Value("${youtube.api.key}")
     private String apiKey;
 
-    public String createPrompt(List<String> emotions, Member member) {
+    public String createPrompt(List<String> emotions, String event, Member member) {
 
         String emotionString = String.join(", ", emotions);
 
         return String.format(
-            "%s 감정을 가진 나이가 %d인 %s에게 추천할만한 영상의 키워드를 하나만 반환해줘.",
+            "%s 감정을 가진 나이가 %d인 %s이 쓴 일기 내용은 %s야. 이 일기의 감정에 정신적으로 도움이 되는 메타데이터를 10개 추천해줘",
             emotionString,
             AgeConverter.convertDateToAge(member.getBirthDate()),
-            member.getJob()
+            member.getJob(),
+            event
         );
+    }
+
+    public YouTubeResponse getYoutubeInfo(List<String> videoIds) throws IOException {
+        log.info("Received Video IDs: {}", videoIds);
+
+        JsonFactory jsonFactory = new JacksonFactory();
+
+        // YouTube 객체를 빌드하여 API에 접근할 수 있는 YouTube 클라이언트 생성
+        YouTube youtube = new YouTube.Builder(
+            new com.google.api.client.http.javanet.NetHttpTransport(),
+            jsonFactory,
+            request -> {})
+            .setApplicationName("Antifragile")
+            .build();
+
+        List<YouTubeResponse.YouTubeApiInfo> youTubeApiInfos = new ArrayList<>();
+
+        // 동영상 정보를 가져오기 위한 요청 생성
+        YouTube.Videos.List videoRequest = youtube.videos()
+            .list(Collections.singletonList("snippet,statistics,status"));
+        videoRequest.setKey(apiKey);
+        videoRequest.setId(videoIds);
+
+        // API 호출
+        VideoListResponse videoResponse = videoRequest.execute();
+        List<Video> videos = videoResponse.getItems();
+
+        // 각 동영상에 대해 정보 추출
+        for (Video video : videos) {
+            VideoStatus status = video.getStatus();
+            if (status.getEmbeddable() == null || !status.getEmbeddable()) {
+                continue; // 임베딩이 불가능한 동영상 건너뛰기
+            }
+
+            String videoId = video.getId();
+            String videoTitle = video.getSnippet().getTitle();
+            String videoDescription = video.getSnippet().getDescription();
+            String thumbnailUrl = "https://img.youtube.com/vi/" + videoId + "/sddefault.jpg";
+            String channelId = video.getSnippet().getChannelId();
+            String channelTitle = video.getSnippet().getChannelTitle();
+
+            // 채널 정보 요청 생성 및 실행
+            YouTube.Channels.List channelRequest = youtube.channels()
+                .list(Collections.singletonList("snippet,statistics"));
+            channelRequest.setKey(apiKey);
+            channelRequest.setId(Collections.singletonList(channelId));
+            ChannelListResponse channelResponse = channelRequest.execute();
+            Channel channel = channelResponse.getItems().get(0);
+            ChannelStatistics statistics = channel.getStatistics();
+            Long subscriberCount = Optional.ofNullable(statistics)
+                .map(ChannelStatistics::getSubscriberCount)
+                .map(Number::longValue)
+                .orElse(null);
+            String channelImageUrl = channel.getSnippet()
+                .getThumbnails().getDefault().getUrl();
+
+            youTubeApiInfos.add(new YouTubeResponse.YouTubeApiInfo(
+                videoTitle,
+                videoDescription,
+                thumbnailUrl,
+                subscriberCount,
+                channelTitle,
+                channelImageUrl,
+                "https://www.youtube.com/watch?v=" + videoId
+            ));
+        }
+
+        return new YouTubeResponse(youTubeApiInfos);
     }
 
     public OpenAiResponse chatGpt(String prompt) {

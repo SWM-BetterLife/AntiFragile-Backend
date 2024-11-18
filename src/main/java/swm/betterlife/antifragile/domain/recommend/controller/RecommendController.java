@@ -1,6 +1,7 @@
 package swm.betterlife.antifragile.domain.recommend.controller;
 
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import swm.betterlife.antifragile.common.response.ResponseBody;
+import swm.betterlife.antifragile.domain.recommend.dto.request.LambdaRequest;
 import swm.betterlife.antifragile.domain.recommend.dto.request.RecommendPromptRequest;
 import swm.betterlife.antifragile.domain.recommend.dto.response.OpenAiResponse;
 import swm.betterlife.antifragile.domain.recommend.dto.response.YouTubeResponse;
+import swm.betterlife.antifragile.domain.recommend.service.LambdaService;
 import swm.betterlife.antifragile.domain.recommend.service.RecommendService;
 
 @Slf4j
@@ -19,6 +22,7 @@ import swm.betterlife.antifragile.domain.recommend.service.RecommendService;
 @RequestMapping("/recommends")
 public class RecommendController {
     private final RecommendService recommendService;
+    private final LambdaService lambdaService;
 
     @PostMapping("/chat-gpt")
     public ResponseBody<OpenAiResponse> chatGpt(
@@ -34,5 +38,13 @@ public class RecommendController {
     ) throws IOException {
         return ResponseBody.ok(
             recommendService.youTubeRecommend(request.prompt()));
+    }
+
+    @PostMapping("/lambda")
+    public ResponseBody<List<String>> getRecommendations(@RequestBody LambdaRequest request) {
+
+        return ResponseBody.ok(
+            lambdaService.getRecommendations(request.prompt())
+        );
     }
 }
