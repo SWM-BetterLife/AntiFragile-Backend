@@ -42,11 +42,9 @@ public class RecommendController {
 
     @PostMapping("/lambda")
     public ResponseBody<List<String>> getRecommendations(@RequestBody LambdaRequest request) {
-        List<String> recommendations = lambdaService.getRecommendations(
-            request.emotion(),
-            request.diarySummary()
-        );
 
-        return ResponseBody.ok(recommendations);
+        return ResponseBody.ok(
+            lambdaService.getRecommendations(request.prompt())
+        );
     }
 }
