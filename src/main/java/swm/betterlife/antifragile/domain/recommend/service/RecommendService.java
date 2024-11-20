@@ -42,11 +42,14 @@ public class RecommendService {
     @Value("${youtube.api.key}")
     private String apiKey;
 
-    public String createPrompt(List<String> emotions, String event, Member member, String prompt) {
+    public String createPrompt(
+        List<String> emotions, String event,
+        Member member, String prompt, String feedback
+    ) {
 
         String emotionString = String.join(", ", emotions);
 
-        return String.format(
+        String baseMessage = String.format(
             "%s 감정을 가진 나이가 %d인 %s이 쓴 일기 내용은 \"%s\"야. %s",
             emotionString,
             AgeConverter.convertDateToAge(member.getBirthDate()),
@@ -54,6 +57,12 @@ public class RecommendService {
             event,
             prompt
         );
+
+        if (feedback != null) {
+            return String.format("%s. 이때 %s를 참고해줘", baseMessage, feedback);
+        }
+
+        return baseMessage;
     }
 
     public YouTubeResponse getYoutubeInfo(List<String> videoIds) throws IOException {
