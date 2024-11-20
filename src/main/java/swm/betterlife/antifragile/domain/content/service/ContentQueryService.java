@@ -36,7 +36,8 @@ public class ContentQueryService {
             .map(RecommendContent::getContentUrl)
             .toList();
 
-        List<Content> recommendContents = contentRepository.findByUrlIn(recommendContentUrls).stream()
+        List<Content> recommendContents
+            = contentRepository.findByUrlIn(recommendContentUrls).stream()
             .sorted(Comparator.comparing(BaseTimeEntity::getModifiedAt))
             .toList();
 
