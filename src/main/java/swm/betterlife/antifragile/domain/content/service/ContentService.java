@@ -80,7 +80,7 @@ public class ContentService {
 
         String prompt = "지금 사용자의 상태에 따라 관련되거나 정신적으로 도움 되는 콘텐츠 10개를 추천해줘";
         prompt = recommendService.createPrompt(
-            analysis.getEmotions(), analysis.getEvent(), member, prompt
+            analysis.getEmotions(), analysis.getEvent(), member, prompt, feedback
         );
         List<Content> recommendedContents
             = getRecommendContentsByAnalysis(analysis, member, prompt);
