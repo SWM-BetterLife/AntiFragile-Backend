@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -48,7 +49,12 @@ public class ContentService {
         DiaryAnalysis analysis =
             diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
         Member member = memberService.getMemberById(memberId);
-        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member);
+
+        String prompt = "이 일기의 감정에 정신적으로 도움이 되는 메타데이터를 10개 추천해줘";
+        prompt = recommendService.createPrompt(
+            analysis.getEmotions(), analysis.getEvent(), member, prompt
+        );
+        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member, prompt);
 
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
         diaryAnalysisService.saveRecommendContents(analysis, savedContents);
@@ -76,7 +82,11 @@ public class ContentService {
         Member member = memberService.getMemberById(memberId);
         List<String> recommendedUrls = extractRecommendContentUrls(analysis);
 
-        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member);
+        String prompt = "지금 사용자의 상태에 따라 관련되거나 정신적으로 도움 되는 콘텐츠 10개를 추천해줘";
+        prompt = recommendService.createPrompt(
+            analysis.getEmotions(), analysis.getEvent(), member, prompt
+        );
+        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member, prompt);
         // TODO: 추후에 feedback을 통해서 재추천 컨텐츠를 가져와야 함
 
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
@@ -119,12 +129,18 @@ public class ContentService {
         }
     }
 
-    private List<Content> getRecommendContentsByAnalysis(DiaryAnalysis analysis, Member member) {
-
-        String prompt = recommendService.createPrompt(
-            analysis.getEmotions(), analysis.getEvent(), member);
-
-        List<String> videoIds = lambdaService.getRecommendations(prompt);
+    private List<Content> getRecommendContentsByAnalysis(
+        DiaryAnalysis analysis, Member member, String prompt
+    ) {
+        List<String> videoIds = new ArrayList<>();
+        int lambdaCnt = 0;
+        while(lambdaCnt < 5) {
+            videoIds = lambdaService.getRecommendations(prompt);
+            if(!videoIds.isEmpty()) {
+                break;
+            }
+            lambdaCnt++;
+        }
 
         try {
             YouTubeResponse youTubeResponse = recommendService.getYoutubeInfo(videoIds);

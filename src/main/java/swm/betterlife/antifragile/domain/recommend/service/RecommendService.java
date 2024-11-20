@@ -42,16 +42,17 @@ public class RecommendService {
     @Value("${youtube.api.key}")
     private String apiKey;
 
-    public String createPrompt(List<String> emotions, String event, Member member) {
+    public String createPrompt(List<String> emotions, String event, Member member, String prompt) {
 
         String emotionString = String.join(", ", emotions);
 
         return String.format(
-            "%s 감정을 가진 나이가 %d인 %s이 쓴 일기 내용은 %s야. 이 일기의 감정에 정신적으로 도움이 되는 메타데이터를 10개 추천해줘",
+            "%s 감정을 가진 나이가 %d인 %s이 쓴 일기 내용은 \"%s\"야. %s",
             emotionString,
             AgeConverter.convertDateToAge(member.getBirthDate()),
             member.getJob(),
-            event
+            event,
+            prompt
         );
     }
 
