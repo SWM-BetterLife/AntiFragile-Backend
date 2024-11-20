@@ -54,7 +54,8 @@ public class ContentService {
         prompt = recommendService.createPrompt(
             analysis.getEmotions(), analysis.getEvent(), member, prompt
         );
-        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member, prompt);
+        List<Content> recommendedContents
+            = getRecommendContentsByAnalysis(analysis, member, prompt);
 
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
         diaryAnalysisService.saveRecommendContents(analysis, savedContents);
@@ -86,7 +87,8 @@ public class ContentService {
         prompt = recommendService.createPrompt(
             analysis.getEmotions(), analysis.getEvent(), member, prompt
         );
-        List<Content> recommendedContents = getRecommendContentsByAnalysis(analysis, member, prompt);
+        List<Content> recommendedContents
+            = getRecommendContentsByAnalysis(analysis, member, prompt);
         // TODO: 추후에 feedback을 통해서 재추천 컨텐츠를 가져와야 함
 
         List<Content> savedContents = saveOrUpdateContents(recommendedContents);
@@ -134,9 +136,9 @@ public class ContentService {
     ) {
         List<String> videoIds = new ArrayList<>();
         int lambdaCnt = 0;
-        while(lambdaCnt < 5) {
+        while (lambdaCnt < 5) {
             videoIds = lambdaService.getRecommendations(prompt);
-            if(!videoIds.isEmpty()) {
+            if (!videoIds.isEmpty()) {
                 break;
             }
             lambdaCnt++;
