@@ -56,8 +56,11 @@ public class ContentService {
         List<Content> recommendedContents
             = getRecommendContentsByAnalysis(analysis, member, prompt);
 
+        List<Content> savedContents = saveOrUpdateContents(recommendedContents);
+        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
+
         return ContentListResponse.from(
-            recommendedContents.stream()
+            savedContents.stream()
                 .map(content -> ContentListResponse.ContentResponse.from(
                     content,
                     contentQueryService.getContentLikeNumber(content),
@@ -86,8 +89,12 @@ public class ContentService {
             = getRecommendContentsByAnalysis(analysis, member, prompt);
         // TODO: 추후에 feedback을 통해서 재추천 컨텐츠를 가져와야 함
 
+        List<Content> savedContents = saveOrUpdateContents(recommendedContents);
+        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
+
+
         return ContentListResponse.from(
-            recommendedContents.stream()
+            savedContents.stream()
                 .map(content -> ContentListResponse.ContentResponse.from(
                     content,
                     contentQueryService.getContentLikeNumber(content),
@@ -143,7 +150,25 @@ public class ContentService {
         }
     }
 
+    private List<Content> saveOrUpdateContents(List<Content> recommendedContents) {
+        List<String> urls = recommendedContents.stream().map(Content::getUrl).toList();
+        Map<String, Content> existingContents = contentRepository.findByUrlIn(urls).stream()
+            .collect(Collectors.toMap(Content::getUrl, Function.identity()));
+        List<Content> toSaveContents = new ArrayList<>();
+        for (Content content : recommendedContents) {
+            Content existingContent = existingContents.get(content.getUrl());
+            if (existingContent != null) {
+                existingContent.updateContent(content);
+                toSaveContents.add(existingContent);
+            } else {
+                toSaveContents.add(content);
+            }
+        }
+        return contentRepository.saveAll(toSaveContents);
+    }
+
     private void validateRecommendLimit(String memberId) {
         memberService.decrementRemainRecommendNumber(memberId);
     }
+
 }
