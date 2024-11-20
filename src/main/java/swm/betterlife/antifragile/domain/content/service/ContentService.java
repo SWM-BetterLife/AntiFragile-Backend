@@ -51,7 +51,7 @@ public class ContentService {
 
         String prompt = "이 일기와 조금이라도 관련있는 메타데이터를 10개 추천해줘";
         prompt = recommendService.createPrompt(
-            analysis.getEmotions(), analysis.getEvent(), member, prompt
+            analysis.getEmotions(), analysis.getEvent(), member, prompt, null
         );
         List<Content> recommendedContents
             = getRecommendContentsByAnalysis(analysis, member, prompt);

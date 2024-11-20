@@ -61,6 +61,8 @@ public class RecommendService {
         if (feedback != null) {
             return String.format("%s. 이때 %s를 참고해줘", baseMessage, feedback);
         }
+
+        return baseMessage;
     }
 
     public YouTubeResponse getYoutubeInfo(List<String> videoIds) throws IOException {
