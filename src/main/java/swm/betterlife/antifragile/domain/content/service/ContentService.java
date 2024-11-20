@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -57,11 +56,8 @@ public class ContentService {
         List<Content> recommendedContents
             = getRecommendContentsByAnalysis(analysis, member, prompt);
 
-        List<Content> savedContents = saveOrUpdateContents(recommendedContents);
-        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
-
         return ContentListResponse.from(
-            savedContents.stream()
+            recommendedContents.stream()
                 .map(content -> ContentListResponse.ContentResponse.from(
                     content,
                     contentQueryService.getContentLikeNumber(content),
@@ -81,7 +77,6 @@ public class ContentService {
         DiaryAnalysis analysis =
             diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
         Member member = memberService.getMemberById(memberId);
-        List<String> recommendedUrls = extractRecommendContentUrls(analysis);
 
         String prompt = "지금 사용자의 상태에 따라 관련되거나 정신적으로 도움 되는 콘텐츠 10개를 추천해줘";
         prompt = recommendService.createPrompt(
@@ -91,12 +86,8 @@ public class ContentService {
             = getRecommendContentsByAnalysis(analysis, member, prompt);
         // TODO: 추후에 feedback을 통해서 재추천 컨텐츠를 가져와야 함
 
-        List<Content> savedContents = saveOrUpdateContents(recommendedContents);
-
-        diaryAnalysisService.saveRecommendContents(analysis, savedContents);
-
         return ContentListResponse.from(
-            savedContents.stream()
+            recommendedContents.stream()
                 .map(content -> ContentListResponse.ContentResponse.from(
                     content,
                     contentQueryService.getContentLikeNumber(content),
@@ -152,41 +143,7 @@ public class ContentService {
         }
     }
 
-    private List<Content> getRecommendContentsByAnalysis(
-        DiaryAnalysis analysis,
-        List<String> recommendedUrls,
-        String feedback
-    ) {
-        // TODO: gpt api와 youtube api를 통해서 재추천 컨텐츠를 가져와야 함
-        return null;
-    }
-
-    private List<Content> saveOrUpdateContents(List<Content> recommendedContents) {
-        List<String> urls = recommendedContents.stream().map(Content::getUrl).toList();
-        Map<String, Content> existingContents = contentRepository.findByUrlIn(urls).stream()
-            .collect(Collectors.toMap(Content::getUrl, Function.identity()));
-
-        List<Content> toSaveContents = new ArrayList<>();
-        for (Content content : recommendedContents) {
-            Content existingContent = existingContents.get(content.getUrl());
-            if (existingContent != null) {
-                existingContent.updateContent(content);
-                toSaveContents.add(existingContent);
-            } else {
-                toSaveContents.add(content);
-            }
-        }
-
-        return contentRepository.saveAll(toSaveContents);
-    }
-
     private void validateRecommendLimit(String memberId) {
         memberService.decrementRemainRecommendNumber(memberId);
-    }
-
-    private List<String> extractRecommendContentUrls(DiaryAnalysis analysis) {
-        return analysis.getRecommendContents().stream()
-            .map(RecommendContent::getContentUrl)
-            .toList();
     }
 }
