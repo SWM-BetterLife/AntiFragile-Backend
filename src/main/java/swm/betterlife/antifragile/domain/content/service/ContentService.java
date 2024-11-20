@@ -49,7 +49,7 @@ public class ContentService {
             diaryAnalysisService.getDiaryAnalysisByMemberIdAndDate(memberId, date);
         Member member = memberService.getMemberById(memberId);
 
-        String prompt = "이 일기의 감정에 정신적으로 도움이 되는 메타데이터를 10개 추천해줘";
+        String prompt = "이 일기와 조금이라도 관련있는 메타데이터를 10개 추천해줘";
         prompt = recommendService.createPrompt(
             analysis.getEmotions(), analysis.getEvent(), member, prompt
         );
