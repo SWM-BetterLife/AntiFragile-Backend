@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swm.betterlife.antifragile.common.entity.BaseTimeEntity;
 import swm.betterlife.antifragile.common.exception.RecommendedContentNotFoundException;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentDetailResponse;
 import swm.betterlife.antifragile.domain.content.dto.response.ContentListResponse;
@@ -35,7 +36,10 @@ public class ContentQueryService {
             .map(RecommendContent::getContentUrl)
             .toList();
 
-        List<Content> recommendContents = contentRepository.findByUrlIn(recommendContentUrls);
+        List<Content> recommendContents
+            = contentRepository.findByUrlIn(recommendContentUrls).stream()
+            .sorted(Comparator.comparing(BaseTimeEntity::getModifiedAt))
+            .toList();
 
         return ContentListResponse.from(
             recommendContents.stream()
